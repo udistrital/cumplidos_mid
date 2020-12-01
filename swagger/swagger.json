@@ -1,0 +1,196 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "beego Test API",
+        "description": "beego has a very cool tools to autogenerate documents for your API",
+        "version": "1.0.0",
+        "termsOfService": "http://beego.me/",
+        "contact": {
+            "email": "astaxie@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "basePath": "/v1",
+    "paths": {
+        "/aprobacion_pago/contratos_contratista/{numero_documento}": {
+            "get": {
+                "tags": [
+                    "aprobacion_pago"
+                ],
+                "operationId": "AprobacionPagoController.GetContratosContratista",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "numero_documento",
+                        "description": "Número documento",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":numero_cdp is empty"
+                    }
+                }
+            }
+        },
+        "/solicitudes_coordinador/solicitudes_coordinador/{doccoordinador}": {
+            "get": {
+                "tags": [
+                    "solicitudes_coordinador"
+                ],
+                "description": "create GetSolicitudesCoordinador",
+                "operationId": "SolicitudesCoordinadorController.GetSolicitudesCoordinador",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "doccoordinador",
+                        "description": "Número del documento del coordinador",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.PagoPersonaProyecto"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found resource"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Dependencia": {
+            "title": "Dependencia",
+            "type": "object",
+            "properties": {
+                "CorreoElectronico": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Nombre": {
+                    "type": "string"
+                },
+                "TelefonoDependencia": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.EstadoPagoMensual": {
+            "title": "EstadoPagoMensual",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "CodigoAbreviacion": {
+                    "type": "string"
+                },
+                "Descripcion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Nombre": {
+                    "type": "string"
+                },
+                "NumeroOrden": {
+                    "type": "number",
+                    "format": "double"
+                }
+            }
+        },
+        "models.PagoMensual": {
+            "title": "PagoMensual",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Ano": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "CargoResponsable": {
+                    "type": "string"
+                },
+                "DocumentoPersonaId": {
+                    "type": "string"
+                },
+                "DocumentoResponsableId": {
+                    "type": "string"
+                },
+                "EstadoPagoMensualId": {
+                    "$ref": "#/definitions/models.EstadoPagoMensual"
+                },
+                "FechaCreacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaModificacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Mes": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "NumeroContrato": {
+                    "type": "string"
+                },
+                "VigenciaContrato": {
+                    "type": "number",
+                    "format": "double"
+                }
+            }
+        },
+        "models.PagoPersonaProyecto": {
+            "title": "PagoPersonaProyecto",
+            "type": "object",
+            "properties": {
+                "Dependencia": {
+                    "$ref": "#/definitions/models.Dependencia"
+                },
+                "NombrePersona": {
+                    "type": "string"
+                },
+                "PagoMensual": {
+                    "$ref": "#/definitions/models.PagoMensual"
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "aprobacion_pago",
+            "description": "AprobacionPagoController operations for AprobacionPago\n"
+        },
+        {
+            "name": "solicitudes_coordinador",
+            "description": "AprobacionPagoController operations for AprobacionPago\n"
+        }
+    ]
+}

@@ -20,6 +20,12 @@ func init() {
 				&controllers.AprobacionPagoController{},
 			),
 		),
+
+		beego.NSNamespace("/solicitudes_coordinador",
+			beego.NSInclude(
+				&controllers.SolicitudesCoordinadorController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
