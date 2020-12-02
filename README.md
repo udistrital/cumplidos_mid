@@ -34,6 +34,7 @@ git pull origin develop && git checkout develop
 # 4. alimentar todas las variables de entorno que utiliza el proyecto.
 CUMPLIDOS_MID__HTTP_PORT=8080 CUMPLIDOS_MID_PGURL=127.0.0.1 SOLICITUD_CRUD_SOME_VARIABLE=some_value bee run
 ```
+
 ### Ejecución Dockerfile
 ```shell
 # Implementado para despliegue del Sistema de integración continua CI.
@@ -59,6 +60,7 @@ docker-compose up --build
 #6. Comprobar que los contenedores estén en ejecución
 docker ps
 ```
+
 ### Ejecución Pruebas
 
 Pruebas unitarias
