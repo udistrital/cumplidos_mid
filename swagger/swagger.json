@@ -1,0 +1,165 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "beego Test API",
+        "description": "beego has a very cool tools to autogenerate documents for your API",
+        "version": "1.0.0",
+        "termsOfService": "http://beego.me/",
+        "contact": {
+            "email": "astaxie@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "basePath": "/v1",
+    "paths": {
+        "/certificacion_visto_bueno/certificacion_visto_bueno/{dependencia}/{mes}/{anio}": {
+            "get": {
+                "tags": [
+                    "certificacion_visto_bueno"
+                ],
+                "description": "create CertificacionVistoBueno",
+                "operationId": "CertificacionVistoBuenoController.CertificacionVistoBueno",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "dependencia",
+                        "description": "Dependencia del contrato en la tabla vinculacion",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "path",
+                        "name": "mes",
+                        "description": "Mes del pago mensual",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "path",
+                        "name": "anio",
+                        "description": "Año del pago mensual",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":anio is empty"
+                    }
+                }
+            }
+        },
+        "/contratos_contratista/contratos_contratista/{numero_documento}": {
+            "get": {
+                "tags": [
+                    "contratos_contratista"
+                ],
+                "operationId": "ContratosContratistaController.GetContratosContratista",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "numero_documento",
+                        "description": "Número documento",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ContratoDisponibilidadRp"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found resource"
+                    }
+                }
+            }
+        },
+        "/solicitudes_ordenador_contratistas/solicitudes_ordenador_contratistas/{docordenador}": {
+            "get": {
+                "tags": [
+                    "solicitudes_ordenador_contratistas"
+                ],
+                "description": "create GetSolicitudesOrdenadorContratistas",
+                "operationId": "GetSolicitudesOrdenadorContratistasController.GetSolicitudesOrdenadorContratistas",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "docordenador",
+                        "description": "Número del documento del supervisor",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":docordenador is empty"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.ContratoDisponibilidadRp": {
+            "title": "ContratoDisponibilidadRp",
+            "type": "object",
+            "properties": {
+                "NombreDependencia": {
+                    "type": "string"
+                },
+                "NumDocumentoSupervisor": {
+                    "type": "string"
+                },
+                "NumeroCdp": {
+                    "type": "string"
+                },
+                "NumeroContratoSuscrito": {
+                    "type": "string"
+                },
+                "NumeroRp": {
+                    "type": "string"
+                },
+                "Vigencia": {
+                    "type": "string"
+                },
+                "VigenciaCdp": {
+                    "type": "string"
+                },
+                "VigenciaRp": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "contratos_contratista",
+            "description": "ContratosContratistaController operations for contratos_contratista\n"
+        },
+        {
+            "name": "certificacion_visto_bueno",
+            "description": "CertificacionVistoBuenoController operations for certificacion_visto_bueno\n"
+        },
+        {
+            "name": "solicitudes_ordenador_contratistas",
+            "description": "ContratosContratistaController operations for contratos_contratista\n"
+        }
+    ]
+}
