@@ -14,11 +14,7 @@ API MID del sitema de cumplidos
 # parametros de api
 CUMPLIDOS_MID_ADMIN_PORT=[Puerto de exposición del API]
 ```
-
 **NOTA:** Las variables se pueden ver en el fichero conf/app.conf
-
-
-**NOTA:** Las variables se pueden ver en el fichero conf/app.conf y están identificadas con SOLICITUD_CRUD__...
 
 ### Ejecución del Proyecto
 ```shell
