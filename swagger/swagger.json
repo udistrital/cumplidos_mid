@@ -49,11 +49,17 @@
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": ""
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Persona"
+                            }
+                        }
                     },
-                    "403": {
-                        "description": ":anio is empty"
+                    "404": {
+                        "description": "not found source"
                     }
                 }
             }
@@ -63,6 +69,7 @@
                 "tags": [
                     "contratos_contratista"
                 ],
+                "description": "create ContratosContratista",
                 "operationId": "ContratosContratistaController.GetContratosContratista",
                 "parameters": [
                     {
@@ -114,6 +121,39 @@
                     }
                 }
             }
+        },
+        "/solicitudes_ordenador_contratistas_dependencia/solicitudes_ordenador_contratistas_dependencia/{docordenador}/{cod_dependencia}": {
+            "get": {
+                "tags": [
+                    "solicitudes_ordenador_contratistas_dependencia"
+                ],
+                "description": "create GetSolicitudesOrdenadorContratistasDependencia",
+                "operationId": "SolicitudesOrdenadorContratistasDependenciaController.GetSolicitudesOrdenadorContratistasDependencia",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "docordenador",
+                        "description": "Número del documento del supervisor",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "cod_dependencia",
+                        "description": "cod_dependencia",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":docordenador is empty"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -146,6 +186,28 @@
                     "type": "string"
                 }
             }
+        },
+        "models.Persona": {
+            "title": "Persona",
+            "type": "object",
+            "properties": {
+                "Nombre": {
+                    "type": "string"
+                },
+                "NumDocumento": {
+                    "type": "string"
+                },
+                "NumeroContrato": {
+                    "type": "string"
+                },
+                "Rubro": {
+                    "type": "string"
+                },
+                "Vigencia": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
         }
     },
     "tags": [
@@ -160,6 +222,10 @@
         {
             "name": "solicitudes_ordenador_contratistas",
             "description": "ContratosContratistaController operations for contratos_contratista\n"
+        },
+        {
+            "name": "solicitudes_ordenador_contratistas_dependencia",
+            "description": "CertificacionVistoBuenoController operations for certificacion_visto_bueno\n"
         }
     ]
 }

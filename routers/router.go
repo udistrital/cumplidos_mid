@@ -32,6 +32,12 @@ func init() {
 				&controllers.GetSolicitudesOrdenadorContratistasController{},
 			),
 		),
+
+		beego.NSNamespace("/solicitudes_ordenador_contratistas_dependencia",
+			beego.NSInclude(
+				&controllers.SolicitudesOrdenadorContratistasDependenciaController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
