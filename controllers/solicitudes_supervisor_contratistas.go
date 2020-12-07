@@ -1,57 +1,62 @@
 package controllers
 
 import (
+	_ "encoding/json"
 	"fmt"
 	"strconv"
-	"github.com/astaxie/beego/httplib"
+	_ "time"
 
 	//"net/http"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/models"
+	"github.com/udistrital/cumplidos_mid/helpers"
 )
 
-// ContratosContratistaController operations for contratos_contratista
-type GetSolicitudesOrdenadorContratistasController struct {
+// SolicitudesSupervisorContratistasController operations for solicitudes_supervisor_contratistas
+type SolicitudesSupervisorContratistasController struct {
 	beego.Controller
 }
 
-//URLMapping ...
-func (c *GetSolicitudesOrdenadorContratistasController) URLMapping() {	
+// URLMapping ...
+func (c *SolicitudesSupervisorContratistasController) URLMapping() {
+	c.Mapping("GetSolicitudesSupervisorContratistas", c.GetSolicitudesSupervisorContratistas)
+}
+
+// AprobacionPagoController ...
+// @Title GetSolicitudesSupervisorContratistas
+// @Description create GetSolicitudesSupervisorContratistas
+// @Param docsupervisor path string true "Número del documento del supervisor"
+// @Success 201
+// @Failure 403 :docsupervisor is empty
+// @router /solicitudes_supervisor_contratistas/:docsupervisor [get]
+func (c *SolicitudesSupervisorContratistasController) GetSolicitudesSupervisorContratistas() {
+
+	doc_supervisor := c.GetString(":docsupervisor")
+	if pagos_contratista_cdp_rp, err := contratos_contratista_supervisor(doc_supervisor);err!=nil || len(pagos_contratista_cdp_rp)==0{
+		logs.Error(err)
+		c.Data["mesaage"] = "Error service Get SolicitudesSupervisorContratistas: The request contains an incorrect parameter or no record exists"
+		c.Abort("404")
+	}else{
+		c.Data["json"] = pagos_contratista_cdp_rp
+	}
+	c.ServeJSON()
 
 }
 
-
-// AprobacionPagoController ...
-// @Title GetSolicitudesOrdenadorContratistas
-// @Description create GetSolicitudesOrdenadorContratistas
-// @Param docordenador path string true "Número del documento del supervisor"
-// @Success 201
-// @Failure 403 :docordenador is empty
-// @router /solicitudes_ordenador_contratistas/:docordenador [get]
-func (c *GetSolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorContratistas() {
-
-	var alertErr models.Alert
-	// alertas := append([]interface{}{"Response:"})
-
-	doc_ordenador := c.GetString(":docordenador")
-	limit, _ := c.GetInt("limit")
-	offset, _ := c.GetInt("offset")
-
+func contratos_contratista_supervisor(doc_supervisor string)(pagos_contratista_cdp_rp []models.PagoContratistaCdpRp, err error){
 	var pagos_mensuales []models.PagoMensual
 	var contratistas []models.InformacionProveedor
-	var pagos_contratista_cdp_rp []models.PagoContratistaCdpRp
 	var contratos_disponibilidad []models.ContratoDisponibilidad
-	r := httplib.Get(beego.AppConfig.String("ProtocolAdmin") + "://" + beego.AppConfig.String("UrlcrudAdmin") + "/" + beego.AppConfig.String("NscrudAdmin") + "/pago_mensual/")
-	r.Param("offset", strconv.Itoa(offset))
-	r.Param("limit", strconv.Itoa(limit))
-	r.Param("query", "EstadoPagoMensual.CodigoAbreviacion:AS,Responsable:"+doc_ordenador)
-	if err := r.ToJSON(&pagos_mensuales); err == nil {
+	var respuesta_peticion map[string]interface{}
 
+	fmt.Println(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:PRS,DocumentoResponsableId:"+doc_supervisor )
+	if err := getJson(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:PRS,DocumentoResponsableId:"+doc_supervisor, &respuesta_peticion); err == nil {
+		helpers.LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
 		for v, _ := range pagos_mensuales {
 
-			if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pagos_mensuales[v].Persona, &contratistas); err == nil {
-
+			if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pagos_mensuales[v].DocumentoPersonaId, &contratistas); err == nil {
 				for _, contratista := range contratistas {
 
 					var informacion_contrato_contratista models.InformacionContratoContratista
@@ -86,28 +91,20 @@ func (c *GetSolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorC
 
 					} else { // If contrato_disponibilidad get
 						fmt.Println("Mirenme, me morí en If contrato_disponibilidad get, solucioname!!! ", err)
-						alertErr.Type = "error"
-						alertErr.Code = "404"
-						alertErr.Body = "" + beego.AppConfig.String("ProtocolAdmin") + "://" + beego.AppConfig.String("UrlcrudAgora") + "/" + beego.AppConfig.String("NscrudAgora") + "/contrato_disponibilidad/?query=NumeroContrato:" + contrato.Contrato.NumeroContrato + ",Vigencia:" + contrato.Contrato.Vigencia + " numero del contrato : " + pagos_mensuales[v].NumeroContrato + " vigencia: " + strconv.FormatFloat(pagos_mensuales[v].VigenciaContrato, 'f', 0, 64)
-						c.Data["json"] = alertErr
-						c.ServeJSON()
 					}
 
 				}
 			} else { //If informacion_proveedor get
 
 				fmt.Println("Mirenme, me morí en If informacion_proveedor get, solucioname!!! ", err)
-				return
+				return nil, err
 			}
 
 		}
 	} else { //If pago_mensual get
 
 		fmt.Println("Mirenme, me morí en If pago_mensual get, solucioname!!! ", err)
-		return
+		return nil, err
 	}
-	c.Data["json"] = pagos_contratista_cdp_rp
-
-	c.ServeJSON()
-
+	return
 }

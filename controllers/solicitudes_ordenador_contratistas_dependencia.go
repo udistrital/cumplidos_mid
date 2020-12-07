@@ -9,10 +9,12 @@ import (
 	//"net/http"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/models"
+	"github.com/udistrital/cumplidos_mid/helpers"
 )
 
-// CertificacionVistoBuenoController operations for certificacion_visto_bueno
+// SolicitudesOrdenadorContratistasDependenciaController operations for solicitudes_ordenador_contratistas_dependencia
 type SolicitudesOrdenadorContratistasDependenciaController struct {
 	beego.Controller
 }
@@ -32,20 +34,31 @@ func (c *SolicitudesOrdenadorContratistasDependenciaController) URLMapping() {
 // @router /solicitudes_ordenador_contratistas_dependencia/:docordenador/:cod_dependencia [get]
 func (c *SolicitudesOrdenadorContratistasDependenciaController	) GetSolicitudesOrdenadorContratistasDependencia() {
 
-	var contrato_dependencia models.ContratoDependencia
-
-	var contratistas []models.InformacionProveedor
-	var pagos_contratista_cdp_rp []models.PagoContratistaCdpRp
-
-	var conteo_offset, conteo_limit = 0, 0
-	var contratos_disponibilidad []models.ContratoDisponibilidad
-
-	var alerta models.Alert
-
 	doc_ordenador := c.GetString(":docordenador")
 	cod_dependencia := c.GetString(":cod_dependencia")
 	limit, _ := c.GetInt("limit")
 	offset, _ := c.GetInt("offset")
+	var alerta models.Alert
+
+
+	if pagos_contratista_cdp_rp, err:= contratos_contratista_dependencia(doc_ordenador, cod_dependencia, limit, offset);err!=nil || len(pagos_contratista_cdp_rp)==0{
+		logs.Error(err)
+		c.Data["json"]=alerta
+		c.Data["mesaage"] = "Error service Get SolicitudesOrdenadorContratistaDependencia: The request contains an incorrect parameter or no record exists"
+		c.Abort("404")
+	}else{
+		c.Data["json"] = pagos_contratista_cdp_rp
+	}
+	c.ServeJSON()
+
+}
+
+func contratos_contratista_dependencia(doc_ordenador string, cod_dependencia string, limit int, offset int)(pagos_contratista_cdp_rp []models.PagoContratistaCdpRp, err error){
+	var contrato_dependencia models.ContratoDependencia
+	var contratistas []models.InformacionProveedor
+	var conteo_offset, conteo_limit = 0, 0
+	var contratos_disponibilidad []models.ContratoDisponibilidad
+	var respuesta_peticion map[string]interface{}
 
 	t := time.Now()
 	fecha_inicio := fmt.Sprintf("%d-%02d",
@@ -59,26 +72,23 @@ func (c *SolicitudesOrdenadorContratistasDependenciaController	) GetSolicitudesO
 	for _, cd := range contrato_dependencia.Contratos.Contrato {
 
 		var pagos_mensuales []models.PagoMensual
-
-		if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAdmin")+"/"+beego.AppConfig.String("NscrudAdmin")+"/pago_mensual/?query=NumeroContrato:"+cd.NumeroContrato+",VigenciaContrato:"+cd.Vigencia+",EstadoPagoMensual.CodigoAbreviacion:AS,Responsable:"+doc_ordenador, &pagos_mensuales); err == nil {
-			fmt.Println(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAdmin")+"/"+beego.AppConfig.String("NscrudAdmin")+"/pago_mensual/?query=NumeroContrato:"+cd.NumeroContrato+",VigenciaContrato:"+cd.Vigencia+",EstadoPagoMensual.CodigoAbreviacion:AS,Responsable:"+doc_ordenador)
+		
+		fmt.Println(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?query=NumeroContrato:"+cd.NumeroContrato+",VigenciaContrato:"+cd.Vigencia+",EstadoPagoMensualId.CodigoAbreviacion:AS,DocumentoResponsableId:"+doc_ordenador)
+		if err := getJson(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?query=NumeroContrato:"+cd.NumeroContrato+",VigenciaContrato:"+cd.Vigencia+",EstadoPagoMensualId.CodigoAbreviacion:AS,DocumentoResponsableId:"+doc_ordenador, &respuesta_peticion); err == nil {
+			helpers.LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
 			for v, pm := range pagos_mensuales {
-
 				if conteo_limit == limit && conteo_offset == offset {
 					break
 				}
-
 				var pago_mensual models.PagoMensual
 
 				if pm.NumeroContrato != "" {
-
 					if conteo_offset == offset && conteo_limit < limit {
-						pago_mensual.Persona = pm.Persona
+						pago_mensual.DocumentoPersonaId = pm.DocumentoPersonaId
 						pago_mensual.VigenciaContrato = pm.VigenciaContrato
 						pago_mensual.NumeroContrato = pm.NumeroContrato
 
-						if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago_mensual.Persona, &contratistas); err == nil {
-
+						if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago_mensual.DocumentoPersonaId, &contratistas); err == nil {
 							for _, contratista := range contratistas {
 
 								var informacion_contrato_contratista models.InformacionContratoContratista
@@ -105,7 +115,7 @@ func (c *SolicitudesOrdenadorContratistasDependenciaController	) GetSolicitudesO
 											pago_contratista_cdp_rp.Rubro = contrato.Contrato.Rubro
 
 											pagos_contratista_cdp_rp = append(pagos_contratista_cdp_rp, pago_contratista_cdp_rp)
-
+											fmt.Println(pagos_contratista_cdp_rp)
 										}
 
 									}
@@ -119,7 +129,7 @@ func (c *SolicitudesOrdenadorContratistasDependenciaController	) GetSolicitudesO
 						} else { //If informacion_proveedor get
 
 							fmt.Println("Mirenme, me morí en If informacion_proveedor get, solucioname!!! ", err)
-							return
+							return nil, err
 						}
 
 					} else {
@@ -131,21 +141,11 @@ func (c *SolicitudesOrdenadorContratistasDependenciaController	) GetSolicitudesO
 		} else { //If pago_mensual get
 
 			fmt.Println("Mirenme, me morí en If pago_mensual get, solucioname!!! ", err)
-			return
+			return nil, err
 		}
 
 	}
-
-	if pagos_contratista_cdp_rp == nil {
-		c.Data["json"] = alerta
-		c.ServeJSON()
-
-	} else {
-		c.Data["json"] = pagos_contratista_cdp_rp
-		c.ServeJSON()
-
-	}
-
+return
 }
 
 func GetContratosDependenciaFiltro(dependencia string, fecha_inicio string, fecha_fin string) (contratos_dependencia models.ContratoDependencia) {

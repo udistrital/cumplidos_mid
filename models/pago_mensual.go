@@ -5,14 +5,14 @@ import (
 )
 
 type PagoMensual struct {
-	Id                  int
-	NumeroContrato      string
-	VigenciaContrato    float64
-	Mes                 float64
-	Persona             string
-	EstadoPagoMensualId *EstadoPagoMensual
-	Responsable         string
-	FechaModificacion   time.Time
-	CargoResponsable    string
-	Ano                 float64
+	Id                  	int
+	NumeroContrato      	string
+	VigenciaContrato    	float64
+	Mes                 	float64
+	DocumentoPersonaId  	string
+	EstadoPagoMensualId 	*EstadoPagoMensual
+	DocumentoResponsableId	string
+	FechaModificacion   	time.Time
+	CargoResponsable    	string
+	Ano                 	float64
 }

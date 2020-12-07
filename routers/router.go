@@ -27,15 +27,21 @@ func init() {
 			),
 		),
 
-		beego.NSNamespace("/solicitudes_ordenador_contratistas",
-			beego.NSInclude(
-				&controllers.GetSolicitudesOrdenadorContratistasController{},
-			),
-		),
-
 		beego.NSNamespace("/solicitudes_ordenador_contratistas_dependencia",
 			beego.NSInclude(
 				&controllers.SolicitudesOrdenadorContratistasDependenciaController{},
+			),
+		),
+
+		beego.NSNamespace("/solicitudes_supervisor_contratistas",
+			beego.NSInclude(
+				&controllers.SolicitudesSupervisorContratistasController{},
+			),
+		),
+
+		beego.NSNamespace("/informacion_ordenador",
+			beego.NSInclude(
+				&controllers.ObtenerInfoOrdenadorController{},
 			),
 		),
 	)

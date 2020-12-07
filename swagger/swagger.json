@@ -96,28 +96,36 @@
                 }
             }
         },
-        "/solicitudes_ordenador_contratistas/solicitudes_ordenador_contratistas/{docordenador}": {
+        "/informacion_ordenador/informacion_ordenador/{numero_contrato}/{vigencia}": {
             "get": {
                 "tags": [
-                    "solicitudes_ordenador_contratistas"
+                    "informacion_ordenador"
                 ],
-                "description": "create GetSolicitudesOrdenadorContratistas",
-                "operationId": "GetSolicitudesOrdenadorContratistasController.GetSolicitudesOrdenadorContratistas",
+                "description": "create ObtenerInfoOrdenador",
+                "operationId": "ObtenerInfoOrdenadorController.ObtenerInfoOrdenador",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "docordenador",
-                        "description": "Número del documento del supervisor",
+                        "name": "numero_contrato",
+                        "description": "Numero de contrato en la tabla contrato general",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "vigencia",
+                        "description": "Vigencia del contrato en la tabla contrato general",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": ""
+                        "description": "{int} models.InformacionOrdenador"
                     },
                     "403": {
-                        "description": ":docordenador is empty"
+                        "description": ":vigencia is empty"
                     }
                 }
             }
@@ -151,6 +159,32 @@
                     },
                     "403": {
                         "description": ":docordenador is empty"
+                    }
+                }
+            }
+        },
+        "/solicitudes_supervisor_contratistas/solicitudes_supervisor_contratistas/{docsupervisor}": {
+            "get": {
+                "tags": [
+                    "solicitudes_supervisor_contratistas"
+                ],
+                "description": "create GetSolicitudesSupervisorContratistas",
+                "operationId": "SolicitudesSupervisorContratistasController.GetSolicitudesSupervisorContratistas",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "docsupervisor",
+                        "description": "Número del documento del supervisor",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":docsupervisor is empty"
                     }
                 }
             }
@@ -220,12 +254,16 @@
             "description": "CertificacionVistoBuenoController operations for certificacion_visto_bueno\n"
         },
         {
-            "name": "solicitudes_ordenador_contratistas",
-            "description": "ContratosContratistaController operations for contratos_contratista\n"
+            "name": "solicitudes_ordenador_contratistas_dependencia",
+            "description": "SolicitudesOrdenadorContratistasDependenciaController operations for solicitudes_ordenador_contratistas_dependencia\n"
         },
         {
-            "name": "solicitudes_ordenador_contratistas_dependencia",
-            "description": "CertificacionVistoBuenoController operations for certificacion_visto_bueno\n"
+            "name": "solicitudes_supervisor_contratistas",
+            "description": "SolicitudesSupervisorContratistasController operations for solicitudes_supervisor_contratistas\n"
+        },
+        {
+            "name": "informacion_ordenador",
+            "description": "ObtenerInfoOrdenadorController operations for obtener_info_ordenador\n"
         }
     ]
 }

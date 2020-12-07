@@ -38,7 +38,7 @@ func (c *CertificacionVistoBuenoController) CertificacionVistoBueno() {
 
 	if personas, err:= certificado_visto_bueno(dependencia, mes, anio);err!=nil || len(personas)==0{
 		logs.Error(err)
-		c.Data["mesaage"] = "Error service Get contratos_contratista: The request contains an incorrect parameter or no record exists"
+		c.Data["mesaage"] = "Error service Get CertificacionVistoBueno: The request contains an incorrect parameter or no record exists"
 		c.Abort("404")
 	}else{
 		c.Data["json"] = personas
@@ -66,6 +66,7 @@ func certificado_visto_bueno(dependencia string, mes string, anio string) (perso
 						if int(actaInicio.FechaInicio.Month()) <= mes_cer && actaInicio.FechaInicio.Year() <= anio_cer && int(actaInicio.FechaFin.Month()) >= mes_cer && actaInicio.FechaFin.Year() >= anio_cer {
 
 							if err := getJson(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion.in:PAD|AD|AP,NumeroContrato:"+vinculacion_docente.NumeroContrato.String+",VigenciaContrato:"+strconv.FormatInt(vinculacion_docente.Vigencia.Int64, 10)+",Mes:"+mes+",Ano:"+anio, &respuesta_peticion); err == nil {
+								fmt.Println(respuesta_peticion)
 								b, _ := json.Marshal(respuesta_peticion["Data"])
 								if len(string(b)) <= 4 {
 									pagos_mensuales = nil
