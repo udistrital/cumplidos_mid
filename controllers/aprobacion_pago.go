@@ -289,8 +289,8 @@ func GetRP(numero_cdp string, vigencia_cdp string) (rp models.InformacionCdpRp) 
 	var temp_cdp_rp models.InformacionCdpRp
 
 	if err := getJsonWSO2("http://"+beego.AppConfig.String("UrlcrudWSO2")+"/"+beego.AppConfig.String("NscrudFinanciera")+"/"+"cdprp/"+numero_cdp+"/"+vigencia_cdp+"/01", &temp); err == nil {
-		fmt.Println("http://" + beego.AppConfig.String("UrlcrudWSO2") + "/" + beego.AppConfig.String("NscrudFinanciera") + "/" + "cdprp/" + numero_cdp + "/" + vigencia_cdp + "/01")
-		fmt.Println(temp)
+		//fmt.Println("http://" + beego.AppConfig.String("UrlcrudWSO2") + "/" + beego.AppConfig.String("NscrudFinanciera") + "/" + "cdprp/" + numero_cdp + "/" + vigencia_cdp + "/01")
+		//fmt.Println(temp)
 		json_cdp_rp, error_json := json.Marshal(temp)
 
 		if error_json == nil {

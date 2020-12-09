@@ -26,6 +26,24 @@ func init() {
 				&controllers.SolicitudesCoordinadorController{},
 			),
 		),
+
+		beego.NSNamespace("/solicitudes_ordenador_contratistas",
+			beego.NSInclude(
+				&controllers.SolicitudesOrdenadorContratistasController{},
+			),
+		),
+
+		beego.NSNamespace("/solicitudes_ordenador",
+			beego.NSInclude(
+				&controllers.SolicitudesOrdenadorController{},
+			),
+		),
+
+		beego.NSNamespace("/certificacion_documentos_aprobados",
+			beego.NSInclude(
+				&controllers.CertificacionDocumentosAprobadosController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
