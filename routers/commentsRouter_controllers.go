@@ -16,10 +16,37 @@ func init() {
             Filters: nil,
             Params: nil})
 
-    beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:GetSolicitudesOrdenadorContratistasController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:GetSolicitudesOrdenadorContratistasController"],
+    beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:CertificacionVistoBuenoController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:CertificacionVistoBuenoController"],
         beego.ControllerComments{
-            Method: "GetSolicitudesOrdenadorContratistas",
-            Router: `/solicitudes_ordenador_contratistas/:docordenador`,
+            Method: "CertificacionVistoBueno",
+            Router: `/certificacion_visto_bueno/:dependencia/:mes/:anio`,
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesOrdenadorContratistasDependenciaController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesOrdenadorContratistasDependenciaController"],
+        beego.ControllerComments{
+            Method: "GetSolicitudesOrdenadorContratistasDependencia",
+            Router: `/solicitudes_ordenador_contratistas_dependencia/:docordenador/:cod_dependencia`,
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesSupervisorContratistasController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesSupervisorContratistasController"],
+        beego.ControllerComments{
+            Method: "GetSolicitudesSupervisorContratistas",
+            Router: `/solicitudes_supervisor_contratistas/:docsupervisor`,
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:ObtenerInfoOrdenadorController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:ObtenerInfoOrdenadorController"],
+        beego.ControllerComments{
+            Method: "ObtenerInfoOrdenador",
+            Router: `/informacion_ordenador/:numero_contrato/:vigencia`,
             AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,
