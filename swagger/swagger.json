@@ -15,6 +15,15 @@
     },
     "basePath": "/v1",
     "paths": {
+<<<<<<< HEAD
+        "/certificacion_visto_bueno/certificacion_visto_bueno/{dependencia}/{mes}/{anio}": {
+            "get": {
+                "tags": [
+                    "certificacion_visto_bueno"
+                ],
+                "description": "create CertificacionVistoBueno",
+                "operationId": "CertificacionVistoBuenoController.CertificacionVistoBueno",
+=======
         "/aprobacion_pago/contratos_contratista/{numero_documento}": {
             "get": {
                 "tags": [
@@ -47,11 +56,16 @@
                 ],
                 "description": "create CertificacionDocumentosAprobados",
                 "operationId": "CertificacionDocumentosAprobadosController.CertificacionDocumentosAprobados",
+>>>>>>> origin/develop
                 "parameters": [
                     {
                         "in": "path",
                         "name": "dependencia",
+<<<<<<< HEAD
+                        "description": "Dependencia del contrato en la tabla vinculacion",
+=======
                         "description": "Dependencia del contrato en la tabla ordenador_gasto",
+>>>>>>> origin/develop
                         "required": true,
                         "type": "integer",
                         "format": "int64"
@@ -83,6 +97,19 @@
                 }
             }
         },
+<<<<<<< HEAD
+        "/contratos_contratista/contratos_contratista/{numero_documento}": {
+            "get": {
+                "tags": [
+                    "contratos_contratista"
+                ],
+                "operationId": "ContratosContratistaController.GetContratosContratista",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "numero_documento",
+                        "description": "Número documento",
+=======
         "/solicitudes_coordinador/{doccoordinador}": {
             "get": {
                 "tags": [
@@ -95,6 +122,7 @@
                         "in": "path",
                         "name": "doccoordinador",
                         "description": "Número del documento del coordinador",
+>>>>>>> origin/develop
                         "required": true,
                         "type": "string"
                     }
@@ -105,7 +133,11 @@
                         "schema": {
                             "type": "array",
                             "items": {
+<<<<<<< HEAD
+                                "$ref": "#/definitions/models.ContratoDisponibilidadRp"
+=======
                                 "$ref": "#/definitions/models.PagoPersonaProyecto"
+>>>>>>> origin/develop
                             }
                         }
                     },
@@ -115,6 +147,9 @@
                 }
             }
         },
+<<<<<<< HEAD
+        "/solicitudes_ordenador_contratistas/solicitudes_ordenador_contratistas/{docordenador}": {
+=======
         "/solicitudes_ordenador/dependencia_ordenador/{docordenador}": {
             "get": {
                 "tags": [
@@ -251,12 +286,17 @@
             }
         },
         "/solicitudes_ordenador_contratistas/solicitudes/{docordenador}": {
+>>>>>>> origin/develop
             "get": {
                 "tags": [
                     "solicitudes_ordenador_contratistas"
                 ],
                 "description": "create GetSolicitudesOrdenadorContratistas",
+<<<<<<< HEAD
+                "operationId": "GetSolicitudesOrdenadorContratistasController.GetSolicitudesOrdenadorContratistas",
+=======
                 "operationId": "SolicitudesOrdenadorContratistasController.GetSolicitudesOrdenadorContratistas",
+>>>>>>> origin/develop
                 "parameters": [
                     {
                         "in": "path",
@@ -264,6 +304,13 @@
                         "description": "Número del documento del supervisor",
                         "required": true,
                         "type": "string"
+<<<<<<< HEAD
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": ""
+=======
                     },
                     {
                         "in": "query",
@@ -287,6 +334,7 @@
                                 "$ref": "#/definitions/models.PagoContratistaCdpRp"
                             }
                         }
+>>>>>>> origin/develop
                     },
                     "403": {
                         "description": ":docordenador is empty"
@@ -296,6 +344,22 @@
         }
     },
     "definitions": {
+<<<<<<< HEAD
+        "models.ContratoDisponibilidadRp": {
+            "title": "ContratoDisponibilidadRp",
+            "type": "object",
+            "properties": {
+                "NombreDependencia": {
+                    "type": "string"
+                },
+                "NumDocumentoSupervisor": {
+                    "type": "string"
+                },
+                "NumeroCdp": {
+                    "type": "string"
+                },
+                "NumeroContratoSuscrito": {
+=======
         "models.Dependencia": {
             "title": "Dependencia",
             "type": "object",
@@ -352,15 +416,20 @@
                     "type": "string"
                 },
                 "NumeroCdp": {
+>>>>>>> origin/develop
                     "type": "string"
                 },
                 "NumeroRp": {
                     "type": "string"
                 },
+<<<<<<< HEAD
+                "Vigencia": {
+=======
                 "PagoMensual": {
                     "$ref": "#/definitions/models.PagoMensual"
                 },
                 "Rubro": {
+>>>>>>> origin/develop
                     "type": "string"
                 },
                 "VigenciaCdp": {
@@ -370,6 +439,8 @@
                     "type": "string"
                 }
             }
+<<<<<<< HEAD
+=======
         },
         "models.PagoMensual": {
             "title": "PagoMensual",
@@ -455,10 +526,23 @@
                     "format": "int64"
                 }
             }
+>>>>>>> origin/develop
         }
     },
     "tags": [
         {
+<<<<<<< HEAD
+            "name": "contratos_contratista",
+            "description": "ContratosContratistaController operations for contratos_contratista\n"
+        },
+        {
+            "name": "certificacion_visto_bueno",
+            "description": "CertificacionVistoBuenoController operations for certificacion_visto_bueno\n"
+        },
+        {
+            "name": "solicitudes_ordenador_contratistas",
+            "description": "ContratosContratistaController operations for contratos_contratista\n"
+=======
             "name": "aprobacion_pago",
             "description": "AprobacionPagoController operations for AprobacionPago\n"
         },
@@ -477,6 +561,7 @@
         {
             "name": "certificacion_documentos_aprobados",
             "description": "AprobacionPagoController operations for AprobacionPago\n"
+>>>>>>> origin/develop
         }
     ]
 }
