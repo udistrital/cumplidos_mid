@@ -36,7 +36,7 @@ func (c *SolicitudesOrdenadorContratistasController) URLMapping() {
 // @Param	offset	query	string	false	"Start position of result set. Must be an integer"
 // @Success 200 {object} []models.PagoContratistaCdpRp
 // @Failure 403 :docordenador is empty
-// @router /solicitudes:docordenador [get]
+// @router /solicitudes/:docordenador [get]
 func (c *SolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorContratistas() {
 
 	limit, _ := c.GetInt("limit")
