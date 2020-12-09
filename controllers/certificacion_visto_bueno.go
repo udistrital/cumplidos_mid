@@ -3,11 +3,13 @@ package controllers
 import (
 	"fmt"
 	"strconv"
-
+	"encoding/json"
 	//"net/http"
 
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/models"
+	"github.com/udistrital/cumplidos_mid/helpers"
 )
 
 // CertificacionVistoBuenoController operations for certificacion_visto_bueno
@@ -26,23 +28,33 @@ func (c *CertificacionVistoBuenoController) URLMapping() {
 // @Param dependencia path int true "Dependencia del contrato en la tabla vinculacion"
 // @Param mes path int true "Mes del pago mensual"
 // @Param anio path int true "Año del pago mensual"
-// @Success 201
-// @Failure 403 :dependencia is empty
-// @Failure 403 :mes is empty
-// @Failure 403 :anio is empty
+// @Success 200 {object} []models.Persona
+// @Failure 404 not found source
 // @router /certificacion_visto_bueno/:dependencia/:mes/:anio [get]
 func (c *CertificacionVistoBuenoController) CertificacionVistoBueno() {
 	dependencia := c.GetString(":dependencia")
 	mes := c.GetString(":mes")
 	anio := c.GetString(":anio")
+
+	if personas, err:= certificado_visto_bueno(dependencia, mes, anio);err!=nil || len(personas)==0{
+		logs.Error(err)
+		c.Data["mesaage"] = "Error service Get CertificacionVistoBueno: The request contains an incorrect parameter or no record exists"
+		c.Abort("404")
+	}else{
+		c.Data["json"] = personas
+	}
+	c.ServeJSON()
+}
+
+func certificado_visto_bueno(dependencia string, mes string, anio string) (personas []models.Persona, err error){
 	var vinculaciones_docente []models.VinculacionDocente
 	var pagos_mensuales []models.PagoMensual
 	var contratistas []models.InformacionProveedor
-	var personas []models.Persona
 	var persona models.Persona
 	var actasInicio []models.ActaInicio
 	var mes_cer, _ = strconv.Atoi(mes)
 	var anio_cer, _ = strconv.Atoi(anio)
+	var respuesta_peticion map[string]interface{}
 	if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAdmin")+"/"+beego.AppConfig.String("NscrudAdmin")+"/vinculacion_docente/?limit=-1&query=IdProyectoCurricular:"+dependencia, &vinculaciones_docente); err == nil {
 		for _, vinculacion_docente := range vinculaciones_docente {
 			if vinculacion_docente.NumeroContrato.Valid == true {
@@ -53,21 +65,23 @@ func (c *CertificacionVistoBuenoController) CertificacionVistoBueno() {
 						//If Estado = 4
 						if int(actaInicio.FechaInicio.Month()) <= mes_cer && actaInicio.FechaInicio.Year() <= anio_cer && int(actaInicio.FechaFin.Month()) >= mes_cer && actaInicio.FechaFin.Year() >= anio_cer {
 
-							if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAdmin")+"/"+beego.AppConfig.String("NscrudAdmin")+"/pago_mensual/?query=EstadoPagoMensual.CodigoAbreviacion.in:PAD|AD|AP,NumeroContrato:"+vinculacion_docente.NumeroContrato.String+",VigenciaContrato:"+strconv.FormatInt(vinculacion_docente.Vigencia.Int64, 10)+",Mes:"+mes+",Ano:"+anio, &pagos_mensuales); err == nil {
-
+							if err := getJson(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion.in:PAD|AD|AP,NumeroContrato:"+vinculacion_docente.NumeroContrato.String+",VigenciaContrato:"+strconv.FormatInt(vinculacion_docente.Vigencia.Int64, 10)+",Mes:"+mes+",Ano:"+anio, &respuesta_peticion); err == nil {
+								fmt.Println(respuesta_peticion)
+								b, _ := json.Marshal(respuesta_peticion["Data"])
+								if len(string(b)) <= 4 {
+									pagos_mensuales = nil
+								}else{
+									helpers.LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
+								}
 								if pagos_mensuales == nil {
-
 									if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+vinculacion_docente.IdPersona, &contratistas); err == nil {
 
 										for _, contratista := range contratistas {
-
 											persona.NumDocumento = contratista.NumDocumento
 											persona.Nombre = contratista.NomProveedor
 											persona.NumeroContrato = actaInicio.NumeroContrato
 											persona.Vigencia = actaInicio.Vigencia
-
 											personas = append(personas, persona)
-
 										}
 
 									} else { //If informacion_proveedor get
@@ -79,13 +93,12 @@ func (c *CertificacionVistoBuenoController) CertificacionVistoBueno() {
 
 							} else { //If pago_mensual get
 								fmt.Println("Mirenme, me morí en If pago_mensual get, solucioname!!! ", err)
-								return
+
 							}
 						}
 					}
 				} else { //If contrato_estado get
 					fmt.Println("Mirenme, me morí en If contrato_estado get, solucioname!!! ", err)
-					return
 				}
 			}
 		}
@@ -94,8 +107,5 @@ func (c *CertificacionVistoBuenoController) CertificacionVistoBueno() {
 
 		fmt.Println("Mirenme, me morí en If vinculacion_docente get, solucioname!!! ", err)
 	}
-	c.Data["json"] = personas
-
-	c.ServeJSON()
-
+	return
 }

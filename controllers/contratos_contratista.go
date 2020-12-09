@@ -32,6 +32,7 @@ func (c *ContratosContratistaController) URLMapping() {
 
 // GetContratosContratista ...
 // @Title GetContratosContratista
+// @Description create ContratosContratista
 // @Param numero_documento path string true "Número documento"
 // @Success 200 {object} []models.ContratoDisponibilidadRp
 // @Failure 404 not found resource
@@ -41,7 +42,7 @@ func (c *ContratosContratistaController) GetContratosContratista() {
 	
 	if contratos_disponibilidad_rp, err:= contratos_contratista(numero_documento);err!=nil || len(contratos_disponibilidad_rp)==0{
 		logs.Error(err)
-		c.Data["mesaage"] = "Error service Get contratos_contratista: The request contains an incorrect parameter or no record exists"
+		c.Data["mesaage"] = "Error service Get ContratosContratista: The request contains an incorrect parameter or no record exists"
 		c.Abort("404")
 	}else{
 		c.Data["json"] = contratos_disponibilidad_rp
