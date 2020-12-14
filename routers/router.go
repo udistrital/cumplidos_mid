@@ -21,27 +21,9 @@ func init() {
 			),
 		),
 
-		beego.NSNamespace("/certificacion_visto_bueno",
-			beego.NSInclude(
-				&controllers.CertificacionVistoBuenoController{},
-			),
-		),
-
-		beego.NSNamespace("/solicitudes_ordenador_contratistas_dependencia",
-			beego.NSInclude(
-				&controllers.SolicitudesOrdenadorContratistasDependenciaController{},
-			),
-		),
-
 		beego.NSNamespace("/solicitudes_supervisor_contratistas",
 			beego.NSInclude(
 				&controllers.SolicitudesSupervisorContratistasController{},
-			),
-		),
-
-		beego.NSNamespace("/informacion_ordenador",
-			beego.NSInclude(
-				&controllers.ObtenerInfoOrdenadorController{},
 			),
 		),
 
@@ -63,9 +45,9 @@ func init() {
 			),
 		),
 
-		beego.NSNamespace("/certificacion_documentos_aprobados",
+		beego.NSNamespace("/certificacion",
 			beego.NSInclude(
-				&controllers.CertificacionDocumentosAprobadosController{},
+				&controllers.CertificacionController{},
 			),
 		),
 	)

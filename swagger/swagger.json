@@ -15,56 +15,13 @@
     },
     "basePath": "/v1",
     "paths": {
-        "/certificacion_documentos_aprobados/{dependencia}/{mes}/{anio}": {
+        "/certificacion/certificacion_visto_bueno/{dependencia}/{mes}/{anio}": {
             "get": {
                 "tags": [
-                    "certificacion_documentos_aprobados"
-                ],
-                "description": "create CertificacionDocumentosAprobados",
-                "operationId": "CertificacionDocumentosAprobadosController.CertificacionDocumentosAprobados",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "dependencia",
-                        "description": "Dependencia del contrato en la tabla ordenador_gasto",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    {
-                        "in": "path",
-                        "name": "mes",
-                        "description": "Mes del pago mensual",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    {
-                        "in": "path",
-                        "name": "anio",
-                        "description": "Año del pago mensual",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": ""
-                    },
-                    "403": {
-                        "description": ":anio is empty"
-                    }
-                }
-            }
-        },
-        "/certificacion_visto_bueno/certificacion_visto_bueno/{dependencia}/{mes}/{anio}": {
-            "get": {
-                "tags": [
-                    "certificacion_visto_bueno"
+                    "certificacion"
                 ],
                 "description": "create CertificacionVistoBueno",
-                "operationId": "CertificacionVistoBuenoController.CertificacionVistoBueno",
+                "operationId": "CertificacionController.CertificacionVistoBueno",
                 "parameters": [
                     {
                         "in": "path",
@@ -107,6 +64,49 @@
                 }
             }
         },
+        "/certificacion/documentos_aprobados/{dependencia}/{mes}/{anio}": {
+            "get": {
+                "tags": [
+                    "certificacion"
+                ],
+                "description": "create CertificacionDocumentosAprobados  trae",
+                "operationId": "CertificacionController.CertificacionDocumentosAprobados",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "dependencia",
+                        "description": "Dependencia del contrato en la tabla ordenador_gasto",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "path",
+                        "name": "mes",
+                        "description": "Mes del pago mensual",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "path",
+                        "name": "anio",
+                        "description": "Año del pago mensual",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":anio is empty"
+                    }
+                }
+            }
+        },
         "/contratos_contratista/contratos_contratista/{numero_documento}": {
             "get": {
                 "tags": [
@@ -135,40 +135,6 @@
                     },
                     "404": {
                         "description": "not found resource"
-                    }
-                }
-            }
-        },
-        "/informacion_ordenador/informacion_ordenador/{numero_contrato}/{vigencia}": {
-            "get": {
-                "tags": [
-                    "informacion_ordenador"
-                ],
-                "description": "create ObtenerInfoOrdenador",
-                "operationId": "ObtenerInfoOrdenadorController.ObtenerInfoOrdenador",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "numero_contrato",
-                        "description": "Numero de contrato en la tabla contrato general",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "vigencia",
-                        "description": "Vigencia del contrato en la tabla contrato general",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "{int} models.InformacionOrdenador"
-                    },
-                    "403": {
-                        "description": ":vigencia is empty"
                     }
                 }
             }
@@ -231,12 +197,46 @@
                 }
             }
         },
-        "/solicitudes_ordenador/{docordenador}": {
+        "/solicitudes_ordenador/informacion_ordenador/{numero_contrato}/{vigencia}": {
             "get": {
                 "tags": [
                     "solicitudes_ordenador"
                 ],
-                "description": "create GetSolicitudesOrdenador",
+                "description": "ObtenerInfoOrdenador trae la informacion de un ordenador del gasto a partir de su numero de contrato y ano de vigencia",
+                "operationId": "SolicitudesOrdenadorController.ObtenerInfoOrdenador",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "numero_contrato",
+                        "description": "Numero de contrato en la tabla contrato general",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "vigencia",
+                        "description": "Vigencia del contrato en la tabla contrato general",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "{int} models.InformacionOrdenador"
+                    },
+                    "403": {
+                        "description": ":vigencia is empty"
+                    }
+                }
+            }
+        },
+        "/solicitudes_ordenador/solicitudes/{docordenador}": {
+            "get": {
+                "tags": [
+                    "solicitudes_ordenador"
+                ],
+                "description": "Trae todas las solicitudes AD aprobadas por el decano que son responsabilidad de un ordenador (Aparentemente solo para docentes)",
                 "operationId": "SolicitudesOrdenadorController.GetSolicitudesOrdenador",
                 "parameters": [
                     {
@@ -384,13 +384,13 @@
                 }
             }
         },
-        "/solicitudes_ordenador_contratistas_dependencia/solicitudes_ordenador_contratistas_dependencia/{docordenador}/{cod_dependencia}": {
+        "/solicitudes_ordenador_contratistas/solicitudes_ordenador_contratistas_dependencia/{docordenador}/{cod_dependencia}": {
             "get": {
                 "tags": [
-                    "solicitudes_ordenador_contratistas_dependencia"
+                    "solicitudes_ordenador_contratistas"
                 ],
                 "description": "create GetSolicitudesOrdenadorContratistasDependencia",
-                "operationId": "SolicitudesOrdenadorContratistasDependenciaController.GetSolicitudesOrdenadorContratistasDependencia",
+                "operationId": "SolicitudesOrdenadorContratistasController.GetSolicitudesOrdenadorContratistasDependencia",
                 "parameters": [
                     {
                         "in": "path",
@@ -404,6 +404,18 @@
                         "name": "cod_dependencia",
                         "description": "cod_dependencia",
                         "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "Limit the size of result set. Must be an integer",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "description": "Start position of result set. Must be an integer",
                         "type": "string"
                     }
                 ],
@@ -642,20 +654,8 @@
             "description": "ContratosContratistaController operations for contratos_contratista\n"
         },
         {
-            "name": "certificacion_visto_bueno",
-            "description": "CertificacionVistoBuenoController operations for certificacion_visto_bueno\n"
-        },
-        {
-            "name": "solicitudes_ordenador_contratistas_dependencia",
-            "description": "SolicitudesOrdenadorContratistasDependenciaController operations for solicitudes_ordenador_contratistas_dependencia\n"
-        },
-        {
             "name": "solicitudes_supervisor_contratistas",
             "description": "SolicitudesSupervisorContratistasController operations for solicitudes_supervisor_contratistas\n"
-        },
-        {
-            "name": "informacion_ordenador",
-            "description": "ObtenerInfoOrdenadorController operations for obtener_info_ordenador\n"
         },
         {
             "name": "solicitudes_coordinador",
@@ -670,7 +670,7 @@
             "description": "SolicitudesOrdenadorContratistasController operations for SolicitudesOrdenadorContratistas\n"
         },
         {
-            "name": "certificacion_documentos_aprobados",
+            "name": "certificacion",
             "description": "AprobacionPagoController operations for AprobacionPago\n"
         }
     ]
