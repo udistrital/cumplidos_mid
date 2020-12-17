@@ -107,7 +107,7 @@
                 }
             }
         },
-        "/contratos_contratista/contratos_contratista/{numero_documento}": {
+        "/contratos_contratista/{numero_documento}": {
             "get": {
                 "tags": [
                     "contratos_contratista"
@@ -429,7 +429,7 @@
                 }
             }
         },
-        "/solicitudes_supervisor_contratistas/solicitudes_supervisor_contratistas/{docsupervisor}": {
+        "/solicitudes_supervisor_contratistas/{docsupervisor}": {
             "get": {
                 "tags": [
                     "solicitudes_supervisor_contratistas"

@@ -118,7 +118,6 @@ func SolicitudesOrdenadorContratistas(doc_ordenador string, limit int, offset in
 
 							var cdprp models.InformacionCdpRp
 							cdprp = GetRP(strconv.Itoa(contrato_disponibilidad.NumeroCdp), strconv.Itoa(contrato_disponibilidad.VigenciaCdp))
-
 							for _, rp := range cdprp.CdpXRp.CdpRp {
 								var pago_contratista_cdp_rp models.PagoContratistaCdpRp
 

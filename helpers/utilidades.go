@@ -38,6 +38,20 @@ func sendJson(url string, trequest string, target interface{}, datajson interfac
 	return json.NewDecoder(r.Body).Decode(target)
 }
 
+func getJsonTest(url string, target interface{}) (status int ,err error) {
+	r, err := http.Get(url)
+	if err != nil {
+		return r.StatusCode, err
+	}
+	defer func() {
+		if err := r.Body.Close(); err != nil {
+			beego.Error(err)
+		}
+	}()
+
+	return  r.StatusCode, json.NewDecoder(r.Body).Decode(target)
+}
+
 func getJson(url string, target interface{}) error {
 	r, err := http.Get(url)
 	if err != nil {
@@ -51,6 +65,20 @@ func getJson(url string, target interface{}) error {
 
 	return json.NewDecoder(r.Body).Decode(target)
 }
+
+// func getJsonTest(w http.ResponseWriter,r *http.Request){
+// 	err := r.ParseForm()
+// 	if err != nil {
+// 	   log.Fatal("parse form error ",err)
+// 	}
+// 	// 初始化请求变量结构
+// 	formData := make(map[string]interface{})
+// 	// 调用json包的解析，解析请求body
+// 	json.NewDecoder(r.Body).Decode(&formData)
+// 	for key,value := range formData{
+// 	   log.Println("key:",key," => value :",value)
+// 	}
+//  }
 
 func getXml(url string, target interface{}) error {
 	r, err := http.Get(url)

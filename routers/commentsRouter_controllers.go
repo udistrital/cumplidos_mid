@@ -10,7 +10,7 @@ func init() {
 	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:ContratosContratistaController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:ContratosContratistaController"],
 		beego.ControllerComments{
 			Method:           "GetContratosContratista",
-			Router:           `/contratos_contratista/:numero_documento`,
+			Router:           `/:numero_documento`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams:     param.Make(),
 			Filters:          nil,
@@ -37,7 +37,7 @@ func init() {
 	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesSupervisorContratistasController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesSupervisorContratistasController"],
 		beego.ControllerComments{
 			Method:           "GetSolicitudesSupervisorContratistas",
-			Router:           `/solicitudes_supervisor_contratistas/:docsupervisor`,
+			Router:           `/:docsupervisor`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams:     param.Make(),
 			Filters:          nil,

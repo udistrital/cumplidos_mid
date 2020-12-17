@@ -27,7 +27,7 @@ func (c *SolicitudesSupervisorContratistasController) URLMapping() {
 // @Param docsupervisor path string true "Número del documento del supervisor"
 // @Success 201
 // @Failure 403 :docsupervisor is empty
-// @router /solicitudes_supervisor_contratistas/:docsupervisor [get]
+// @router /:docsupervisor [get]
 func (c *SolicitudesSupervisorContratistasController) GetSolicitudesSupervisorContratistas() {
 
 	doc_supervisor := c.GetString(":docsupervisor")

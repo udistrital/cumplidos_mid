@@ -31,7 +31,7 @@ func (c *ContratosContratistaController) URLMapping() {
 // @Param numero_documento path string true "Número documento"
 // @Success 200 {object} []models.ContratoDisponibilidadRp
 // @Failure 404 not found resource
-// @router /contratos_contratista/:numero_documento [get]
+// @router /:numero_documento [get]
 func (c *ContratosContratistaController) GetContratosContratista() {
 	numero_documento := c.GetString(":numero_documento")
 
