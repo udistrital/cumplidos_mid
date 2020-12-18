@@ -73,7 +73,7 @@ func init() {
 	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesOrdenadorContratistasController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesOrdenadorContratistasController"],
 		beego.ControllerComments{
 			Method:           "AprobarMultiplesPagosContratistas",
-			Router:           "/",
+			Router:           "/aprobar_pagos",
 			AllowHTTPMethods: []string{"post"},
 			MethodParams:     param.Make(),
 			Filters:          nil,

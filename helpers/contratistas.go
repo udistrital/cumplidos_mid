@@ -9,7 +9,7 @@ import (
 	"github.com/udistrital/cumplidos_mid/models"
 )
 
-func CertificacionCumplidosContratistas(dependencia string, mes string, anio string) (personas []models.Persona, err error) {
+/*func CertificacionCumplidosContratistas2(dependencia string, mes string, anio string) (personas []models.Persona, err error) {
 
 	var contrato_dependencia models.ContratoDependencia
 	var pagos_mensuales []models.PagoMensual
@@ -19,7 +19,7 @@ func CertificacionCumplidosContratistas(dependencia string, mes string, anio str
 	var nmes, _ = strconv.Atoi(mes)
 	var respuesta_peticion map[string]interface{}
 
-	contrato_dependencia = GetContratosDependencia(dependencia, anio+"-"+mes)
+	contrato_dependencia = GetContratosDependencia2(dependencia, anio+"-"+mes)
 
 	for _, cd := range contrato_dependencia.Contratos.Contrato {
 
@@ -28,11 +28,12 @@ func CertificacionCumplidosContratistas(dependencia string, mes string, anio str
 			// se hace para limpiar la variable
 			pagos_mensuales = []models.PagoMensual{}
 			LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
-
+			//fmt.Println("Pagos: ", respuesta_peticion)
+			//fmt.Println("Pagos: ", len(pagos_mensuales))
+			//fmt.Println(beego.AppConfig.String("ProtocolCrudCumplidos") + "://" + beego.AppConfig.String("UrlcrudCumplidos") + "/" + beego.AppConfig.String("NscrudCumplidos") + "/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion.in:AS|AP,NumeroContrato:" + cd.NumeroContrato + ",VigenciaContrato:" + cd.Vigencia + ",Mes:" + strconv.Itoa(nmes) + ",Ano:" + anio)
 			for v := range pagos_mensuales {
-
 				if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pagos_mensuales[v].DocumentoPersonaId, &contratistas); err == nil {
-
+					//fmt.Println("agora URL: ", beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pagos_mensuales[v].DocumentoPersonaId)
 					var contrato models.InformacionContrato
 					contrato = GetContrato(pagos_mensuales[v].NumeroContrato, strconv.FormatFloat(pagos_mensuales[v].VigenciaContrato, 'f', 0, 64))
 
@@ -59,6 +60,63 @@ func CertificacionCumplidosContratistas(dependencia string, mes string, anio str
 			return nil, err
 
 		}
+
+	}
+	return
+}*/
+
+func CertificacionCumplidosContratistas(dependencia string, mes string, anio string) (personas []models.Persona, err error) {
+
+	//var contrato_dependencia models.ContratoDependencia
+	var contrato_dependencia map[string]string
+	var pagos_mensuales []models.PagoMensual
+	var contratistas []models.InformacionProveedor
+	var persona models.Persona
+
+	var nmes, _ = strconv.Atoi(mes)
+	var respuesta_peticion map[string]interface{}
+	//traemos los contratos activos para un mes en una dependencia
+	contrato_dependencia = GetContratosDependencia(dependencia, anio+"-"+mes)
+	if err := getJson(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlcrudCumplidos")+"/"+beego.AppConfig.String("NscrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion.in:AS|AP,Mes:"+strconv.Itoa(nmes)+",Ano:"+anio+"&limit=-1", &respuesta_peticion); err == nil {
+
+		pagos_mensuales = []models.PagoMensual{}
+		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
+		fmt.Println("total pagos: ", len(pagos_mensuales))
+		for _, pago_mensual := range pagos_mensuales {
+			if vigencia, ok := contrato_dependencia[pago_mensual.NumeroContrato]; ok == true && vigencia == strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64) {
+				//fmt.Println("num contrato: ", contrato_dependencia[pago_mensual.NumeroContrato], " vig: ", vigencia)
+
+				if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago_mensual.DocumentoPersonaId, &contratistas); err == nil {
+					//fmt.Println("agora URL: ", beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pagos_mensuales[v].DocumentoPersonaId)
+					var contrato models.InformacionContrato
+
+					contrato = GetContrato(pago_mensual.NumeroContrato, strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64))
+
+					for _, contratista := range contratistas {
+						persona.NumDocumento = contratista.NumDocumento
+						persona.Nombre = contratista.NomProveedor
+						persona.NumeroContrato = pago_mensual.NumeroContrato
+						persona.Vigencia = int(pago_mensual.VigenciaContrato) //strconv.Atoi(cd.Vigencia)
+						persona.Rubro = contrato.Contrato.Rubro
+						personas = append(personas, persona)
+					}
+
+				} else { //If informacion_proveedor get
+
+					fmt.Println("Mirenme, me morí en If informacion_proveedor get, solucioname!!! ", err)
+					return nil, err
+
+				}
+
+			} else {
+				//fmt.Println("se murio el if aspero")
+			}
+
+		}
+	} else { //If pago_mensual get
+
+		fmt.Println("Mirenme, me morí en If pago_mensual get, solucioname!!! ", err)
+		return nil, err
 
 	}
 	return

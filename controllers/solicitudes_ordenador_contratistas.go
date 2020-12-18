@@ -57,7 +57,7 @@ func (c *SolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorCont
 // @Param	body		body 	[]models.PagoContratistaCdpRp	true		"body for SoportePagoMensual content"
 // @Success 201
 // @Failure 400 the request contains incorrect syntax
-// @router / [post]
+// @router /aprobar_pagos [post]
 func (c *SolicitudesOrdenadorContratistasController) AprobarMultiplesPagosContratistas() {
 	defer func() {
 		if err := recover(); err != nil {
