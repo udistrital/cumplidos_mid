@@ -101,6 +101,7 @@ func GetContratosOrdenadorDependencia(dependencia string, fechaInicio string, fe
 
 	r := httplib.Get("http://" + beego.AppConfig.String("UrlcrudWSO2") + "/" + beego.AppConfig.String("NscrudAdministrativa") + "/" + "contratos_ordenador_dependencia/" + dependencia + "/" + fechaInicio + "/" + fechaFin)
 	r.Header("Accept", "application/json")
+
 	if err := r.ToJSON(&contratos_ordenador_dependencia); err == nil {
 		return contratos_ordenador_dependencia, nil
 	} else {

@@ -2,7 +2,7 @@ package controllers
 
 import (
 	_ "encoding/json"
-	"fmt"
+	"strconv"
 	_ "time"
 
 	"github.com/astaxie/beego"
@@ -30,27 +30,32 @@ func (c *CertificacionController) URLMapping() {
 // @Success 201
 // @Failure 403 :dependencia is empty
 // @Failure 403 :mes is empty
-// @Failure 403 :anio is empty
-// @router /documentos_aprobados/:dependencia/:mes/:anio [get]
+// @Failure 403 :ano is empty
+// @router /documentos_aprobados/:dependencia/:mes/:ano [get]
 func (c *CertificacionController) GetCertificacionDocumentosAprobados() {
 
 	dependencia := c.GetString(":dependencia")
 	mes := c.GetString(":mes")
-	anio := c.GetString(":anio")
+	ano := c.GetString(":ano")
 
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
 			respuesta := err.(map[string]interface{})
-			fmt.Println("EEerror: ", respuesta["err"])
 			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "CertificacionController" + "/" + (respuesta["funcion"]).(string))
 			c.Data["data"] = (respuesta["err"])
 			c.Abort("404")
 		}
 	}()
 
-	//var v []models.PagoContratistaCdpRp
-	if personas, err := helpers.CertificacionDocumentosAprobados(dependencia, anio, mes); err == nil {
+	_, err1 := strconv.Atoi(dependencia)
+	mess, err2 := strconv.Atoi(mes)
+	_, err3 := strconv.Atoi(ano)
+	if (mess == 0) || (len(ano) != 4) || (mess > 12) || (err1 != nil) || (err2 != nil) || (err3 != nil) {
+		panic(map[string]interface{}{"funcion": "GetCertificacionDocumentosAprobados", "err": "Error en los parametros de ingreso"})
+	}
+
+	if personas, err := helpers.CertificacionDocumentosAprobados(dependencia, ano, mes); err == nil {
 		c.Data["json"] = personas
 	} else {
 		panic(err)
@@ -58,11 +63,6 @@ func (c *CertificacionController) GetCertificacionDocumentosAprobados() {
 
 	c.ServeJSON()
 
-}
-
-type RequestError struct {
-	funcion string
-	err     error
 }
 
 // CertificacionVistoBuenoController ...

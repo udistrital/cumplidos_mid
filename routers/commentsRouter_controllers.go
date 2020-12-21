@@ -28,7 +28,7 @@ func init() {
 	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:CertificacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:CertificacionController"],
 		beego.ControllerComments{
 			Method:           "GetCertificacionDocumentosAprobados",
-			Router:           "/documentos_aprobados/:dependencia/:mes/:anio",
+			Router:           "/documentos_aprobados/:dependencia/:mes/:ano",
 			AllowHTTPMethods: []string{"get"},
 			MethodParams:     param.Make(),
 			Filters:          nil,

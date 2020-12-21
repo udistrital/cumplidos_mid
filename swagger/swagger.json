@@ -64,7 +64,7 @@
                 }
             }
         },
-        "/certificacion/documentos_aprobados/{dependencia}/{mes}/{anio}": {
+        "/certificacion/documentos_aprobados/{dependencia}/{mes}/{ano}": {
             "get": {
                 "tags": [
                     "certificacion"
@@ -102,7 +102,7 @@
                         "description": ""
                     },
                     "403": {
-                        "description": ":anio is empty"
+                        "description": ":ano is empty"
                     }
                 }
             }
