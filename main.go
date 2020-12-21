@@ -1,9 +1,10 @@
 package main
 
 import (
-	_ "github.com/udistrital/cumplidos_mid/routers"
-	"github.com/astaxie/beego/plugins/cors"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/plugins/cors"
+	_ "github.com/udistrital/cumplidos_mid/routers"
+	"github.com/udistrital/utils_oas/customerrorv2"
 )
 
 func main() {
@@ -23,5 +24,6 @@ func main() {
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
+	beego.ErrorController(&customerrorv2.CustomErrorController{})
 	beego.Run()
 }

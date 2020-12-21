@@ -2,6 +2,7 @@ package controllers
 
 import (
 	_ "encoding/json"
+	"fmt"
 	_ "time"
 
 	"github.com/astaxie/beego"
@@ -40,7 +41,10 @@ func (c *CertificacionController) GetCertificacionDocumentosAprobados() {
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			c.Data["mesaage"] = "Error service Get solicitudes_coordinador: The request contains an incorrect parameter or no record exists"
+			respuesta := err.(map[string]interface{})
+			fmt.Println("EEerror: ", respuesta["err"])
+			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "CertificacionController" + "/" + (respuesta["funcion"]).(string))
+			c.Data["data"] = (respuesta["err"])
 			c.Abort("404")
 		}
 	}()
@@ -54,6 +58,11 @@ func (c *CertificacionController) GetCertificacionDocumentosAprobados() {
 
 	c.ServeJSON()
 
+}
+
+type RequestError struct {
+	funcion string
+	err     error
 }
 
 // CertificacionVistoBuenoController ...

@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/astaxie/beego/httplib"
+	"github.com/astaxie/beego/logs"
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/models"
@@ -96,15 +97,17 @@ func GetContratosDependenciaFiltro(dependencia string, fecha_inicio string, fech
 	return contratos_dependencia
 }
 
-func GetContratosOrdenadorDependencia(dependencia string, fechaInicio string, fechaFin string) (contratos_ordenador_dependencia models.ContratoOrdenadorDependencia) {
+func GetContratosOrdenadorDependencia(dependencia string, fechaInicio string, fechaFin string) (contratos_ordenador_dependencia models.ContratoOrdenadorDependencia, outputError map[string]interface{}) {
 
 	r := httplib.Get("http://" + beego.AppConfig.String("UrlcrudWSO2") + "/" + beego.AppConfig.String("NscrudAdministrativa") + "/" + "contratos_ordenador_dependencia/" + dependencia + "/" + fechaInicio + "/" + fechaFin)
 	r.Header("Accept", "application/json")
 	if err := r.ToJSON(&contratos_ordenador_dependencia); err == nil {
+		return contratos_ordenador_dependencia, nil
 	} else {
-
-		fmt.Println(err)
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/CertificacionDocumentosAprobados/GetContratosOrdenadorDependencia", "err": err}
+		return contratos_ordenador_dependencia, outputError
 	}
 
-	return contratos_ordenador_dependencia
+	return
 }

@@ -3,8 +3,9 @@ package helpers
 import (
 	_ "encoding/json"
 	"fmt"
-	"github.com/astaxie/beego/logs"
 	"strconv"
+
+	"github.com/astaxie/beego/logs"
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/models"
@@ -26,7 +27,9 @@ func CertificacionDocumentosAprobados(dependencia string, anio string, mes strin
 
 	}
 
-	contrato_ordenador_dependencia = GetContratosOrdenadorDependencia(dependencia, anio+"-"+mes, anio+"-"+mes)
+	if contrato_ordenador_dependencia, outputError = GetContratosOrdenadorDependencia(dependencia, anio+"-"+mes, anio+"-"+mes); outputError != nil {
+		return nil, outputError
+	}
 
 	for _, contrato := range contrato_ordenador_dependencia.ContratosOrdenadorDependencia.InformacionContratos {
 
@@ -35,32 +38,25 @@ func CertificacionDocumentosAprobados(dependencia string, anio string, mes strin
 			for _, vinculacion_docente := range vinculaciones_docente {
 				if vinculacion_docente.NumeroContrato.Valid == true {
 
-					if response, err := getJsonTest(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion:AP,NumeroContrato:"+contrato.NumeroContrato+",VigenciaContrato:"+contrato.Vigencia+",Mes:"+strconv.Itoa(mes_cer)+",Ano:"+anio, &respuesta_peticion); err == nil {
-						
-						if(response == 200){
-							pagos_mensuales = []models.PagoMensual{}
-									if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
-										LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
-									}else{
-										pagos_mensuales = nil
-									}		
-							if pagos_mensuales == nil {	
-								persona.NumDocumento = contrato.Documento
-								persona.Nombre = contrato.NombreContratista
-								persona.NumeroContrato = contrato.NumeroContrato
-								persona.Vigencia, _ = strconv.Atoi(contrato.Vigencia)
-								personas = append(personas, persona)	
-							}
-						}else{
-							logs.Info("Error (3) estado de la solicitud")
-							outputError = map[string]interface{}{"Function": "CertificacionController:CertificacionDocumentosAprobados", "Error": response}
-							return nil, outputError
+					if response, err := getJsonTest(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion:AP,NumeroContrato:"+contrato.NumeroContrato+",VigenciaContrato:"+contrato.Vigencia+",Mes:"+strconv.Itoa(mes_cer)+",Ano:"+anio, &respuesta_peticion); (err == nil) && (response == 200) {
+
+						pagos_mensuales = []models.PagoMensual{}
+						if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
+							LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
+						} else {
+							pagos_mensuales = nil
+						}
+						if pagos_mensuales == nil {
+							persona.NumDocumento = contrato.Documento
+							persona.Nombre = contrato.NombreContratista
+							persona.NumeroContrato = contrato.NumeroContrato
+							persona.Vigencia, _ = strconv.Atoi(contrato.Vigencia)
+							personas = append(personas, persona)
 						}
 
 					} else { //If informacion_proveedor get
-
-						logs.Info("Error (2) servicio caido")
-						outputError = map[string]interface{}{"Function": "CertificacionController:getUserAgora", "Error": err}
+						logs.Error(err)
+						outputError = map[string]interface{}{"funcion": "/CertificacionDocumentosAprobados/cumplidosCrud", "err": err}
 						return nil, outputError
 
 					}
@@ -69,8 +65,9 @@ func CertificacionDocumentosAprobados(dependencia string, anio string, mes strin
 			}
 
 		} else { //If vinculacion_docente get
-
 			fmt.Println("Mirenme, me morí en If vinculacion_docente get, solucioname!!! ", err)
+			logs.Error(err)
+			outputError = map[string]interface{}{"funcion": "CertificacionDocumentosAprobados/crudAdmin", "err": err}
 			return nil, outputError
 
 		}
@@ -103,9 +100,9 @@ func CertificadoVistoBueno(dependencia string, mes string, anio string) (persona
 								pagos_mensuales = []models.PagoMensual{}
 								if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 									LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
-								}else{
+								} else {
 									pagos_mensuales = nil
-								}									
+								}
 								if pagos_mensuales == nil {
 									if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+vinculacion_docente.IdPersona, &contratistas); err == nil {
 										for _, contratista := range contratistas {
@@ -141,4 +138,3 @@ func CertificadoVistoBueno(dependencia string, mes string, anio string) (persona
 	}
 	return
 }
-
