@@ -26,7 +26,7 @@ func (c *CertificacionController) URLMapping() {
 // @Description create CertificacionDocumentosAprobados  trae
 // @Param dependencia path int true "Dependencia del contrato en la tabla ordenador_gasto"
 // @Param mes path int true "Mes del pago mensual"
-// @Param anio path int true "Año del pago mensual"
+// @Param ano path int true "Año del pago mensual"
 // @Success 201
 // @Failure 403 :dependencia is empty
 // @Failure 403 :mes is empty

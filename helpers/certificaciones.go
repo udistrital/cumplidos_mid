@@ -65,7 +65,6 @@ func CertificacionDocumentosAprobados(dependencia string, anio string, mes strin
 			}
 
 		} else { //If vinculacion_docente get
-			fmt.Println("Mirenme, me morí en If vinculacion_docente get, solucioname!!! ", err)
 			logs.Error(err)
 			outputError = map[string]interface{}{"funcion": "CertificacionDocumentosAprobados/crudAdmin", "err": err}
 			return nil, outputError
