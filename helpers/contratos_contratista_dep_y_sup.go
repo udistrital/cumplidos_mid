@@ -7,10 +7,18 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/models"
 )
 
-func ContratosContratistaDependencia(doc_ordenador string, cod_dependencia string, limit int, offset int) (pagos_contratista_cdp_rp []models.PagoContratistaCdpRp, err error) {
+func ContratosContratistaDependencia(doc_ordenador string, cod_dependencia string, limit int, offset int) (pagos_contratista_cdp_rp []models.PagoContratistaCdpRp, outputError map[string]interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenadorContratistas", "err": err, "status": "500"}
+			panic(outputError)
+		}
+	}()
+
 	var contrato_dependencia models.ContratoDependencia
 	var contratistas []models.InformacionProveedor
 	var conteo_offset, conteo_limit = 0, 0
@@ -25,12 +33,14 @@ func ContratosContratistaDependencia(doc_ordenador string, cod_dependencia strin
 	fecha_final := fmt.Sprintf("%d-%02d",
 		t2.Year(), t2.Month())
 
-	contrato_dependencia = GetContratosDependenciaFiltro(cod_dependencia, fecha_inicio, fecha_final)
+	if contrato_dependencia, outputError = GetContratosDependenciaFiltro(cod_dependencia, fecha_inicio, fecha_final); outputError != nil {
+		return nil, outputError
+	}
 	for _, cd := range contrato_dependencia.Contratos.Contrato {
 
 		var pagos_mensuales []models.PagoMensual
 
-		if err := getJson(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?query=NumeroContrato:"+cd.NumeroContrato+",VigenciaContrato:"+cd.Vigencia+",EstadoPagoMensualId.CodigoAbreviacion:AS,DocumentoResponsableId:"+doc_ordenador, &respuesta_peticion); err == nil {
+		if response, err := getJsonTest(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?query=NumeroContrato:"+cd.NumeroContrato+",VigenciaContrato:"+cd.Vigencia+",EstadoPagoMensualId.CodigoAbreviacion:AS,DocumentoResponsableId:"+doc_ordenador, &respuesta_peticion); (err == nil) && (response == 200) {
 			pagos_mensuales = []models.PagoMensual{}
 			LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
 			for v, pm := range pagos_mensuales {
@@ -45,7 +55,7 @@ func ContratosContratistaDependencia(doc_ordenador string, cod_dependencia strin
 						pago_mensual.VigenciaContrato = pm.VigenciaContrato
 						pago_mensual.NumeroContrato = pm.NumeroContrato
 
-						if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago_mensual.DocumentoPersonaId, &contratistas); err == nil {
+						if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago_mensual.DocumentoPersonaId, &contratistas); (err == nil) && (response == 200) {
 							for _, contratista := range contratistas {
 
 								var informacion_contrato_contratista models.InformacionContratoContratista
@@ -53,7 +63,7 @@ func ContratosContratistaDependencia(doc_ordenador string, cod_dependencia strin
 								var contrato models.InformacionContrato
 								contrato = GetContrato(pago_mensual.NumeroContrato, strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64))
 
-								if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); err == nil {
+								if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
 
 									for _, contrato_disponibilidad := range contratos_disponibilidad {
 
@@ -79,14 +89,18 @@ func ContratosContratistaDependencia(doc_ordenador string, cod_dependencia strin
 
 								} else { // If contrato_disponibilidad get
 									fmt.Println("Mirenme, me morí en If contrato_disponibilidad get, solucioname!!! ", err)
+									logs.Error(err)
+									outputError = map[string]interface{}{"funcion": "/ContratosContratistaDependencia", "err": err.Error(), "status": "502"}
+									return nil, outputError
 								}
 
 							}
 							conteo_limit = conteo_limit + 1
 						} else { //If informacion_proveedor get
-
 							fmt.Println("Mirenme, me morí en If informacion_proveedor get, solucioname!!! ", err)
-							return nil, err
+							logs.Error(err)
+							outputError = map[string]interface{}{"funcion": "/ContratosContratistaDependencia", "err": err.Error(), "status": "502"}
+							return nil, outputError
 						}
 
 					} else {
@@ -96,9 +110,10 @@ func ContratosContratistaDependencia(doc_ordenador string, cod_dependencia strin
 			}
 
 		} else { //If pago_mensual get
-
 			fmt.Println("Mirenme, me morí en If pago_mensual get, solucioname!!! ", err)
-			return nil, err
+			logs.Error(err)
+			outputError = map[string]interface{}{"funcion": "/ContratosContratistaDependencia", "err": err.Error(), "status": "502"}
+			return nil, outputError
 		}
 
 	}
@@ -110,7 +125,7 @@ func ContratosContratistaSupervisor(doc_supervisor string) (pagos_contratista_cd
 	var contratistas []models.InformacionProveedor
 	var contratos_disponibilidad []models.ContratoDisponibilidad
 	var respuesta_peticion map[string]interface{}
-	fmt.Println(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:PRS,DocumentoResponsableId:"+doc_supervisor)
+	fmt.Println(beego.AppConfig.String("ProtocolCrudCumplidos") + "://" + beego.AppConfig.String("UrlCrudCumplidos") + "/" + beego.AppConfig.String("NsCrudCumplidos") + "/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:PRS,DocumentoResponsableId:" + doc_supervisor)
 	if err := getJson(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:PRS,DocumentoResponsableId:"+doc_supervisor, &respuesta_peticion); err == nil {
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
 		for v, _ := range pagos_mensuales {
@@ -167,4 +182,3 @@ func ContratosContratistaSupervisor(doc_supervisor string) (pagos_contratista_cd
 	}
 	return
 }
-
