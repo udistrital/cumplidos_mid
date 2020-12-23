@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/astaxie/beego/httplib"
+	_ "github.com/astaxie/beego/httplib"
 	"github.com/astaxie/beego/logs"
 
 	"github.com/astaxie/beego"
@@ -112,16 +112,30 @@ func GetContratosDependenciaFiltro(dependencia string, fecha_inicio string, fech
 
 func GetContratosOrdenadorDependencia(dependencia string, fechaInicio string, fechaFin string) (contratos_ordenador_dependencia models.ContratoOrdenadorDependencia, outputError map[string]interface{}) {
 
-	r := httplib.Get("http://" + beego.AppConfig.String("UrlcrudWSO2") + "/" + beego.AppConfig.String("NscrudAdministrativa") + "/" + "contratos_ordenador_dependencia/" + dependencia + "/" + fechaInicio + "/" + fechaFin)
-	r.Header("Accept", "application/json")
-
-	if err := r.ToJSON(&contratos_ordenador_dependencia); err == nil {
-		return contratos_ordenador_dependencia, nil
-	} else {
+	var temp map[string]interface{}
+	if response, err := getJsonWSO2Test("http://" + beego.AppConfig.String("UrlcrudWSO2") + "/" + beego.AppConfig.String("NscrudAdministrativa") + "/" + "contratos_ordenador_dependencia/" + dependencia + "/" + fechaInicio + "/" + fechaFin, &temp); (err == nil)  && (response == 200) {
+		json_contrato_dependencia, error_json := json.Marshal(temp)
+		if error_json == nil{
+			if err := json.Unmarshal(json_contrato_dependencia, &contratos_ordenador_dependencia); err == nil {
+				return contratos_ordenador_dependencia, nil
+			}else{
+				fmt.Println(error_json.Error())
+			}
+		}
+	}else{
 		logs.Error(err)
 		outputError = map[string]interface{}{"funcion": "/GetContratosOrdenadorDependencia", "err": err, "status": "502"}
 		return contratos_ordenador_dependencia, outputError
 	}
+
+	//r := httplib.Get("http://" + beego.AppConfig.String("UrlcrudWSO2") + "/" + beego.AppConfig.String("NscrudAdministrativa") + "/" + "contratos_ordenador_dependencia/" + dependencia + "/" + fechaInicio + "/" + fechaFin)
+	//r.Header("Accept", "application/json")
+
+	//if err := r.ToJSON(&contratos_ordenador_dependencia); err == nil {
+	//	return contratos_ordenador_dependencia, nil
+	//} else {
+		
+	//}
 
 	return
 }
