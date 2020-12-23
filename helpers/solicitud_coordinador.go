@@ -7,10 +7,17 @@ import (
 	_ "time"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/models"
 )
 
-func SolicitudCoordinador(doc_coordinador string) (pagos_personas_proyecto []models.PagoPersonaProyecto, err error) {
+func SolicitudCoordinador(doc_coordinador string) (pagos_personas_proyecto []models.PagoPersonaProyecto, outputError map[string]interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador", "err": err, "status": "502"}
+			panic(outputError)
+		}
+	}()
 
 	var pagos_mensuales []models.PagoMensual
 	var contratistas []models.InformacionProveedor
@@ -45,25 +52,33 @@ func SolicitudCoordinador(doc_coordinador string) (pagos_personas_proyecto []mod
 							} else { //If dependencia get
 
 								fmt.Println("Mirenme, me morí en If dependencia get, solucioname!!! ", err)
-								return nil, err
+								logs.Error(err)
+								outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador", "err": err, "status": "502"}
+								return nil, outputError
 							}
 						}
 
 					} else { // If vinculacion_docente_get
 						fmt.Println("Mirenme, me morí en If vinculacion_docente get, solucioname!!! ", err)
-						return nil, err
+						logs.Error(err)
+						outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador", "err": err, "status": "502"}
+						return nil, outputError
 					}
 				}
 			} else { //If informacion_proveedor get
 
 				fmt.Println("Mirenme, me morí en If informacion_proveedor get, solucioname!!! ", err)
-				return nil, err
+				logs.Error(err)
+				outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador", "err": err, "status": "502"}
+				return nil, outputError
 			}
 		}
 	} else { //If pago_mensual get
 
 		fmt.Println("Mirenme, me morí en If pago_mensual get, solucioname!!! ", err)
-		return nil, err
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador", "err": err, "status": "502"}
+		return nil, outputError
 	}
 
 	return

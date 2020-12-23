@@ -6,6 +6,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/httplib"
+	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/models"
 )
 
@@ -65,8 +66,13 @@ import (
 	return
 }*/
 
-func CertificacionCumplidosContratistas(dependencia string, mes string, anio string) (personas []models.Persona, err error) {
-
+func CertificacionCumplidosContratistas(dependencia string, mes string, anio string) (personas []models.Persona, outputError map[string]interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			outputError = map[string]interface{}{"funcion": "/CertificacionCumplidosContratistas", "err": err, "status": "502"}
+			panic(outputError)
+		}
+	}()
 	//var contrato_dependencia models.ContratoDependencia
 	var contrato_dependencia map[string]string
 	var pagos_mensuales []models.PagoMensual
@@ -76,7 +82,10 @@ func CertificacionCumplidosContratistas(dependencia string, mes string, anio str
 	var nmes, _ = strconv.Atoi(mes)
 	var respuesta_peticion map[string]interface{}
 	//traemos los contratos activos para un mes en una dependencia
-	contrato_dependencia = GetContratosDependencia(dependencia, anio+"-"+mes)
+	if contrato_dependencia, outputError = GetContratosDependencia(dependencia, anio+"-"+mes); outputError != nil {
+		return nil, outputError
+	}
+
 	if err := getJson(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlcrudCumplidos")+"/"+beego.AppConfig.String("NscrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion.in:AS|AP,Mes:"+strconv.Itoa(nmes)+",Ano:"+anio+"&limit=-1", &respuesta_peticion); err == nil {
 
 		pagos_mensuales = []models.PagoMensual{}
@@ -104,7 +113,9 @@ func CertificacionCumplidosContratistas(dependencia string, mes string, anio str
 				} else { //If informacion_proveedor get
 
 					fmt.Println("Mirenme, me morí en If informacion_proveedor get, solucioname!!! ", err)
-					return nil, err
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/CertificacionCumplidosContratistas", "err": err.Error(), "status": "404"}
+					return nil, outputError
 
 				}
 
@@ -116,19 +127,26 @@ func CertificacionCumplidosContratistas(dependencia string, mes string, anio str
 	} else { //If pago_mensual get
 
 		fmt.Println("Mirenme, me morí en If pago_mensual get, solucioname!!! ", err)
-		return nil, err
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/CertificacionCumplidosContratistas", "err": err.Error(), "status": "404"}
+		return nil, outputError
 
 	}
 	return
 }
 
-func AprobacionPagosContratistas(v []models.PagoContratistaCdpRp) (err error) {
-	//var v []models.PagoContratistaCdpRp
+func AprobacionPagosContratistas(v []models.PagoContratistaCdpRp) (outputError map[string]interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			outputError = map[string]interface{}{"funcion": "/CertificadoVistoBueno", "err": err, "status": "502"}
+			panic(outputError)
+		}
+	}()
+
 	var response interface{}
-
 	var pagos_mensuales []*models.PagoMensual
-
 	var pago_mensual *models.PagoMensual
+
 	for _, pm := range v {
 
 		pago_mensual = pm.PagoMensual
@@ -136,13 +154,23 @@ func AprobacionPagosContratistas(v []models.PagoContratistaCdpRp) (err error) {
 	}
 	if err := sendJson(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/tr_aprobacion_masiva_pagos", "POST", &response, pagos_mensuales); err != nil {
 		fmt.Println(err)
-		return err
+		//return err
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/AprobacionPagosContratistas", "err": err.Error(), "status": "502"}
+		return outputError
 
 	}
 	return nil
 }
 
-func SolicitudesOrdenadorContratistas(doc_ordenador string, limit int, offset int) (pagos_contratista_cdp_rp []models.PagoContratistaCdpRp, err error) {
+func SolicitudesOrdenadorContratistas(doc_ordenador string, limit int, offset int) (pagos_contratista_cdp_rp []models.PagoContratistaCdpRp, outputError map[string]interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenadorContratistas", "err": err, "status": "500"}
+			panic(outputError)
+		}
+	}()
+
 	var pagos_mensuales []models.PagoMensual
 	var contratistas []models.InformacionProveedor
 
@@ -161,7 +189,7 @@ func SolicitudesOrdenadorContratistas(doc_ordenador string, limit int, offset in
 		//fmt.Println("pagos: ", pagos_mensuales)
 		for v, _ := range pagos_mensuales {
 
-			if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pagos_mensuales[v].DocumentoPersonaId, &contratistas); err == nil {
+			if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pagos_mensuales[v].DocumentoPersonaId, &contratistas); (err == nil) && (response == 200) {
 
 				for _, contratista := range contratistas {
 
@@ -170,7 +198,7 @@ func SolicitudesOrdenadorContratistas(doc_ordenador string, limit int, offset in
 					var contrato models.InformacionContrato
 					contrato = GetContrato(pagos_mensuales[v].NumeroContrato, strconv.FormatFloat(pagos_mensuales[v].VigenciaContrato, 'f', 0, 64))
 
-					if err := getJson(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); err == nil {
+					if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
 
 						for _, contrato_disponibilidad := range contratos_disponibilidad {
 
@@ -196,20 +224,26 @@ func SolicitudesOrdenadorContratistas(doc_ordenador string, limit int, offset in
 
 					} else { // If contrato_disponibilidad get
 						fmt.Println("Mirenme, me morí en If contrato_disponibilidad get, solucioname!!! ", err)
-						return nil, err
+						logs.Error(err)
+						outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenadorContratistas", "err": err.Error(), "status": "502"}
+						return nil, outputError
 
 					}
 
 				}
 			} else { //If informacion_proveedor get
 				fmt.Println("Mirenme, me morí en If informacion_proveedor get, solucioname!!! ", err)
-				return nil, err
+				logs.Error(err)
+				outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenadorContratistas", "err": err.Error(), "status": "502"}
+				return nil, outputError
 			}
 
 		}
 	} else { //If pago_mensual get
 		fmt.Println("Mirenme, me morí en If pago_mensual get, solucioname!!! ", err)
-		return nil, err
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenadorContratistas", "err": err, "status": "502"}
+		return nil, outputError
 	}
 
 	return pagos_contratista_cdp_rp, nil

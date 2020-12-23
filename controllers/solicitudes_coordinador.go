@@ -28,11 +28,33 @@ func (c *SolicitudesCoordinadorController) URLMapping() {
 // @router /:doccoordinador [get]
 func (c *SolicitudesCoordinadorController) GetSolicitudesCoordinador() {
 	doc_coordinador := c.GetString(":doccoordinador")
-	//fmt.Println("salida2: ", pagos_personas_proyecto,"   ", len(pagos_personas_proyecto))
+	//función que maneja el error
+	defer func() {
+		if err := recover(); err != nil {
+			logs.Error(err)
+			respuesta := err.(map[string]interface{})
+			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesCoordinadorController" + "/" + (respuesta["funcion"]).(string))
+			c.Data["data"] = (respuesta["err"])
+			if status, ok := respuesta["status"]; ok {
+				c.Abort(status.(string))
+			} else {
+				c.Abort("404")
+			}
+		}
+	}()
+	//Validación de parametros de entrada
+
+	//docc_coordinador, err1 := strconv.Atoi(doc_coordinador)
+	if len(doc_coordinador) < 2 {
+		panic(map[string]interface{}{"funcion": "GetSolicitudesCoordinador", "err": "Error en los parametros de ingreso", "status": "400"})
+	}
+
 	if pagos_personas_proyecto, err := helpers.SolicitudCoordinador(doc_coordinador); err != nil || len(pagos_personas_proyecto) == 0 {
-		logs.Error(err)
-		c.Data["mesaage"] = "Error service Get solicitudes_coordinador: The request contains an incorrect parameter or no record exists"
-		c.Abort("404")
+		if err == nil {
+			panic(map[string]interface{}{"funcion": "GetSolicitudesCoordinador", "err": "No se encontraron registros"})
+		} else {
+			panic(err)
+		}
 
 	} else {
 		c.Data["json"] = pagos_personas_proyecto

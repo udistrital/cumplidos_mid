@@ -15,7 +15,7 @@
     },
     "basePath": "/v1",
     "paths": {
-        "/certificacion/certificacion_visto_bueno/{dependencia}/{mes}/{anio}": {
+        "/certificacion/certificacion_visto_bueno/{dependencia}/{mes}/{ano}": {
             "get": {
                 "tags": [
                     "certificacion"
@@ -286,7 +286,7 @@
                 ],
                 "responses": {
                     "201": {
-                        "description": ""
+                        "description": "Ok"
                     },
                     "400": {
                         "description": "the request contains incorrect syntax"
@@ -294,7 +294,7 @@
                 }
             }
         },
-        "/solicitudes_ordenador_contratistas/certificaciones/{dependencia}/{mes}/{anio}": {
+        "/solicitudes_ordenador_contratistas/certificaciones/{dependencia}/{mes}/{ano}": {
             "get": {
                 "tags": [
                     "solicitudes_ordenador_contratistas"
@@ -318,7 +318,7 @@
                     },
                     {
                         "in": "path",
-                        "name": "anio",
+                        "name": "ano",
                         "description": "Año del certificado",
                         "required": true,
                         "type": "string"
@@ -335,7 +335,7 @@
                         }
                     },
                     "403": {
-                        "description": ":anio is empty"
+                        "description": ":ano is empty"
                     }
                 }
             }
@@ -384,7 +384,7 @@
                 }
             }
         },
-        "/solicitudes_ordenador_contratistas/solicitudes_ordenador_contratistas_dependencia/{docordenador}/{cod_dependencia}": {
+        "/solicitudes_ordenador_contratistas/solicitudes_dependencia/{docordenador}/{cod_dependencia}": {
             "get": {
                 "tags": [
                     "solicitudes_ordenador_contratistas"

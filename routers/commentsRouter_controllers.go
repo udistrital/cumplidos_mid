@@ -19,7 +19,7 @@ func init() {
 	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:CertificacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:CertificacionController"],
 		beego.ControllerComments{
 			Method:           "CertificacionVistoBueno",
-			Router:           `/certificacion_visto_bueno/:dependencia/:mes/:anio`,
+			Router:           `/certificacion_visto_bueno/:dependencia/:mes/:ano`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams:     param.Make(),
 			Filters:          nil,
@@ -82,7 +82,7 @@ func init() {
 	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesOrdenadorContratistasController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesOrdenadorContratistasController"],
 		beego.ControllerComments{
 			Method:           "CertificacionCumplidosContratistas",
-			Router:           "/certificaciones/:dependencia/:mes/:anio",
+			Router:           "/certificaciones/:dependencia/:mes/:ano",
 			AllowHTTPMethods: []string{"get"},
 			MethodParams:     param.Make(),
 			Filters:          nil,
@@ -91,7 +91,7 @@ func init() {
 	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesOrdenadorContratistasController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesOrdenadorContratistasController"],
 		beego.ControllerComments{
 			Method:           "GetSolicitudesOrdenadorContratistasDependencia",
-			Router:           `/solicitudes_ordenador_contratistas_dependencia/:docordenador/:cod_dependencia`,
+			Router:           `/solicitudes_dependencia/:docordenador/:cod_dependencia`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams:     param.Make(),
 			Filters:          nil,
