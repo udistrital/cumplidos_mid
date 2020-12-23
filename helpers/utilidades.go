@@ -100,6 +100,7 @@ func getJsonWSO2(urlp string, target interface{}) error {
 	req, err := http.NewRequest("GET", urlp, b)
 	req.Header.Set("Accept", "application/json")
 	r, err := client.Do(req)
+	fmt.Println(r)
 	if err != nil {
 		beego.Error("error", err)
 		return err
@@ -111,6 +112,26 @@ func getJsonWSO2(urlp string, target interface{}) error {
 	}()
 
 	return json.NewDecoder(r.Body).Decode(target)
+}
+
+func getJsonWSO2Test(urlp string, target interface{}) (status int ,err error) {
+	b := new(bytes.Buffer)
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", urlp, b)
+	req.Header.Set("Accept", "application/json")
+	r, err := client.Do(req)
+	fmt.Println(r)
+	if err != nil {
+		beego.Error("error", err)
+		return r.StatusCode, err
+	}
+	defer func() {
+		if err := r.Body.Close(); err != nil {
+			beego.Error(nil, err)
+		}
+	}()
+
+	return r.StatusCode, json.NewDecoder(r.Body).Decode(target)
 }
 
 func diff(a, b time.Time) (year, month, day int) {
