@@ -44,7 +44,11 @@ func (c *CertificacionController) GetCertificacionDocumentosAprobados() {
 			respuesta := err.(map[string]interface{})
 			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "CertificacionController" + "/" + (respuesta["funcion"]).(string))
 			c.Data["data"] = (respuesta["err"])
-			c.Abort("404")
+			if status, ok := respuesta["status"]; ok {
+				c.Abort(status.(string))
+			} else {
+				c.Abort("404")
+			}
 		}
 	}()
 
@@ -52,7 +56,7 @@ func (c *CertificacionController) GetCertificacionDocumentosAprobados() {
 	mess, err2 := strconv.Atoi(mes)
 	_, err3 := strconv.Atoi(ano)
 	if (mess == 0) || (len(ano) != 4) || (mess > 12) || (err1 != nil) || (err2 != nil) || (err3 != nil) {
-		panic(map[string]interface{}{"funcion": "GetCertificacionDocumentosAprobados", "err": "Error en los parametros de ingreso"})
+		panic(map[string]interface{}{"funcion": "GetCertificacionDocumentosAprobados", "err": "Error en los parametros de ingreso", "status": "400"})
 	}
 
 	if personas, err := helpers.CertificacionDocumentosAprobados(dependencia, ano, mes); err == nil {
@@ -73,16 +77,41 @@ func (c *CertificacionController) GetCertificacionDocumentosAprobados() {
 // @Param anio path int true "Año del pago mensual"
 // @Success 200 {object} []models.Persona
 // @Failure 404 not found source
-// @router /certificacion_visto_bueno/:dependencia/:mes/:anio [get]
+// @router /certificacion_visto_bueno/:dependencia/:mes/:ano [get]
 func (c *CertificacionController) CertificacionVistoBueno() {
 	dependencia := c.GetString(":dependencia")
 	mes := c.GetString(":mes")
-	anio := c.GetString(":anio")
+	ano := c.GetString(":ano")
 
-	if personas, err := helpers.CertificadoVistoBueno(dependencia, mes, anio); err != nil || len(personas) == 0 {
-		logs.Error(err)
-		c.Data["mesaage"] = "Error service Get CertificacionVistoBueno: The request contains an incorrect parameter or no record exists"
-		c.Abort("404")
+	//función que maneja el error
+	defer func() {
+		if err := recover(); err != nil {
+			logs.Error(err)
+			respuesta := err.(map[string]interface{})
+			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "CertificacionController" + "/" + (respuesta["funcion"]).(string))
+			c.Data["data"] = (respuesta["err"])
+			if status, ok := respuesta["status"]; ok {
+				c.Abort(status.(string))
+			} else {
+				c.Abort("404")
+			}
+		}
+	}()
+	//Validación de parametros de entrada
+	_, err1 := strconv.Atoi(dependencia)
+	mess, err2 := strconv.Atoi(mes)
+	_, err3 := strconv.Atoi(ano)
+	if (mess == 0) || (len(ano) != 4) || (mess > 12) || (err1 != nil) || (err2 != nil) || (err3 != nil) {
+		panic(map[string]interface{}{"funcion": "CertificacionVistoBueno", "err": "Error en los parametros de ingreso", "status": "400"})
+	}
+
+	if personas, err := helpers.CertificadoVistoBueno(dependencia, mes, ano); err != nil || len(personas) == 0 {
+		if err == nil {
+			panic(map[string]interface{}{"funcion": "CertificacionVistoBueno", "err": "No se encontraron registros"})
+		} else {
+			panic(err)
+		}
+
 	} else {
 		c.Data["json"] = personas
 	}

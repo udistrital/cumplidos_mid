@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	_ "github.com/astaxie/beego/httplib"
+	"github.com/astaxie/beego/httplib"
 	"github.com/astaxie/beego/logs"
 
 	"github.com/astaxie/beego"
@@ -37,81 +37,94 @@ import (
 	return contratos_dependencia
 }*/
 
-func GetContratosDependencia(dependencia string, fecha string) (salida map[string]string) {
+func GetContratosDependencia(dependencia string, fecha string) (salida map[string]string, outputError map[string]interface{}) {
 	salida = make(map[string]string)
 	var temp map[string]interface{}
 	var contratos_dependencia models.ContratoDependencia
 	//var salida map[string]string
-	if err := getJsonWSO2("http://"+beego.AppConfig.String("UrlcrudWSO2")+"/"+beego.AppConfig.String("NscrudAdministrativa")+"/"+"contratos_dependencia/"+dependencia+"/"+fecha+"/"+fecha, &temp); err == nil {
 
-		json_contrato, error_json := json.Marshal(temp)
-		if error_json == nil {
+	r := httplib.Get("http://" + beego.AppConfig.String("UrlcrudWSO2") + "/" + beego.AppConfig.String("NscrudAdministrativa") + "/" + "contratos_dependencia/" + dependencia + "/" + fecha + "/" + fecha)
+	r.Header("Accept", "application/json")
+
+	if err := r.ToJSON(&temp); err == nil {
+		if json_contrato, error_json := json.Marshal(temp); error_json == nil {
 			if err := json.Unmarshal(json_contrato, &contratos_dependencia); err == nil {
-
 				for _, cd := range contratos_dependencia.Contratos.Contrato {
-					//fmt.Println("dependencia: ", cd)
-					//fmt.Println(cd.NumeroContrato, cd.Vigencia)
-					//salida["prueba"] = "cd.Vigencia"
-					//fmt.Println(cd.NumeroContrato)
 					salida[cd.NumeroContrato] = cd.Vigencia
-					//fmt.Println("salida: ", salida)
 				}
-				return salida
+				return salida, nil
 			} else {
-				fmt.Println(err)
+				//fmt.Println(err)
+				logs.Error(err)
+				outputError = map[string]interface{}{"funcion": "/GetContratosDependencia", "err": err, "status": "502"}
+				return salida, outputError
 			}
 		} else {
 			fmt.Println(error_json.Error())
+			logs.Error(err)
+			outputError = map[string]interface{}{"funcion": "/GetContratosDependencia", "err": error_json.Error(), "status": "502"}
+			return salida, outputError
 		}
-
 	} else {
-
-		fmt.Println(err)
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/GetContratosDependencia", "err": err.Error(), "status": "502"}
+		return salida, outputError
 	}
-
 	//return contratos_dependencia
-	return salida
+	return salida, outputError
 }
 
-func GetContratosDependenciaFiltro(dependencia string, fecha_inicio string, fecha_fin string) (contratos_dependencia models.ContratoDependencia) {
+//practicamente es el mismo metodo anterior
+func GetContratosDependenciaFiltro(dependencia string, fecha_inicio string, fecha_fin string) (contratos_dependencia models.ContratoDependencia, outputError map[string]interface{}) {
 
 	var temp map[string]interface{}
-
-	if err := getJsonWSO2("http://"+beego.AppConfig.String("UrlcrudWSO2")+"/"+beego.AppConfig.String("NscrudAdministrativa")+"/"+"contratos_dependencia/"+dependencia+"/"+fecha_fin+"/"+fecha_inicio, &temp); err == nil {
+	r := httplib.Get("http://" + beego.AppConfig.String("UrlcrudWSO2") + "/" + beego.AppConfig.String("NscrudAdministrativa") + "/" + "contratos_dependencia/" + dependencia + "/" + fecha_fin + "/" + fecha_inicio)
+	r.Header("Accept", "application/json")
+	if err := r.ToJSON(&temp); err == nil {
+		//if err := getJsonWSO2("http://"+beego.AppConfig.String("UrlcrudWSO2")+"/"+beego.AppConfig.String("NscrudAdministrativa")+"/"+"contratos_dependencia/"+dependencia+"/"+fecha_fin+"/"+fecha_inicio, &temp); err == nil {
 		json_contrato, error_json := json.Marshal(temp)
 		if error_json == nil {
 			if err := json.Unmarshal(json_contrato, &contratos_dependencia); err == nil {
-				return contratos_dependencia
+				return contratos_dependencia, nil
 			} else {
 				fmt.Println(err)
+				logs.Error(err)
+				outputError = map[string]interface{}{"funcion": "/GetContratosDependenciaFiltro", "err": err.Error(), "status": "502"}
+				return contratos_dependencia, outputError
+
 			}
 		} else {
 			fmt.Println(error_json.Error())
+			logs.Error(err)
+			outputError = map[string]interface{}{"funcion": "/GetContratosDependenciaFiltro", "err": err.Error(), "status": "502"}
+			return contratos_dependencia, outputError
 		}
 
 	} else {
-
 		fmt.Println(err)
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/GetContratosDependenciaFiltro", "err": err.Error(), "status": "502"}
+		return contratos_dependencia, outputError
 	}
 
-	return contratos_dependencia
+	return
 }
 
 func GetContratosOrdenadorDependencia(dependencia string, fechaInicio string, fechaFin string) (contratos_ordenador_dependencia models.ContratoOrdenadorDependencia, outputError map[string]interface{}) {
 
 	var temp map[string]interface{}
-	if response, err := getJsonWSO2Test("http://" + beego.AppConfig.String("UrlcrudWSO2") + "/" + beego.AppConfig.String("NscrudAdministrativa") + "/" + "contratos_ordenador_dependencia/" + dependencia + "/" + fechaInicio + "/" + fechaFin, &temp); (err == nil)  && (response == 200) {
+	if response, err := getJsonWSO2Test("http://"+beego.AppConfig.String("UrlcrudWSO2")+"/"+beego.AppConfig.String("NscrudAdministrativa")+"/"+"contratos_ordenador_dependencia/"+dependencia+"/"+fechaInicio+"/"+fechaFin, &temp); (err == nil) && (response == 200) {
 		json_contrato_dependencia, error_json := json.Marshal(temp)
-		if error_json == nil{
+		if error_json == nil {
 			if err := json.Unmarshal(json_contrato_dependencia, &contratos_ordenador_dependencia); err == nil {
 				return contratos_ordenador_dependencia, nil
-			}else{
+			} else {
 				fmt.Println(error_json.Error())
 			}
 		}
-	}else{
+	} else {
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/CertificacionDocumentosAprobados/GetContratosOrdenadorDependencia", "err": err}
+		outputError = map[string]interface{}{"funcion": "/GetContratosOrdenadorDependencia", "err": err, "status": "502"}
 		return contratos_ordenador_dependencia, outputError
 	}
 
@@ -121,7 +134,7 @@ func GetContratosOrdenadorDependencia(dependencia string, fechaInicio string, fe
 	//if err := r.ToJSON(&contratos_ordenador_dependencia); err == nil {
 	//	return contratos_ordenador_dependencia, nil
 	//} else {
-		
+
 	//}
 
 	return
