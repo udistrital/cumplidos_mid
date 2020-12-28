@@ -14,7 +14,7 @@ import (
 func ContratosContratistaDependencia(doc_ordenador string, cod_dependencia string, limit int, offset int) (pagos_contratista_cdp_rp []models.PagoContratistaCdpRp, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
-			outputError = map[string]interface{}{"funcion": "/ContratosContratistaDependencia", "err": err, "status": "500"}
+			outputError = map[string]interface{}{"funcion": "/ContratosContratistaDependencia", "err": err, "status": "404"}
 			panic(outputError)
 		}
 	}()
