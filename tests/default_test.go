@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"fmt"
 	"runtime"
 	"path/filepath"
-	_ "github.com/udistrital/cumplidos_mid/cumplidos_mid/routers"
+	_ "github.com/udistrital/cumplidos_mid/routers"
 
 	"github.com/astaxie/beego"
 	. "github.com/smartystreets/goconvey/convey"
@@ -22,6 +23,7 @@ func init() {
 func TestGet(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/v1/object", nil)
 	w := httptest.NewRecorder()
+	fmt.Println(r)
 	beego.BeeApp.Handlers.ServeHTTP(w, r)
 
 	beego.Trace("testing", "TestGet", "Code[%d]\n%s", w.Code, w.Body.String())
