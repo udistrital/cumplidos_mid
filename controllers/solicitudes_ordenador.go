@@ -4,6 +4,7 @@ import (
 	_ "encoding/json"
 	_ "time"
 
+	"strconv"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	_ "github.com/astaxie/beego/logs"
@@ -37,21 +38,31 @@ func (c *SolicitudesOrdenadorController) GetSolicitudesOrdenador() {
 	limit, _ := c.GetInt("limit")
 	offset, _ := c.GetInt("offset")
 
+	//defer helpers.GestionError(c)
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			c.Data["mesaage"] = "Error service Get solicitudes_coordinador: The request contains an incorrect parameter or no record exists"
-			c.Abort("404")
+			respuesta := err.(map[string]interface{})
+			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorController" + "/" + (respuesta["funcion"]).(string))
+			c.Data["data"] = (respuesta["err"])
+			if status, ok := respuesta["status"]; ok {
+				c.Abort(status.(string))
+			} else {
+				c.Abort("404")
+			}
 		}
 	}()
+	_, err := strconv.Atoi(doc_ordenador)
 
+	if (err != nil){
+		panic(map[string]interface{}{"funcion": "GetSolicitudesOrdenador", "err": "Error en los parametros de ingreso", "status": "400"})
+	}
 	//var v []models.PagoContratistaCdpRp
 	if pagos_personas_proyecto, err := helpers.SolicitudesOrdenador(doc_ordenador, limit, offset); err == nil {
 		c.Data["json"] = pagos_personas_proyecto
 	} else {
 		panic(err)
 	}
-
 	c.ServeJSON()
 
 }
@@ -70,10 +81,22 @@ func (c *SolicitudesOrdenadorController) ObtenerDependenciaOrdenador() {
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			c.Data["mesaage"] = "Error service Get solicitudes_coordinador: The request contains an incorrect parameter or no record exists"
-			c.Abort("404")
+			respuesta := err.(map[string]interface{})
+			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorController" + "/" + (respuesta["funcion"]).(string))
+			c.Data["data"] = (respuesta["err"])
+			if status, ok := respuesta["status"]; ok {
+				c.Abort(status.(string))
+			} else {
+				c.Abort("404")
+			}
 		}
 	}()
+
+	_, err := strconv.Atoi(doc_ordenador)
+
+	if (err != nil){
+		panic(map[string]interface{}{"funcion": "ObtenerDependenciaOrdenador", "err": "Error en los parametros de ingreso", "status": "400"})
+	}
 
 	if dependenciaId, err := helpers.DependenciaOrdenador(doc_ordenador); err == nil {
 		c.Data["json"] = dependenciaId
@@ -98,12 +121,31 @@ func (c *SolicitudesOrdenadorController) ObtenerInfoOrdenador() {
 	numero_contrato := c.GetString(":numero_contrato")
 	vigencia := c.GetString(":vigencia")
 
-	if informacion_ordenador, err := helpers.TraerInfoOrdenador(numero_contrato, vigencia); err != nil {
-		logs.Error(err)
-		c.Data["mesaage"] = "Error service Get SolicitudesOrdenadorContratistaDependencia: The request contains an incorrect parameter or no record exists"
-		c.Abort("404")
-	} else {
+	defer func() {
+		if err := recover(); err != nil {
+			logs.Error(err)
+			respuesta := err.(map[string]interface{})
+			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorController" + "/" + (respuesta["funcion"]).(string))
+			c.Data["data"] = (respuesta["err"])
+			if status, ok := respuesta["status"]; ok {
+				c.Abort(status.(string))
+			} else {
+				c.Abort("404")
+			}
+		}
+	}()
+
+	_, err1 := strconv.Atoi(numero_contrato)
+	_, err2 := strconv.Atoi(vigencia)
+	
+	if (err1 != nil) && (err2 != nil) && (len(vigencia) != 4){
+		panic(map[string]interface{}{"funcion": "ObtenerDependenciaOrdenador", "err": "Error en los parametros de ingreso", "status": "400"})
+	}
+
+	if informacion_ordenador, err := helpers.TraerInfoOrdenador(numero_contrato, vigencia); err == nil {
 		c.Data["json"] = informacion_ordenador
+	} else {
+		panic(err)
 	}
 	c.ServeJSON()
 }
