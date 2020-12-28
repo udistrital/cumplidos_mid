@@ -2,7 +2,7 @@ package helpers
 
 import (
 	_ "encoding/json"
-	"fmt"
+	_ "fmt"
 	"strconv"
 
 	"github.com/astaxie/beego/logs"
@@ -115,10 +115,7 @@ func CertificadoVistoBueno(dependencia string, mes string, anio string) (persona
 											persona.Vigencia = actaInicio.Vigencia
 											personas = append(personas, persona)
 										}
-
 									} else { //If informacion_proveedor get
-
-										fmt.Println("Mirenme, me morí en If pago_mensual get, solucioname!!! ", err)
 										logs.Error(err)
 										outputError = map[string]interface{}{"funcion": "/CertificadoVistoBueno", "err": err, "status": "502"}
 										return nil, outputError
@@ -127,7 +124,6 @@ func CertificadoVistoBueno(dependencia string, mes string, anio string) (persona
 								}
 
 							} else { //If pago_mensual get
-								fmt.Println("Mirenme, me morí en If pago_mensual get, solucioname!!! ", err)
 								logs.Error(err)
 								outputError = map[string]interface{}{"funcion": "/CertificadoVistoBueno", "err": err, "status": "502"}
 								return nil, outputError
@@ -135,7 +131,6 @@ func CertificadoVistoBueno(dependencia string, mes string, anio string) (persona
 						}
 					}
 				} else { //If contrato_estado get
-					fmt.Println("Mirenme, me morí en If contrato_estado get, solucioname!!! ", err)
 					logs.Error(err)
 					outputError = map[string]interface{}{"funcion": "/CertificadoVistoBueno", "err": err, "status": "502"}
 					return nil, outputError
@@ -144,7 +139,6 @@ func CertificadoVistoBueno(dependencia string, mes string, anio string) (persona
 		}
 
 	} else { //If vinculacion_docente get
-		//fmt.Println("Mirenme, me morí en If vinculacion_docente get, solucioname!!! ", err)
 		logs.Error(err)
 		outputError = map[string]interface{}{"funcion": "/CertificadoVistoBueno", "err": err, "status": "502"}
 		return nil, outputError

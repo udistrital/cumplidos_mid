@@ -3,7 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	_ "encoding/json"
-	"fmt"
+	_ "fmt"
 	"strconv"
 	_ "time"
 
@@ -81,9 +81,7 @@ func (c *SolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorCont
 func (c *SolicitudesOrdenadorContratistasController) AprobarMultiplesPagosContratistas() {
 	//defer helpers.GestionError(c)
 	defer func() {
-		fmt.Println("error 3")
 		if err := recover(); err != nil {
-			fmt.Println("error 4")
 			logs.Error(err)
 			respuesta := err.(map[string]interface{})
 			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorContratistasController" + "/" + (respuesta["funcion"]).(string))
@@ -101,11 +99,9 @@ func (c *SolicitudesOrdenadorContratistasController) AprobarMultiplesPagosContra
 		if err := helpers.AprobacionPagosContratistas(v); err == nil {
 			c.Data["json"] = "OK"
 		} else {
-			fmt.Println("error 2")
 			panic(err)
 		}
 	} else {
-		fmt.Println("error 1")
 		panic(map[string]interface{}{"funcion": "AprobarMultiplesPagosContratistas", "err": err.Error(), "status": "400"})
 	}
 
