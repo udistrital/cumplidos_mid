@@ -44,9 +44,9 @@ func (c *SolicitudesOrdenadorController) GetSolicitudesOrdenador() {
 		if err := recover(); err != nil {
 			logs.Error(err)
 			localError := err.(map[string]interface{})
-			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorController" + "/" + (respuesta["funcion"]).(string))
-			c.Data["data"] = (respuesta["err"])
-			if status, ok := respuesta["status"]; ok {
+			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorController" + "/" + (localError["funcion"]).(string))
+			c.Data["data"] = (localError["err"])
+			if status, ok := localError["status"]; ok {
 				c.Abort(status.(string))
 			} else {
 				c.Abort("404")
@@ -83,9 +83,9 @@ func (c *SolicitudesOrdenadorController) ObtenerDependenciaOrdenador() {
 		if err := recover(); err != nil {
 			logs.Error(err)
 			localError := err.(map[string]interface{})
-			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorController" + "/" + (respuesta["funcion"]).(string))
-			c.Data["data"] = (respuesta["err"])
-			if status, ok := respuesta["status"]; ok {
+			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorController" + "/" + (localError["funcion"]).(string))
+			c.Data["data"] = (localError["err"])
+			if status, ok := localError["status"]; ok {
 				c.Abort(status.(string))
 			} else {
 				c.Abort("404")
@@ -126,9 +126,9 @@ func (c *SolicitudesOrdenadorController) ObtenerInfoOrdenador() {
 		if err := recover(); err != nil {
 			logs.Error(err)
 			localError := err.(map[string]interface{})
-			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorController" + "/" + (respuesta["funcion"]).(string))
-			c.Data["data"] = (respuesta["err"])
-			if status, ok := respuesta["status"]; ok {
+			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorController" + "/" + (localError["funcion"]).(string))
+			c.Data["data"] = (localError["err"])
+			if status, ok := localError["status"]; ok {
 				c.Abort(status.(string))
 			} else {
 				c.Abort("404")
