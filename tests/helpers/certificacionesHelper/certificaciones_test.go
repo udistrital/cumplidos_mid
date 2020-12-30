@@ -14,6 +14,8 @@ var parameters struct {
 	NscrudAdministrativa string
 	ProtocolAdmin string
 	UrlcrudAdmin string
+	UrlcrudAgora string
+	NscrudAgora string
 	NscrudAdmin string
 	ProtocolCrudCumplidos string
 	UrlCrudCumplidos string
@@ -25,6 +27,8 @@ func TestMain(m *testing.M) {
 	parameters.NscrudAdministrativa = os.Getenv("NscrudAdministrativa")
 	parameters.ProtocolAdmin = os.Getenv("ProtocolAdmin")
 	parameters.UrlcrudAdmin = os.Getenv("UrlcrudAdmin")
+	parameters.UrlcrudAgora = os.Getenv("UrlcrudAgora")
+	parameters.NscrudAgora = os.Getenv("NscrudAgora")
 	parameters.NscrudAdmin = os.Getenv("NscrudAdmin")
 	parameters.ProtocolCrudCumplidos = os.Getenv("ProtocolCrudCumplidos")
 	parameters.UrlCrudCumplidos = os.Getenv("UrlCrudCumplidos")
@@ -33,6 +37,8 @@ func TestMain(m *testing.M) {
 	beego.AppConfig.Set("NscrudAdministrativa", parameters.NscrudAdministrativa)
 	beego.AppConfig.Set("ProtocolAdmin", parameters.ProtocolAdmin)
 	beego.AppConfig.Set("UrlcrudAdmin", parameters.UrlcrudAdmin)
+	beego.AppConfig.Set("UrlcrudAgora", parameters.UrlcrudAgora)
+	beego.AppConfig.Set("NscrudAgora", parameters.NscrudAgora)
 	beego.AppConfig.Set("NscrudAdmin", parameters.NscrudAdmin)
 	beego.AppConfig.Set("ProtocolCrudCumplidos", parameters.ProtocolCrudCumplidos)
 	beego.AppConfig.Set("UrlCrudCumplidos", parameters.UrlCrudCumplidos)
@@ -75,6 +81,10 @@ func TestEndPointCertificacion(t *testing.T) {
 	t.Log(parameters.ProtocolAdmin)
 	t.Log("Testing EndPoint UrlcrudAdmin")
 	t.Log(parameters.UrlcrudAdmin)
+	t.Log("Testing EndPoint UrlcrudAgora")
+	t.Log(parameters.UrlcrudAgora)
+	t.Log("Testing EndPoint NscrudAgora")
+	t.Log(parameters.NscrudAgora)
 	t.Log("Testing EndPoint NscrudAdmin")
 	t.Log(parameters.NscrudAdmin)
 	t.Log("Testing EndPoint ProtocolCrudCumplidos")

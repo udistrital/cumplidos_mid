@@ -2,7 +2,6 @@ package helpers
 
 import (
 	_ "encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/astaxie/beego/logs"
@@ -90,18 +89,13 @@ func CertificadoVistoBueno(dependencia string, mes string, anio string) (persona
 	var anio_cer, _ = strconv.Atoi(anio)
 	var respuesta_peticion map[string]interface{}
 	if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAdmin")+"/"+beego.AppConfig.String("NscrudAdmin")+"/vinculacion_docente/?limit=-1&query=IdProyectoCurricular:"+dependencia, &vinculaciones_docente); (err == nil) && (response == 200) {
-		fmt.Println("1")
 		for _, vinculacion_docente := range vinculaciones_docente {
 			if vinculacion_docente.NumeroContrato.Valid == true {
-
 				if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/acta_inicio/?query=NumeroContrato:"+vinculacion_docente.NumeroContrato.String+",Vigencia:"+strconv.FormatInt(vinculacion_docente.Vigencia.Int64, 10), &actasInicio); (err == nil) && (response == 200) {
-					fmt.Println("2")
 					for _, actaInicio := range actasInicio {
 						//If Estado = 4
 						if int(actaInicio.FechaInicio.Month()) <= mes_cer && actaInicio.FechaInicio.Year() <= anio_cer && int(actaInicio.FechaFin.Month()) >= mes_cer && actaInicio.FechaFin.Year() >= anio_cer {
-
 							if response, err := getJsonTest(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion.in:PAD|AD|AP,NumeroContrato:"+vinculacion_docente.NumeroContrato.String+",VigenciaContrato:"+strconv.FormatInt(vinculacion_docente.Vigencia.Int64, 10)+",Mes:"+mes+",Ano:"+anio, &respuesta_peticion); (err == nil) && (response == 200) {
-								fmt.Println("3")
 								pagos_mensuales = []models.PagoMensual{}
 								if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 									LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
@@ -109,9 +103,7 @@ func CertificadoVistoBueno(dependencia string, mes string, anio string) (persona
 									pagos_mensuales = nil
 								}
 								if pagos_mensuales == nil {
-									fmt.Println("pagos_mensuales nulo")
 									if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+vinculacion_docente.IdPersona, &contratistas); (err == nil) && (response == 200) {
-										fmt.Println("4")
 										for _, contratista := range contratistas {
 											persona.NumDocumento = contratista.NumDocumento
 											persona.Nombre = contratista.NomProveedor

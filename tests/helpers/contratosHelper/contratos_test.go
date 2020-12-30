@@ -5,24 +5,27 @@ import (
 	"os"
 	"testing"
 
-	_ "github.com/astaxie/beego"
+	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/helpers"
 )
 
 var parameters struct {
-	Certificacion string
+	UrlcrudWSO2 string
+	NscrudAdministrativa string
 }
 
 func TestMain(m *testing.M) {
-	parameters.Certificacion = os.Getenv("Certificacion")
-	//beego.AppConfig.Set("ActaRecibidoService", os.Getenv("ACTA_RECIBIDO_CRUD"))
+	parameters.UrlcrudWSO2 = os.Getenv("UrlcrudWSO2")
+	parameters.NscrudAdministrativa = os.Getenv("NscrudAdministrativa")
+	beego.AppConfig.Set("UrlcrudWSO2", parameters.UrlcrudWSO2)
+	beego.AppConfig.Set("NscrudAdministrativa", parameters.NscrudAdministrativa)
 	flag.Parse()
 	os.Exit(m.Run())
 }
 
-// CertificacionDocumentosAprobados ...
-func TestCertificacionDocumentosAprobados(t *testing.T) {
-	valor, err := helpers.CertificacionDocumentosAprobados("17", "2020", "6")
+// GetContratosDependencia ...
+func TestGetContratosDependencia(t *testing.T) {
+	valor, err := helpers.GetContratosDependencia("DEP12", "2020-03")
 	if err != nil {
 		t.Error("No se pudo consultar las actas de recibido", err)
 		t.Fail()
@@ -32,9 +35,21 @@ func TestCertificacionDocumentosAprobados(t *testing.T) {
 	}
 }
 
-// CertificadoVistoBueno ...
-func TestCertificadoVistoBueno(t *testing.T) {
-	valor, err := helpers.CertificadoVistoBueno("17", "2020", "6")
+// GetContratosDependenciaFiltro ...
+func TestGetContratosDependenciaFiltro(t *testing.T) {
+	valor, err := helpers.GetContratosDependenciaFiltro("DEP12", "2020-12", "2020-11")
+	if err != nil {
+		t.Error("No se pudo consultar las actas de recibido por tipo", err)
+		t.Fail()
+	} else {
+		t.Log(valor)
+		t.Log("TestGetActasRecibidoTipo Finalizado Correctamente (OK)")
+	}
+}
+
+// GetContratosOrdenadorDependencia ...
+func TestGetContratosOrdenadorDependencia(t *testing.T) {
+	valor, err := helpers.GetContratosOrdenadorDependencia("17", "4", "2019")
 	if err != nil {
 		t.Error("No se pudo consultar las actas de recibido por tipo", err)
 		t.Fail()
@@ -46,6 +61,8 @@ func TestCertificadoVistoBueno(t *testing.T) {
 
 
 func TestEndPointCertificacion(t *testing.T) {
-	t.Log("Testing EndPoint Certificacion")
-	t.Log(parameters.Certificacion)
+	t.Log("Testing EndPoint UrlcrudWSO2")
+	t.Log(parameters.UrlcrudWSO2)
+	t.Log("Testing EndPoint NscrudAdministrativa")
+	t.Log(parameters.NscrudAdministrativa)
 }
