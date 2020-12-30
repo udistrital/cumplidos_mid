@@ -5,21 +5,21 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego"
-	_"github.com/astaxie/beego/httplib"
+	_ "github.com/astaxie/beego/httplib"
+	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/models"
 )
 
 func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_ordenador models.InformacionOrdenador, outputError map[string]interface{}) {
-	
+
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = map[string]interface{}{"funcion": "/TraerInfoOrdenador", "err": err, "status": "502"}
 			panic(outputError)
 		}
 	}()
-	
+
 	var temp map[string]interface{}
 	var contrato_elaborado models.ContratoElaborado
 	var ordenadores_gasto []models.OrdenadorGasto
@@ -93,7 +93,7 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 				logs.Error(err)
 				outputError = map[string]interface{}{"funcion": "/TraerInfoOrdenador", "err": err.Error(), "status": "502"}
 				return informacion_ordenador, outputError
-				
+
 			}
 		} else {
 			fmt.Println(error_json.Error())
@@ -124,11 +124,12 @@ func SolicitudesOrdenador(doc_ordenador string, limit int, offset int) (pagos_pe
 	var pago_personas_proyecto models.PagoPersonaProyecto
 	var vinculaciones_docente []models.VinculacionDocente
 	var respuesta_peticion map[string]interface{}
+
 	if response, err := getJsonTest(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?offset="+strconv.Itoa(offset)+"&limit="+strconv.Itoa(limit)+"&query=EstadoPagoMensualId.CodigoAbreviacion:AD,DocumentoResponsableId:"+doc_ordenador, &respuesta_peticion); (err == nil) && (response == 200) {
 		pagos_mensuales = []models.PagoMensual{}
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
 		for x, pago_mensual := range pagos_mensuales {
-			if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago_mensual.DocumentoPersonaId, &contratistas); (err == nil) && (response == 200){
+			if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago_mensual.DocumentoPersonaId, &contratistas); (err == nil) && (response == 200) {
 				for _, contratista := range contratistas {
 					// se podria armar un metodo desde aca y usar gorutines para reducir el tiempo de carga de las peticiones?
 					if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAdmin")+"/"+beego.AppConfig.String("NscrudAdmin")+"/vinculacion_docente/?limit=-1&query=NumeroContrato:"+pago_mensual.NumeroContrato+",Vigencia:"+strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64), &vinculaciones_docente); (err == nil) && (response == 200) {
@@ -139,31 +140,31 @@ func SolicitudesOrdenador(doc_ordenador string, limit int, offset int) (pagos_pe
 								pago_personas_proyecto.NombrePersona = contratista.NomProveedor
 								pago_personas_proyecto.Dependencia = &dep
 								pagos_personas_proyecto = append(pagos_personas_proyecto, pago_personas_proyecto)
-	
+
 							} else { //If dependencia get
 								logs.Error(err)
-								outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenador", "err": err.Error(), "status": "502"}
+								outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenador1", "err": err.Error(), "status": "502"}
 								return nil, outputError
 							}
-	
+
 						}
-	
+
 					} else { // If vinculacion_docente_get
 						logs.Error(err)
-						outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenador", "err": err.Error(), "status": "502"}
+						outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenador2", "err": err.Error(), "status": "502"}
 						return nil, outputError
 					}
 				}
 			} else { //If informacion_proveedor get
 				logs.Error(err)
-				outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenador", "err": err.Error(), "status": "502"}
+				outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenador3", "err": err.Error(), "status": "502"}
 				return nil, outputError
 			}
 		}
 
-	}else{
+	} else {
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenador", "err": err.Error(), "status": "502"}
+		outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenador4", "err": err.Error(), "status": "502"}
 		return nil, outputError
 	}
 	return pagos_personas_proyecto, nil
@@ -180,8 +181,8 @@ func DependenciaOrdenador(doc_ordenador string) (dependenciaId int, outputError 
 
 	var ordenadores_gasto []models.OrdenadorGasto
 	var jefes_dependencia []models.JefeDependencia
-
-	if response ,err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudCore")+"/"+beego.AppConfig.String("NscrudCore")+"/jefe_dependencia/?query=TerceroId:"+doc_ordenador+"&sortby=FechaInicio&order=desc&limit=1", &jefes_dependencia); (err == nil) && (response == 200) {
+	// las consultas de la linea 164 y 187 se pueden unir y dejar una sola que use sql puro para relacionarlas
+	if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudCore")+"/"+beego.AppConfig.String("NscrudCore")+"/jefe_dependencia/?query=TerceroId:"+doc_ordenador+"&sortby=FechaInicio&order=desc&limit=1", &jefes_dependencia); (err == nil) && (response == 200) {
 		for _, jefe := range jefes_dependencia {
 
 			if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudCore")+"/"+beego.AppConfig.String("NscrudCore")+"/ordenador_gasto/?query=DependenciaId:"+strconv.Itoa(jefe.DependenciaId), &ordenadores_gasto); (err == nil) && (response == 200) {

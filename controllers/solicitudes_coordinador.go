@@ -32,7 +32,7 @@ func (c *SolicitudesCoordinadorController) GetSolicitudesCoordinador() {
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			respuesta := err.(map[string]interface{})
+			localError := err.(map[string]interface{})
 			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesCoordinadorController" + "/" + (respuesta["funcion"]).(string))
 			c.Data["data"] = (respuesta["err"])
 			if status, ok := respuesta["status"]; ok {

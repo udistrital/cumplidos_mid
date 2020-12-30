@@ -5,6 +5,7 @@ import (
 	_ "time"
 
 	"strconv"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	_ "github.com/astaxie/beego/logs"
@@ -42,7 +43,7 @@ func (c *SolicitudesOrdenadorController) GetSolicitudesOrdenador() {
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			respuesta := err.(map[string]interface{})
+			localError := err.(map[string]interface{})
 			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorController" + "/" + (respuesta["funcion"]).(string))
 			c.Data["data"] = (respuesta["err"])
 			if status, ok := respuesta["status"]; ok {
@@ -54,7 +55,7 @@ func (c *SolicitudesOrdenadorController) GetSolicitudesOrdenador() {
 	}()
 	_, err := strconv.Atoi(doc_ordenador)
 
-	if (err != nil){
+	if err != nil {
 		panic(map[string]interface{}{"funcion": "GetSolicitudesOrdenador", "err": "Error en los parametros de ingreso", "status": "400"})
 	}
 	//var v []models.PagoContratistaCdpRp
@@ -81,7 +82,7 @@ func (c *SolicitudesOrdenadorController) ObtenerDependenciaOrdenador() {
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			respuesta := err.(map[string]interface{})
+			localError := err.(map[string]interface{})
 			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorController" + "/" + (respuesta["funcion"]).(string))
 			c.Data["data"] = (respuesta["err"])
 			if status, ok := respuesta["status"]; ok {
@@ -94,7 +95,7 @@ func (c *SolicitudesOrdenadorController) ObtenerDependenciaOrdenador() {
 
 	_, err := strconv.Atoi(doc_ordenador)
 
-	if (err != nil){
+	if err != nil {
 		panic(map[string]interface{}{"funcion": "ObtenerDependenciaOrdenador", "err": "Error en los parametros de ingreso", "status": "400"})
 	}
 
@@ -124,7 +125,7 @@ func (c *SolicitudesOrdenadorController) ObtenerInfoOrdenador() {
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			respuesta := err.(map[string]interface{})
+			localError := err.(map[string]interface{})
 			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorController" + "/" + (respuesta["funcion"]).(string))
 			c.Data["data"] = (respuesta["err"])
 			if status, ok := respuesta["status"]; ok {
@@ -137,8 +138,8 @@ func (c *SolicitudesOrdenadorController) ObtenerInfoOrdenador() {
 
 	_, err1 := strconv.Atoi(numero_contrato)
 	_, err2 := strconv.Atoi(vigencia)
-	
-	if (err1 != nil) && (err2 != nil) && (len(vigencia) != 4){
+
+	if (err1 != nil) && (err2 != nil) && (len(vigencia) != 4) {
 		panic(map[string]interface{}{"funcion": "ObtenerDependenciaOrdenador", "err": "Error en los parametros de ingreso", "status": "400"})
 	}
 

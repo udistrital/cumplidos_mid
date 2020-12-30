@@ -6,6 +6,7 @@ import (
 
 	//"net/http"
 	"strconv"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/helpers"
@@ -36,7 +37,7 @@ func (c *SolicitudesSupervisorContratistasController) GetSolicitudesSupervisorCo
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			respuesta := err.(map[string]interface{})
+			localError := err.(map[string]interface{})
 			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesSupervisorContratistasController" + "/" + (respuesta["funcion"]).(string))
 			c.Data["data"] = (respuesta["err"])
 			if status, ok := respuesta["status"]; ok {
@@ -49,7 +50,7 @@ func (c *SolicitudesSupervisorContratistasController) GetSolicitudesSupervisorCo
 
 	_, err := strconv.Atoi(doc_supervisor)
 
-	if (err != nil){
+	if err != nil {
 		panic(map[string]interface{}{"funcion": "GetSolicitudesSupervisorContratistas", "err": "Error en los parametros de ingreso", "status": "400"})
 	}
 
