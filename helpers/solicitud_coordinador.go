@@ -47,26 +47,27 @@ func SolicitudCoordinador(doc_coordinador string) (pagos_personas_proyecto []mod
 
 							} else { //If dependencia get
 								logs.Error(err)
-								outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador", "err": err, "status": "502"}
+								outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador1", "err": err, "status": "502"}
 								return nil, outputError
 							}
 						}
 
 					} else { // If vinculacion_docente_get
 						logs.Error(err)
-						outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador", "err": err, "status": "502"}
+						outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador2", "err": err, "status": "502"}
 						return nil, outputError
 					}
 				}
 			} else { //If informacion_proveedor get
 				logs.Error(err)
-				outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador", "err": err, "status": "502"}
+				outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador3", "err": err, "status": "502"}
 				return nil, outputError
 			}
 		}
 	} else { //If pago_mensual get
+		//fmt.Println(beego.AppConfig.String("ProtocolCrudCumplidos") + "://" + beego.AppConfig.String("UrlCrudCumplidos") + "/" + beego.AppConfig.String("NsCrudCumplidos") + "/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:PRC,DocumentoResponsableId:" + doc_coordinador)
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador", "err": err, "status": "502"}
+		outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador4", "err": err, "status": "502"}
 		return nil, outputError
 	}
 

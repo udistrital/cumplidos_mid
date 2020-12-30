@@ -5,6 +5,7 @@ import (
 	//"net/http"
 	_ "fmt"
 	"strconv"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/helpers"
@@ -32,7 +33,7 @@ func (c *ContratosContratistaController) GetContratosContratista() {
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			respuesta := err.(map[string]interface{})
+			localError := err.(map[string]interface{})
 			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "ContratosContratistaController" + "/" + (respuesta["funcion"]).(string))
 			c.Data["data"] = (respuesta["err"])
 			if status, ok := respuesta["status"]; ok {
@@ -46,13 +47,13 @@ func (c *ContratosContratistaController) GetContratosContratista() {
 	numero_documento := c.GetString(":numero_documento")
 	_, err := strconv.Atoi(numero_documento)
 
-	if (err != nil){
+	if err != nil {
 		panic(map[string]interface{}{"funcion": "GetContratosContratista", "err": "Error en los parametros de ingreso", "status": "400"})
 	}
 
-	if contratos_disponibilidad_rp, err := helpers.ContratosContratista(numero_documento); (err == nil) || (len(contratos_disponibilidad_rp) != 0){
+	if contratos_disponibilidad_rp, err := helpers.ContratosContratista(numero_documento); (err == nil) || (len(contratos_disponibilidad_rp) != 0) {
 		c.Data["json"] = contratos_disponibilidad_rp
-	}else{
+	} else {
 		panic(err)
 	}
 	c.ServeJSON()

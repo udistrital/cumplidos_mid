@@ -45,7 +45,7 @@ func (c *SolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorCont
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			respuesta := err.(map[string]interface{})
+			localError := err.(map[string]interface{})
 			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorContratistasController" + "/" + (respuesta["funcion"]).(string))
 			c.Data["data"] = (respuesta["err"])
 			if status, ok := respuesta["status"]; ok {
@@ -83,7 +83,7 @@ func (c *SolicitudesOrdenadorContratistasController) AprobarMultiplesPagosContra
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			respuesta := err.(map[string]interface{})
+			localError := err.(map[string]interface{})
 			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorContratistasController" + "/" + (respuesta["funcion"]).(string))
 			c.Data["data"] = (respuesta["err"])
 			if status, ok := respuesta["status"]; ok {
@@ -129,7 +129,7 @@ func (c *SolicitudesOrdenadorContratistasController) CertificacionCumplidosContr
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			respuesta := err.(map[string]interface{})
+			localError := err.(map[string]interface{})
 			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorContratistasController" + "/" + (respuesta["funcion"]).(string))
 			c.Data["data"] = (respuesta["err"])
 			if status, ok := respuesta["status"]; ok {
@@ -178,7 +178,7 @@ func (c *SolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorCont
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			respuesta := err.(map[string]interface{})
+			localError := err.(map[string]interface{})
 			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorContratistasController" + "/" + (respuesta["funcion"]).(string))
 			c.Data["data"] = (respuesta["err"])
 			if status, ok := respuesta["status"]; ok {
