@@ -2,6 +2,7 @@ package helpers
 
 import (
 	_ "encoding/json"
+	"fmt"
 	_ "fmt"
 	"strconv"
 	_ "time"
@@ -65,8 +66,10 @@ func SolicitudCoordinador(doc_coordinador string) (pagos_personas_proyecto []mod
 			}
 		}
 	} else { //If pago_mensual get
-		//fmt.Println(beego.AppConfig.String("ProtocolCrudCumplidos") + "://" + beego.AppConfig.String("UrlCrudCumplidos") + "/" + beego.AppConfig.String("NsCrudCumplidos") + "/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:PRC,DocumentoResponsableId:" + doc_coordinador)
+
 		logs.Error(err)
+		fmt.Println("response ", response)
+		fmt.Println("url: ", beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:PRC,DocumentoResponsableId:"+doc_coordinador)
 		outputError = map[string]interface{}{"funcion": "/SolicitudCoordinador4", "err": err, "status": "502"}
 		return nil, outputError
 	}

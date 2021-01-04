@@ -74,7 +74,7 @@ func (c *CertificacionController) GetCertificacionDocumentosAprobados() {
 // @Description create CertificacionVistoBueno
 // @Param dependencia path int true "Dependencia del contrato en la tabla vinculacion"
 // @Param mes path int true "Mes del pago mensual"
-// @Param anio path int true "Año del pago mensual"
+// @Param ano path int true "Año del pago mensual"
 // @Success 200 {object} []models.Persona
 // @Failure 404 not found source
 // @router /certificacion_visto_bueno/:dependencia/:mes/:ano [get]

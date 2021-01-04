@@ -2,6 +2,7 @@ package helpers
 
 import (
 	_ "encoding/json"
+	"fmt"
 	"strconv"
 
 	"github.com/astaxie/beego/logs"
@@ -14,7 +15,7 @@ func CertificacionDocumentosAprobados(dependencia string, anio string, mes strin
 
 	defer func() {
 		if err := recover(); err != nil {
-			outputError = map[string]interface{}{"funcion": "/CertificacionDocumentosAprobados", "err": err, "status": "502"}
+			outputError = map[string]interface{}{"funcion": "/CertificacionDocumentosAprobados3", "err": err, "status": "502"}
 			panic(outputError)
 		}
 	}()
@@ -33,6 +34,7 @@ func CertificacionDocumentosAprobados(dependencia string, anio string, mes strin
 	}
 
 	if contrato_ordenador_dependencia, outputError = GetContratosOrdenadorDependencia(dependencia, anio+"-"+mes, anio+"-"+mes); outputError != nil {
+		outputError["funcion"] = "/CertificacionDocumentosAprobados" + fmt.Sprintf("%v", outputError["funcion"])
 		return nil, outputError
 	}
 
@@ -58,14 +60,14 @@ func CertificacionDocumentosAprobados(dependencia string, anio string, mes strin
 						}
 					} else { //If informacion_proveedor get
 						logs.Error(err)
-						outputError = map[string]interface{}{"funcion": "/CertificacionDocumentosAprobados", "err": err, "status": "502"}
+						outputError = map[string]interface{}{"funcion": "/CertificacionDocumentosAprobados1", "err": err.Error(), "status": "502"}
 						return nil, outputError
 					}
 				}
 			}
 		} else { //If vinculacion_docente get
 			logs.Error(err)
-			outputError = map[string]interface{}{"funcion": "/CertificacionDocumentosAprobados", "err": err, "status": "502"}
+			outputError = map[string]interface{}{"funcion": "/CertificacionDocumentosAprobados2", "err": err.Error(), "status": "502"}
 			return nil, outputError
 		}
 	}
@@ -113,7 +115,7 @@ func CertificadoVistoBueno(dependencia string, mes string, anio string) (persona
 										}
 									} else { //If informacion_proveedor get
 										logs.Error(err)
-										outputError = map[string]interface{}{"funcion": "/CertificadoVistoBueno", "err": err, "status": "502"}
+										outputError = map[string]interface{}{"funcion": "/CertificadoVistoBueno1", "err": err, "status": "502"}
 										return nil, outputError
 									}
 
@@ -121,14 +123,14 @@ func CertificadoVistoBueno(dependencia string, mes string, anio string) (persona
 
 							} else { //If pago_mensual get
 								logs.Error(err)
-								outputError = map[string]interface{}{"funcion": "/CertificadoVistoBueno", "err": err, "status": "502"}
+								outputError = map[string]interface{}{"funcion": "/CertificadoVistoBueno2", "err": err.Error(), "status": "502"}
 								return nil, outputError
 							}
 						}
 					}
 				} else { //If contrato_estado get
 					logs.Error(err)
-					outputError = map[string]interface{}{"funcion": "/CertificadoVistoBueno", "err": err, "status": "502"}
+					outputError = map[string]interface{}{"funcion": "/CertificadoVistoBueno3", "err": err.Error(), "status": "502"}
 					return nil, outputError
 				}
 			}
@@ -136,7 +138,7 @@ func CertificadoVistoBueno(dependencia string, mes string, anio string) (persona
 
 	} else { //If vinculacion_docente get
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/CertificadoVistoBueno", "err": err, "status": "502"}
+		outputError = map[string]interface{}{"funcion": "/CertificadoVistoBueno4", "err": err.Error(), "status": "502"}
 		return nil, outputError
 	}
 	return
