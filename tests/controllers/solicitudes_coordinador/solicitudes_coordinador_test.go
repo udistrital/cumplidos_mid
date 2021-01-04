@@ -5,10 +5,7 @@ import (
 	"testing"
 )
 
-func TestEndPoint(t *testing.T) {
-	//var data1 map[string]interface{}
-	//var data2 []interface{}
-	//var data3 interface{}
+func TestGetSolicitudesCoordinador(t *testing.T) {
 
 	if response, err := http.Get("http://localhost:8090/v1/solicitudes_coordinador/19346572"); err == nil {
 		if response.StatusCode != 200 {
@@ -24,10 +21,7 @@ func TestEndPoint(t *testing.T) {
 
 }
 
-func TestEndPointError(t *testing.T) {
-	//var data1 map[string]interface{}
-	//var data2 []interface{}
-	//var data3 interface{}
+func TesGetSolicitudesCoordinadorError(t *testing.T) {
 
 	if response, err := http.Get("http://localhost:8090/v1/solicitudes_coordinador/1"); err == nil {
 		if response.StatusCode != 400 {
