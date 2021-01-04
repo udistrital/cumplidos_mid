@@ -47,7 +47,7 @@ func (c *ContratosContratistaController) GetContratosContratista() {
 	numero_documento := c.GetString(":numero_documento")
 	_, err := strconv.Atoi(numero_documento)
 
-	if err != nil {
+	if err != nil || len(numero_documento) < 2 {
 		panic(map[string]interface{}{"funcion": "GetContratosContratista", "err": "Error en los parametros de ingreso", "status": "400"})
 	}
 
