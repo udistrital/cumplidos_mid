@@ -38,7 +38,7 @@ func sendJson(url string, trequest string, target interface{}, datajson interfac
 	return json.NewDecoder(r.Body).Decode(target)
 }
 
-func getJsonTest(url string, target interface{}) (status int ,err error) {
+func getJsonTest(url string, target interface{}) (status int, err error) {
 	r, err := http.Get(url)
 	if err != nil {
 		return r.StatusCode, err
@@ -49,7 +49,7 @@ func getJsonTest(url string, target interface{}) (status int ,err error) {
 		}
 	}()
 
-	return  r.StatusCode, json.NewDecoder(r.Body).Decode(target)
+	return r.StatusCode, json.NewDecoder(r.Body).Decode(target)
 }
 
 func getJson(url string, target interface{}) error {
@@ -113,7 +113,7 @@ func getJsonWSO2(urlp string, target interface{}) error {
 	return json.NewDecoder(r.Body).Decode(target)
 }
 
-func getJsonWSO2Test(urlp string, target interface{}) (status int ,err error) {
+func getJsonWSO2Test(urlp string, target interface{}) (status int, err error) {
 	b := new(bytes.Buffer)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", urlp, b)
