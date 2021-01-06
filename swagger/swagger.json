@@ -41,7 +41,7 @@
                     },
                     {
                         "in": "path",
-                        "name": "anio",
+                        "name": "ano",
                         "description": "Año del pago mensual",
                         "required": true,
                         "type": "integer",

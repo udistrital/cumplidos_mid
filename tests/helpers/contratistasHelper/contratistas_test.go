@@ -2,7 +2,6 @@ package contratistasHelper
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"testing"
 
@@ -125,7 +124,6 @@ func TestAprobacionPagosContratistas(t *testing.T) {
 			Rubro:             "Funcionamiento",
 		},
 	}
-	fmt.Println(arregloPrueba)
 	err := helpers.AprobacionPagosContratistas(arregloPrueba)
 	if err != nil {
 		t.Error("No se pudo generar la aprobación de pagos", err)
@@ -138,7 +136,7 @@ func TestAprobacionPagosContratistas(t *testing.T) {
 // SolicitudesOrdenadorContratistas ...
 func TestSolicitudesOrdenadorContratistas(t *testing.T) {
 	t.Log("-----------------------------------------------------")
-	valor, err := helpers.SolicitudesOrdenadorContratistas("52204982", 0, 0)
+	valor, err := helpers.SolicitudesOrdenadorContratistas("52204982", 5, 0)
 	if err != nil {
 		t.Error("No se pudo consultar las solicitudes de contratistas correspondientes a un ordenador por: ", err)
 		t.Fail()

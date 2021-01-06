@@ -136,10 +136,9 @@ func (c *SolicitudesOrdenadorController) ObtenerInfoOrdenador() {
 		}
 	}()
 
-	_, err1 := strconv.Atoi(numero_contrato)
-	_, err2 := strconv.Atoi(vigencia)
+	_, err1 := strconv.Atoi(vigencia)
 
-	if (err1 != nil) && (err2 != nil) && (len(vigencia) != 4) {
+	if (err1 != nil) || (len(vigencia) != 4) {
 		panic(map[string]interface{}{"funcion": "ObtenerDependenciaOrdenador", "err": "Error en los parametros de ingreso", "status": "400"})
 	}
 
