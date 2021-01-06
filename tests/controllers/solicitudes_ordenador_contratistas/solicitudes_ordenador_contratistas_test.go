@@ -102,7 +102,7 @@ func TestAprobarMultiplesPagosContratistas(t *testing.T) {
 	if err == nil {
 		t.Log("TestEndPoint Finalizado Correctamente (OK)")
 	} else {
-		t.Error("Error TestEndPoint: Se esperaba 200 y se obtuvo", r.StatusCode)
+		t.Error("Error TestEndPoint: Se esperaba 201 y se obtuvo", r.StatusCode)
 		t.Fail()
 	}
 }

@@ -64,7 +64,8 @@ func (c *SolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorCont
 		panic(err)
 
 	} else {
-		c.Data["json"] = pagos_contratista_cdp_rp
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": pagos_contratista_cdp_rp}
 	}
 
 	c.ServeJSON()
@@ -97,7 +98,9 @@ func (c *SolicitudesOrdenadorContratistasController) AprobarMultiplesPagosContra
 	var v []models.PagoContratistaCdpRp
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
 		if err := helpers.AprobacionPagosContratistas(v); err == nil {
-			c.Data["json"] = "OK"
+			//c.Data["json"] = "OK"
+			c.Ctx.Output.SetStatus(201)
+			c.Data["json"] = map[string]interface{}{"Success": true, "Status": "201", "Message": "Successful", "Data": "OK"}
 		} else {
 			panic(err)
 		}
@@ -114,7 +117,7 @@ func (c *SolicitudesOrdenadorContratistasController) AprobarMultiplesPagosContra
 // @Param dependencia path string true "Dependencia supervisor"
 // @Param mes path string true "Mes del certificado"
 // @Param ano path string true "Año del certificado "
-// @Success 201 {object} []models.Persona
+// @Success 200 {object} []models.Persona
 // @Failure 403 :dependencia is empty
 // @Failure 403 :mes is empty
 // @Failure 403 :ano is empty
@@ -149,7 +152,8 @@ func (c *SolicitudesOrdenadorContratistasController) CertificacionCumplidosContr
 
 	//var v []models.PagoContratistaCdpRp
 	if personas, err := helpers.CertificacionCumplidosContratistas(dependencia, mes, ano); err == nil {
-		c.Data["json"] = personas
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": personas}
 	} else {
 		panic(err)
 	}
@@ -164,7 +168,7 @@ func (c *SolicitudesOrdenadorContratistasController) CertificacionCumplidosContr
 // @Param cod_dependencia path string true "cod_dependencia"
 // @Param	limit	query	string	false	"Limit the size of result set. Must be an integer"
 // @Param	offset	query	string	false	"Start position of result set. Must be an integer"
-// @Success 201
+// @Success 200
 // @Failure 403 :docordenador is empty
 // @router /solicitudes_dependencia/:docordenador/:cod_dependencia [get]
 func (c *SolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorContratistasDependencia() {
@@ -201,7 +205,8 @@ func (c *SolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorCont
 			panic(err)
 		}
 	} else {
-		c.Data["json"] = pagos_contratista_cdp_rp
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": pagos_contratista_cdp_rp}
 	}
 	c.ServeJSON()
 

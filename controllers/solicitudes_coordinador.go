@@ -57,7 +57,8 @@ func (c *SolicitudesCoordinadorController) GetSolicitudesCoordinador() {
 		}
 
 	} else {
-		c.Data["json"] = pagos_personas_proyecto
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": pagos_personas_proyecto}
 	}
 
 	c.ServeJSON()
