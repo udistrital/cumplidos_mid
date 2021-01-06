@@ -98,7 +98,7 @@
                     }
                 ],
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": ""
                     },
                     "403": {
@@ -222,7 +222,7 @@
                     }
                 ],
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "{int} models.InformacionOrdenador"
                     },
                     "403": {
@@ -325,7 +325,7 @@
                     }
                 ],
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "",
                         "schema": {
                             "type": "array",
@@ -420,7 +420,7 @@
                     }
                 ],
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": ""
                     },
                     "403": {
@@ -446,7 +446,7 @@
                     }
                 ],
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": ""
                     },
                     "403": {

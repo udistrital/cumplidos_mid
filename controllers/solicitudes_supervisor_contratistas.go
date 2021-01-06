@@ -26,7 +26,7 @@ func (c *SolicitudesSupervisorContratistasController) URLMapping() {
 // @Title GetSolicitudesSupervisorContratistas
 // @Description create GetSolicitudesSupervisorContratistas
 // @Param docsupervisor path string true "Número del documento del supervisor"
-// @Success 201
+// @Success 200
 // @Failure 403 :docsupervisor is empty
 // @router /:docsupervisor [get]
 func (c *SolicitudesSupervisorContratistasController) GetSolicitudesSupervisorContratistas() {
@@ -55,7 +55,9 @@ func (c *SolicitudesSupervisorContratistasController) GetSolicitudesSupervisorCo
 	}
 
 	if pagos_contratista_cdp_rp, err := helpers.ContratosContratistaSupervisor(doc_supervisor); err == nil || len(pagos_contratista_cdp_rp) != 0 {
-		c.Data["json"] = pagos_contratista_cdp_rp
+		//c.Data["json"] = pagos_contratista_cdp_rp
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": pagos_contratista_cdp_rp}
 	} else {
 		panic(err)
 	}

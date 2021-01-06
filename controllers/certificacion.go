@@ -27,7 +27,7 @@ func (c *CertificacionController) URLMapping() {
 // @Param dependencia path int true "Dependencia del contrato en la tabla ordenador_gasto"
 // @Param mes path int true "Mes del pago mensual"
 // @Param ano path int true "Año del pago mensual"
-// @Success 201
+// @Success 200
 // @Failure 403 :dependencia is empty
 // @Failure 403 :mes is empty
 // @Failure 403 :ano is empty
@@ -60,7 +60,8 @@ func (c *CertificacionController) GetCertificacionDocumentosAprobados() {
 	}
 
 	if personas, err := helpers.CertificacionDocumentosAprobados(dependencia, ano, mes); err == nil {
-		c.Data["json"] = personas
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": personas}
 	} else {
 		panic(err)
 	}
@@ -113,7 +114,8 @@ func (c *CertificacionController) CertificacionVistoBueno() {
 		}
 
 	} else {
-		c.Data["json"] = personas
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": personas}
 	}
 	c.ServeJSON()
 }

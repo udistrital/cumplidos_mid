@@ -52,7 +52,8 @@ func (c *ContratosContratistaController) GetContratosContratista() {
 	}
 
 	if contratos_disponibilidad_rp, err := helpers.ContratosContratista(numero_documento); (err == nil) || (len(contratos_disponibilidad_rp) != 0) {
-		c.Data["json"] = contratos_disponibilidad_rp
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": contratos_disponibilidad_rp}
 	} else {
 		panic(err)
 	}
