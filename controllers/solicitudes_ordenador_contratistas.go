@@ -34,7 +34,7 @@ func (c *SolicitudesOrdenadorContratistasController) URLMapping() {
 // @Param	limit	query	string	false	"Limit the size of result set. Must be an integer"
 // @Param	offset	query	string	false	"Start position of result set. Must be an integer"
 // @Success 200 {object} []models.PagoContratistaCdpRp
-// @Failure 403 :docordenador is empty
+// @Failure 404 not found resource
 // @router /solicitudes/:docordenador [get]
 func (c *SolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorContratistas() {
 
@@ -118,9 +118,7 @@ func (c *SolicitudesOrdenadorContratistasController) AprobarMultiplesPagosContra
 // @Param mes path string true "Mes del certificado"
 // @Param ano path string true "Año del certificado "
 // @Success 200 {object} []models.Persona
-// @Failure 403 :dependencia is empty
-// @Failure 403 :mes is empty
-// @Failure 403 :ano is empty
+// @Failure 404 not found resource
 // @router /certificaciones/:dependencia/:mes/:ano [get]
 func (c *SolicitudesOrdenadorContratistasController) CertificacionCumplidosContratistas() {
 
@@ -168,8 +166,8 @@ func (c *SolicitudesOrdenadorContratistasController) CertificacionCumplidosContr
 // @Param cod_dependencia path string true "cod_dependencia"
 // @Param	limit	query	string	false	"Limit the size of result set. Must be an integer"
 // @Param	offset	query	string	false	"Start position of result set. Must be an integer"
-// @Success 200
-// @Failure 403 :docordenador is empty
+// @Success 200 {object} []models.PagoContratistaCdpRp
+// @Failure 404 not found resource
 // @router /solicitudes_dependencia/:docordenador/:cod_dependencia [get]
 func (c *SolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorContratistasDependencia() {
 

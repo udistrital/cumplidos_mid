@@ -99,10 +99,16 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Persona"
+                            }
+                        }
                     },
-                    "403": {
-                        "description": ":ano is empty"
+                    "404": {
+                        "description": "not found resource"
                     }
                 }
             }
@@ -191,8 +197,8 @@
                     "200": {
                         "description": "int"
                     },
-                    "403": {
-                        "description": ":docordenador is empty"
+                    "404": {
+                        "description": "not found resource"
                     }
                 }
             }
@@ -223,10 +229,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "{int} models.InformacionOrdenador"
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.InformacionOrdenador"
+                        }
                     },
-                    "403": {
-                        "description": ":vigencia is empty"
+                    "404": {
+                        "description": "not found resource"
                     }
                 }
             }
@@ -257,8 +266,8 @@
                             }
                         }
                     },
-                    "403": {
-                        "description": ":docordenador is empty"
+                    "404": {
+                        "description": "not found resource"
                     }
                 }
             }
@@ -334,8 +343,8 @@
                             }
                         }
                     },
-                    "403": {
-                        "description": ":ano is empty"
+                    "404": {
+                        "description": "not found resource"
                     }
                 }
             }
@@ -378,8 +387,8 @@
                             }
                         }
                     },
-                    "403": {
-                        "description": ":docordenador is empty"
+                    "404": {
+                        "description": "not found resource"
                     }
                 }
             }
@@ -421,10 +430,16 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.PagoContratistaCdpRp"
+                            }
+                        }
                     },
-                    "403": {
-                        "description": ":docordenador is empty"
+                    "404": {
+                        "description": "not found resource"
                     }
                 }
             }
@@ -447,10 +462,16 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.PagoContratistaCdpRp"
+                            }
+                        }
                     },
-                    "403": {
-                        "description": ":docsupervisor is empty"
+                    "404": {
+                        "description": "not found resource"
                     }
                 }
             }
@@ -529,6 +550,26 @@
                 "NumeroOrden": {
                     "type": "number",
                     "format": "double"
+                }
+            }
+        },
+        "models.InformacionOrdenador": {
+            "title": "InformacionOrdenador",
+            "type": "object",
+            "properties": {
+                "Cargo": {
+                    "type": "string"
+                },
+                "IdDependencia": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Nombre": {
+                    "type": "string"
+                },
+                "NumeroDocumento": {
+                    "type": "integer",
+                    "format": "int64"
                 }
             }
         },

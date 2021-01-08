@@ -27,10 +27,8 @@ func (c *CertificacionController) URLMapping() {
 // @Param dependencia path int true "Dependencia del contrato en la tabla ordenador_gasto"
 // @Param mes path int true "Mes del pago mensual"
 // @Param ano path int true "Año del pago mensual"
-// @Success 200
-// @Failure 403 :dependencia is empty
-// @Failure 403 :mes is empty
-// @Failure 403 :ano is empty
+// @Success 200 {object} []models.Persona
+// @Failure 404 not found resource
 // @router /documentos_aprobados/:dependencia/:mes/:ano [get]
 func (c *CertificacionController) GetCertificacionDocumentosAprobados() {
 

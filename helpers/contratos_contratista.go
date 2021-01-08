@@ -95,7 +95,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 
 													} else { // If contrato_disponibilidad get
 														logs.Error(err)
-														outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
+														outputError = map[string]interface{}{"funcion": "/contratosContratista1", "err": err, "status": "502"}
 														return nil, outputError
 													}
 												}
@@ -106,7 +106,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 
 									} else { // If novedad_postcontractual get
 										logs.Error(err)
-										outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
+										outputError = map[string]interface{}{"funcion": "/contratosContratista2", "err": err, "status": "502"}
 										return nil, outputError
 									}
 								} else {
@@ -119,14 +119,14 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 
 					} else { // If novedad_postcontractual get
 						logs.Error(err)
-						outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
+						outputError = map[string]interface{}{"funcion": "/contratosContratista3", "err": err, "status": "502"}
 						return nil, outputError
 					}
 				}
 
 			} else { // If informacion_proveedor get
 				logs.Error(err)
-				outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
+				outputError = map[string]interface{}{"funcion": "/contratosContratista4", "err": err, "status": "502"}
 				return nil, outputError
 			}
 
