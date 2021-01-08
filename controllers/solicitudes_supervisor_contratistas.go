@@ -26,8 +26,8 @@ func (c *SolicitudesSupervisorContratistasController) URLMapping() {
 // @Title GetSolicitudesSupervisorContratistas
 // @Description create GetSolicitudesSupervisorContratistas
 // @Param docsupervisor path string true "Número del documento del supervisor"
-// @Success 200
-// @Failure 403 :docsupervisor is empty
+// @Success 200 {object}  []models.PagoContratistaCdpRp
+// @Failure 404 not found resource
 // @router /:docsupervisor [get]
 func (c *SolicitudesSupervisorContratistasController) GetSolicitudesSupervisorContratistas() {
 
