@@ -28,7 +28,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 	var informacion_proveedores []models.InformacionProveedor
 	contratos_persona, outputError := GetContratosPersona(numero_documento)
 	if outputError == nil {
-		if contratos_persona.ContratosPersonas.ContratoPersona == nil { // Si no tiene contrato
+		//if contratos_persona.ContratosPersonas.ContratoPersona == nil { // Si no tiene contrato
 			if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+numero_documento, &informacion_proveedores); (err == nil) && (response == 200) {
 				for _, persona := range informacion_proveedores {
 					if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/novedad_postcontractual/?query=Contratista:"+strconv.Itoa(persona.Id)+"&sortby=FechaInicio&order=desc&limit=1", &novedades_postcontractuales); (err == nil) && (response == 200) {
@@ -43,8 +43,8 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 									if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/novedad_postcontractual/?query=NumeroContrato:"+novedad.NumeroContrato+",Vigencia:"+strconv.Itoa(novedad.Vigencia)+"&sortby=FechaInicio&order=desc&limit=1", &novedades_novedad); (err == nil) && (response == 200) {
 										for _, novedad_novedad := range novedades_novedad {
 											if novedad_novedad != novedad {
-												if (novedad_novedad.FechaInicio.Year() == time.Now().Year() && int(novedad_novedad.FechaFin.Month()) >= int(time.Now().Month()) && novedad_novedad.FechaFin.Year() == time.Now().Year()) ||
-													(novedad_novedad.FechaInicio.Year() <= time.Now().Year() && int(novedad_novedad.FechaFin.Month()) <= int(time.Now().Month()) && novedad_novedad.FechaFin.Year() >= time.Now().Year() && novedad_novedad.FechaFin.Year() > novedad_novedad.FechaInicio.Year()) {
+												if (novedad_novedad.FechaInicio.Year() == time.Now().Year() && int(novedad_novedad.FechaFin.Month()) >= int(time.Now().Month())-2 && novedad_novedad.FechaFin.Year() == time.Now().Year()) ||
+													(novedad_novedad.FechaInicio.Year() <= time.Now().Year() && int(novedad_novedad.FechaFin.Month()) >= int(time.Now().Month())-2 && novedad_novedad.FechaFin.Year() >= time.Now().Year() && novedad_novedad.FechaFin.Year() > novedad_novedad.FechaInicio.Year()) {
 													if novedad_novedad.TipoNovedad == 219 { // si es una cesión
 													} else {
 														var cdprp models.InformacionCdpRp
@@ -68,8 +68,8 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 													}
 												}
 											} else {
-												if (novedad.FechaInicio.Year() == time.Now().Year() && int(novedad.FechaFin.Month()) >= int(time.Now().Month()) && novedad.FechaFin.Year() == time.Now().Year()) ||
-													(novedad.FechaInicio.Year() <= time.Now().Year() && int(novedad.FechaFin.Month()) <= int(time.Now().Month()) && novedad.FechaFin.Year() >= time.Now().Year() && novedad.FechaFin.Year() > novedad.FechaInicio.Year()) {
+												if (novedad.FechaInicio.Year() == time.Now().Year() && int(novedad.FechaFin.Month()) >= int(time.Now().Month())-2 && novedad.FechaFin.Year() == time.Now().Year()) ||
+													(novedad.FechaInicio.Year() <= time.Now().Year() && int(novedad.FechaFin.Month()) >= int(time.Now().Month())-2 && novedad.FechaFin.Year() >= time.Now().Year() && novedad.FechaFin.Year() > novedad.FechaInicio.Year()) {
 													if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
 														for _, contrato_disponibilidad := range contratos_disponibilidad {
 															var cdprp models.InformacionCdpRp
@@ -130,7 +130,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 				return nil, outputError
 			}
 
-		} else { // si tiene contrato
+		//} else { // si tiene contrato
 			for _, contrato_persona := range contratos_persona.ContratosPersonas.ContratoPersona {
 				var contrato models.InformacionContrato
 				contrato, outputError = GetContrato(contrato_persona.NumeroContrato, contrato_persona.Vigencia)
@@ -261,7 +261,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 					return nil, outputError
 				}
 			}
-		}
+		//}
 	} else {
 		return nil, outputError
 	}
