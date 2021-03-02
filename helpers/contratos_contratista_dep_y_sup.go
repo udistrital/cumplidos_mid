@@ -180,7 +180,7 @@ func ContratosContratistaSupervisor(doc_supervisor string) (pagos_contratista_cd
 		
 							} else { // If contrato_disponibilidad get
 								logs.Error(err)
-								outputError = map[string]interface{}{"funcion": "/ContratosContratistaSupervisor", "err": err, "status": "502"}
+								outputError = map[string]interface{}{"funcion": "/ContratosContratistaSupervisor3", "err": err, "status": "502"}
 								return nil, outputError
 							}
 						}else{
@@ -193,14 +193,14 @@ func ContratosContratistaSupervisor(doc_supervisor string) (pagos_contratista_cd
 				}
 			} else { //If informacion_proveedor get
 				logs.Error(err)
-				outputError = map[string]interface{}{"funcion": "/ContratosContratistaSupervisor", "err": err, "status": "502"}
+				outputError = map[string]interface{}{"funcion": "/ContratosContratistaSupervisor2", "err": err, "status": "502"}
 				return nil, outputError
 			}
 
 		}
 	} else { //If pago_mensual get
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/ContratosContratistaSupervisor", "err": err, "status": "502"}
+		outputError = map[string]interface{}{"funcion": "/ContratosContratistaSupervisor1", "err": err, "status": "502"}
 		return nil, outputError
 	}
 	return
