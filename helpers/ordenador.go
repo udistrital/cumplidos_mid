@@ -28,20 +28,20 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 	//var informacion_ordenador models.InformacionOrdenador
 	var ordenadores []models.Ordenador
 
-	if response, err := getJsonWSO2Test("http://"+beego.AppConfig.String("UrlcrudWSO2")+"/"+beego.AppConfig.String("NscrudAdministrativa")+"/"+"contrato_elaborado/"+numero_contrato+"/"+vigencia, &temp); err == nil && temp != nil && response == 200 {
+	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contrato_elaborado/"+numero_contrato+"/"+vigencia, &temp); err == nil && temp != nil && response == 200 {
 		json_contrato_elaborado, error_json := json.Marshal(temp)
 		if error_json == nil {
 			if err := json.Unmarshal(json_contrato_elaborado, &contrato_elaborado); err == nil {
 				if contrato_elaborado.Contrato.TipoContrato == "2" || contrato_elaborado.Contrato.TipoContrato == "3" || contrato_elaborado.Contrato.TipoContrato == "18" {
-					if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudCore")+"/"+beego.AppConfig.String("NscrudCore")+"/ordenador_gasto/?query=Id:"+contrato_elaborado.Contrato.OrdenadorGasto, &ordenadores_gasto); (err == nil) && (response == 200) {
+					if response, err := getJsonTest(beego.AppConfig.String("UrlcrudCore")+"/ordenador_gasto/?query=Id:"+contrato_elaborado.Contrato.OrdenadorGasto, &ordenadores_gasto); (err == nil) && (response == 200) {
 
 						for _, ordenador_gasto := range ordenadores_gasto {
 
-							if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudCore")+"/"+beego.AppConfig.String("NscrudCore")+"/jefe_dependencia/?query=DependenciaId:"+strconv.Itoa(ordenador_gasto.DependenciaId)+"&sortby=FechaInicio&order=desc&limit=1", &jefes_dependencia); (err == nil) && (response == 200) {
+							if response, err := getJsonTest(beego.AppConfig.String("UrlcrudCore")+"/jefe_dependencia/?query=DependenciaId:"+strconv.Itoa(ordenador_gasto.DependenciaId)+"&sortby=FechaInicio&order=desc&limit=1", &jefes_dependencia); (err == nil) && (response == 200) {
 
 								for _, jefe_dependencia := range jefes_dependencia {
 
-									if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+strconv.Itoa(jefe_dependencia.TerceroId), &informacion_proveedores); (err == nil) && (response == 200) {
+									if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+strconv.Itoa(jefe_dependencia.TerceroId), &informacion_proveedores); (err == nil) && (response == 200) {
 
 										for _, informacion_proveedor := range informacion_proveedores {
 
@@ -74,7 +74,7 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 					}
 
 				} else { //si no son docentes
-					if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/ordenadores/?query=IdOrdenador:"+contrato_elaborado.Contrato.OrdenadorGasto+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
+					if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=IdOrdenador:"+contrato_elaborado.Contrato.OrdenadorGasto+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
 						for _, ordenador := range ordenadores {
 							informacion_ordenador.NumeroDocumento = ordenador.Documento
 							informacion_ordenador.Cargo = ordenador.RolOrdenador
@@ -125,17 +125,17 @@ func SolicitudesOrdenador(doc_ordenador string, limit int, offset int) (pagos_pe
 	var vinculaciones_docente []models.VinculacionDocente
 	var respuesta_peticion map[string]interface{}
 
-	if response, err := getJsonTest(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?offset="+strconv.Itoa(offset)+"&limit="+strconv.Itoa(limit)+"&query=EstadoPagoMensualId.CodigoAbreviacion:AD,DocumentoResponsableId:"+doc_ordenador, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?offset="+strconv.Itoa(offset)+"&limit="+strconv.Itoa(limit)+"&query=EstadoPagoMensualId.CodigoAbreviacion:AD,DocumentoResponsableId:"+doc_ordenador, &respuesta_peticion); (err == nil) && (response == 200) {
 		pagos_mensuales = []models.PagoMensual{}
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
 		for x, pago_mensual := range pagos_mensuales {
-			if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago_mensual.DocumentoPersonaId, &contratistas); (err == nil) && (response == 200) {
+			if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago_mensual.DocumentoPersonaId, &contratistas); (err == nil) && (response == 200) {
 				for _, contratista := range contratistas {
 					// se podria armar un metodo desde aca y usar gorutines para reducir el tiempo de carga de las peticiones?
-					if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAdmin")+"/"+beego.AppConfig.String("NscrudAdmin")+"/vinculacion_docente/?limit=-1&query=NumeroContrato:"+pago_mensual.NumeroContrato+",Vigencia:"+strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64), &vinculaciones_docente); (err == nil) && (response == 200) {
+					if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAdmin")+"/vinculacion_docente/?limit=-1&query=NumeroContrato:"+pago_mensual.NumeroContrato+",Vigencia:"+strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64), &vinculaciones_docente); (err == nil) && (response == 200) {
 						for _, vinculacion := range vinculaciones_docente {
 							var dep models.Dependencia
-							if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudOikos")+"/"+beego.AppConfig.String("NscrudOikos")+"/dependencia/"+strconv.Itoa(vinculacion.IdProyectoCurricular), &dep); (err == nil) && (response == 200) {
+							if response, err := getJsonTest(beego.AppConfig.String("UrlcrudOikos")+"/dependencia/"+strconv.Itoa(vinculacion.IdProyectoCurricular), &dep); (err == nil) && (response == 200) {
 								pago_personas_proyecto.PagoMensual = &pagos_mensuales[x]
 								pago_personas_proyecto.NombrePersona = contratista.NomProveedor
 								pago_personas_proyecto.Dependencia = &dep
@@ -182,10 +182,10 @@ func DependenciaOrdenador(doc_ordenador string) (dependenciaId int, outputError 
 	var ordenadores_gasto []models.OrdenadorGasto
 	var jefes_dependencia []models.JefeDependencia
 	// las consultas de la linea 164 y 187 se pueden unir y dejar una sola que use sql puro para relacionarlas
-	if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudCore")+"/"+beego.AppConfig.String("NscrudCore")+"/jefe_dependencia/?query=TerceroId:"+doc_ordenador+"&sortby=FechaInicio&order=desc&limit=1", &jefes_dependencia); (err == nil) && (response == 200) {
+	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudCore")+"/jefe_dependencia/?query=TerceroId:"+doc_ordenador+"&sortby=FechaInicio&order=desc&limit=1", &jefes_dependencia); (err == nil) && (response == 200) {
 		for _, jefe := range jefes_dependencia {
 
-			if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudCore")+"/"+beego.AppConfig.String("NscrudCore")+"/ordenador_gasto/?query=DependenciaId:"+strconv.Itoa(jefe.DependenciaId), &ordenadores_gasto); (err == nil) && (response == 200) {
+			if response, err := getJsonTest(beego.AppConfig.String("UrlcrudCore")+"/ordenador_gasto/?query=DependenciaId:"+strconv.Itoa(jefe.DependenciaId), &ordenadores_gasto); (err == nil) && (response == 200) {
 
 				for _, ordenador := range ordenadores_gasto {
 
