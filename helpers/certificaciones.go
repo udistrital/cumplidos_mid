@@ -40,11 +40,11 @@ func CertificacionDocumentosAprobados(dependencia string, anio string, mes strin
 
 	for _, contrato := range contrato_ordenador_dependencia.ContratosOrdenadorDependencia.InformacionContratos {
 
-		if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAdmin")+"/"+beego.AppConfig.String("NscrudAdmin")+"/vinculacion_docente/?limit=-1&query=NumeroContrato:"+contrato.NumeroContrato+",Vigencia:"+contrato.Vigencia, &vinculaciones_docente); (err == nil) && (response == 200) {
+		if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAdmin")+"/vinculacion_docente/?limit=-1&query=NumeroContrato:"+contrato.NumeroContrato+",Vigencia:"+contrato.Vigencia, &vinculaciones_docente); (err == nil) && (response == 200) {
 
 			for _, vinculacion_docente := range vinculaciones_docente {
 				if vinculacion_docente.NumeroContrato.Valid == true {
-					if response, err := getJsonTest(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion:AP,NumeroContrato:"+contrato.NumeroContrato+",VigenciaContrato:"+contrato.Vigencia+",Mes:"+strconv.Itoa(mes_cer)+",Ano:"+anio, &respuesta_peticion); (err == nil) && (response == 200) {
+					if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion:AP,NumeroContrato:"+contrato.NumeroContrato+",VigenciaContrato:"+contrato.Vigencia+",Mes:"+strconv.Itoa(mes_cer)+",Ano:"+anio, &respuesta_peticion); (err == nil) && (response == 200) {
 						pagos_mensuales = []models.PagoMensual{}
 						if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 							LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
@@ -90,14 +90,14 @@ func CertificadoVistoBueno(dependencia string, mes string, anio string) (persona
 	var mes_cer, _ = strconv.Atoi(mes)
 	var anio_cer, _ = strconv.Atoi(anio)
 	var respuesta_peticion map[string]interface{}
-	if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAdmin")+"/"+beego.AppConfig.String("NscrudAdmin")+"/vinculacion_docente/?limit=-1&query=IdProyectoCurricular:"+dependencia, &vinculaciones_docente); (err == nil) && (response == 200) {
+	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAdmin")+"/vinculacion_docente/?limit=-1&query=IdProyectoCurricular:"+dependencia, &vinculaciones_docente); (err == nil) && (response == 200) {
 		for _, vinculacion_docente := range vinculaciones_docente {
 			if vinculacion_docente.NumeroContrato.Valid == true {
-				if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/acta_inicio/?query=NumeroContrato:"+vinculacion_docente.NumeroContrato.String+",Vigencia:"+strconv.FormatInt(vinculacion_docente.Vigencia.Int64, 10), &actasInicio); (err == nil) && (response == 200) {
+				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/acta_inicio/?query=NumeroContrato:"+vinculacion_docente.NumeroContrato.String+",Vigencia:"+strconv.FormatInt(vinculacion_docente.Vigencia.Int64, 10), &actasInicio); (err == nil) && (response == 200) {
 					for _, actaInicio := range actasInicio {
 						//If Estado = 4
 						if int(actaInicio.FechaInicio.Month()) <= mes_cer && actaInicio.FechaInicio.Year() <= anio_cer && int(actaInicio.FechaFin.Month()) >= mes_cer && actaInicio.FechaFin.Year() >= anio_cer {
-							if response, err := getJsonTest(beego.AppConfig.String("ProtocolCrudCumplidos")+"://"+beego.AppConfig.String("UrlCrudCumplidos")+"/"+beego.AppConfig.String("NsCrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion.in:PAD|AD|AP,NumeroContrato:"+vinculacion_docente.NumeroContrato.String+",VigenciaContrato:"+strconv.FormatInt(vinculacion_docente.Vigencia.Int64, 10)+",Mes:"+mes+",Ano:"+anio, &respuesta_peticion); (err == nil) && (response == 200) {
+							if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion.in:PAD|AD|AP,NumeroContrato:"+vinculacion_docente.NumeroContrato.String+",VigenciaContrato:"+strconv.FormatInt(vinculacion_docente.Vigencia.Int64, 10)+",Mes:"+mes+",Ano:"+anio, &respuesta_peticion); (err == nil) && (response == 200) {
 								pagos_mensuales = []models.PagoMensual{}
 								if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 									LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
@@ -105,7 +105,7 @@ func CertificadoVistoBueno(dependencia string, mes string, anio string) (persona
 									pagos_mensuales = nil
 								}
 								if pagos_mensuales == nil {
-									if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+vinculacion_docente.IdPersona, &contratistas); (err == nil) && (response == 200) {
+									if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+vinculacion_docente.IdPersona, &contratistas); (err == nil) && (response == 200) {
 										for _, contratista := range contratistas {
 											persona.NumDocumento = contratista.NumDocumento
 											persona.Nombre = contratista.NomProveedor

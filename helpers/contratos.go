@@ -19,7 +19,7 @@ func GetContratosDependencia(dependencia string, fecha string) (salida map[strin
 	var contratos_dependencia models.ContratoDependencia
 	//var salida map[string]string
 
-	if response, err := getJsonWSO2Test("http://" + beego.AppConfig.String("UrlcrudWSO2") + "/" + beego.AppConfig.String("NscrudAdministrativa") + "/" + "contratos_dependencia/" + dependencia + "/" + fecha + "/" + fecha, &temp); (err == nil) && (response == 200){
+	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM") + "/" + "contratos_dependencia/" + dependencia + "/" + fecha + "/" + fecha, &temp); (err == nil) && (response == 200){
 		if json_contrato, error_json := json.Marshal(temp); error_json == nil {
 			if err := json.Unmarshal(json_contrato, &contratos_dependencia); err == nil {
 				for _, cd := range contratos_dependencia.Contratos.Contrato {
@@ -50,7 +50,7 @@ func GetContratosDependencia(dependencia string, fecha string) (salida map[strin
 func GetContratosDependenciaFiltro(dependencia string, fecha_inicio string, fecha_fin string) (contratos_dependencia models.ContratoDependencia, outputError map[string]interface{}) {
 
 	var temp map[string]interface{}
-	if response, err := getJsonWSO2Test("http://" + beego.AppConfig.String("UrlcrudWSO2") + "/" + beego.AppConfig.String("NscrudAdministrativa") + "/" + "contratos_dependencia/" + dependencia + "/" + fecha_fin + "/" + fecha_inicio, &temp); (err == nil) && (response == 200){
+	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM") + "/" + "contratos_dependencia/" + dependencia + "/" + fecha_fin + "/" + fecha_inicio, &temp); (err == nil) && (response == 200){
 		json_contrato, error_json := json.Marshal(temp)
 		if error_json == nil {
 			if err := json.Unmarshal(json_contrato, &contratos_dependencia); err == nil {
@@ -85,7 +85,7 @@ func GetContratosOrdenadorDependencia(dependencia string, fechaInicio string, fe
 	}()
 
 	var temp map[string]interface{}
-	if response, err := getJsonWSO2Test("http://"+beego.AppConfig.String("UrlcrudWSO2")+"/"+beego.AppConfig.String("NscrudAdministrativa")+"/"+"contratos_ordenador_dependencia/"+dependencia+"/"+fechaInicio+"/"+fechaFin, &temp); (err == nil) && (response == 200) {
+	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contratos_ordenador_dependencia/"+dependencia+"/"+fechaInicio+"/"+fechaFin, &temp); (err == nil) && (response == 200) {
 		json_contrato_dependencia, error_json := json.Marshal(temp)
 		if error_json == nil {
 			if err := json.Unmarshal(json_contrato_dependencia, &contratos_ordenador_dependencia); err == nil {
