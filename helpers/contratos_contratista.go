@@ -2,10 +2,9 @@ package helpers
 
 import (
 	"encoding/json"
-	"fmt"
-	_ "fmt"
 	"strconv"
 	"time"
+	"fmt"
 
 	"github.com/astaxie/beego/logs"
 
@@ -29,9 +28,9 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 	contratos_persona, outputError := GetContratosPersona(numero_documento)
 	if outputError == nil {
 		//if contratos_persona.ContratosPersonas.ContratoPersona == nil { // Si no tiene contrato
-			if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+numero_documento, &informacion_proveedores); (err == nil) && (response == 200) {
+			if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+numero_documento, &informacion_proveedores); (err == nil) && (response == 200) {
 				for _, persona := range informacion_proveedores {
-					if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/novedad_postcontractual/?query=Contratista:"+strconv.Itoa(persona.Id)+"&sortby=FechaInicio&order=desc&limit=1", &novedades_postcontractuales); (err == nil) && (response == 200) {
+					if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=Contratista:"+strconv.Itoa(persona.Id)+"&sortby=FechaInicio&order=desc&limit=1", &novedades_postcontractuales); (err == nil) && (response == 200) {
 						for _, novedad := range novedades_postcontractuales {
 							var contrato models.InformacionContrato
 							contrato, outputError = GetContrato(novedad.NumeroContrato, strconv.Itoa(novedad.Vigencia))
@@ -40,7 +39,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 								informacion_contrato_contratista, outputError = GetInformacionContratoContratista(novedad.NumeroContrato, strconv.Itoa(novedad.Vigencia))
 								if outputError == nil {
 
-									if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/novedad_postcontractual/?query=NumeroContrato:"+novedad.NumeroContrato+",Vigencia:"+strconv.Itoa(novedad.Vigencia)+"&sortby=FechaInicio&order=desc&limit=1", &novedades_novedad); (err == nil) && (response == 200) {
+									if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=NumeroContrato:"+novedad.NumeroContrato+",Vigencia:"+strconv.Itoa(novedad.Vigencia)+"&sortby=FechaInicio&order=desc&limit=1", &novedades_novedad); (err == nil) && (response == 200) {
 										for _, novedad_novedad := range novedades_novedad {
 											if novedad_novedad != novedad {
 												if (novedad_novedad.FechaInicio.Year() == time.Now().Year() && int(novedad_novedad.FechaFin.Month()) >= int(time.Now().Month())-2 && novedad_novedad.FechaFin.Year() == time.Now().Year()) ||
@@ -70,7 +69,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 											} else {
 												if (novedad.FechaInicio.Year() == time.Now().Year() && int(novedad.FechaFin.Month()) >= int(time.Now().Month())-2 && novedad.FechaFin.Year() == time.Now().Year()) ||
 													(novedad.FechaInicio.Year() <= time.Now().Year() && int(novedad.FechaFin.Month()) >= int(time.Now().Month())-2 && novedad.FechaFin.Year() >= time.Now().Year() && novedad.FechaFin.Year() > novedad.FechaInicio.Year()) {
-													if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
+													if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
 														for _, contrato_disponibilidad := range contratos_disponibilidad {
 															var cdprp models.InformacionCdpRp
 															cdprp, outputError = GetRP(strconv.Itoa(contrato_disponibilidad.NumeroCdp), strconv.Itoa(contrato_disponibilidad.VigenciaCdp))
@@ -136,7 +135,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 				contrato, outputError = GetContrato(contrato_persona.NumeroContrato, contrato_persona.Vigencia)
 				if outputError == nil {
 					//var novedad_postcontractual models.NovedadPostcontractual
-					if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/novedad_postcontractual/?query=NumeroContrato:"+contrato_persona.NumeroContrato+",Vigencia:"+contrato_persona.Vigencia+"&sortby=FechaInicio&order=desc&limit=1", &novedades_postcontractuales); (err == nil) && (response == 200) {
+					if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=NumeroContrato:"+contrato_persona.NumeroContrato+",Vigencia:"+contrato_persona.Vigencia+"&sortby=FechaInicio&order=desc&limit=1", &novedades_postcontractuales); (err == nil) && (response == 200) {
 						//var	prueba []models.NovedadPostcontractual
 						//	json.NewDecoder(r.Body).Decode(prueba)
 						var informacion_contrato_contratista models.InformacionContratoContratista
@@ -145,9 +144,9 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 							if novedades_postcontractuales != nil { // Si tiene novedades
 								for _, novedad := range novedades_postcontractuales {
 									if novedad.TipoNovedad == 219 { // si es una cesión
-										if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+numero_documento, &informacion_proveedores); (err == nil) && (response == 200) {
+										if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+numero_documento, &informacion_proveedores); (err == nil) && (response == 200) {
 											for _, persona := range informacion_proveedores {
-												if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/novedad_postcontractual/?query=Contratista:"+strconv.Itoa(persona.Id)+"&sortby=FechaInicio&order=desc&limit=1", &novedades_postcontractuales); (err == nil) && (response == 200) {
+												if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=Contratista:"+strconv.Itoa(persona.Id)+"&sortby=FechaInicio&order=desc&limit=1", &novedades_postcontractuales); (err == nil) && (response == 200) {
 													for _, novedad := range novedades_postcontractuales {
 														var contrato models.InformacionContrato
 														contrato, outputError = GetContrato(novedad.NumeroContrato, strconv.Itoa(novedad.Vigencia))
@@ -155,7 +154,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 															var informacion_contrato_contratista models.InformacionContratoContratista
 															informacion_contrato_contratista, outputError = GetInformacionContratoContratista(novedad.NumeroContrato, strconv.Itoa(novedad.Vigencia))
 															if outputError == nil {
-																if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
+																if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
 																	for _, contrato_disponibilidad := range contratos_disponibilidad {
 																		var cdprp models.InformacionCdpRp
 																		cdprp, outputError = GetRP(strconv.Itoa(contrato_disponibilidad.NumeroCdp), strconv.Itoa(contrato_disponibilidad.VigenciaCdp))
@@ -221,7 +220,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 									}
 								}
 							} else { // si no tiene novedades
-								if response, err := getJsonTest(beego.AppConfig.String("ProtocolAdmin")+"://"+beego.AppConfig.String("UrlcrudAgora")+"/"+beego.AppConfig.String("NscrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
+								if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
 									for _, contrato_disponibilidad := range contratos_disponibilidad {
 										var cdprp models.InformacionCdpRp
 										cdprp, outputError = GetRP(strconv.Itoa(contrato_disponibilidad.NumeroCdp), strconv.Itoa(contrato_disponibilidad.VigenciaCdp))
@@ -279,7 +278,7 @@ func GetRP(numero_cdp string, vigencia_cdp string) (rp models.InformacionCdpRp, 
 
 	var temp map[string]interface{}
 	var temp_cdp_rp models.InformacionCdpRp
-	if response, err := getJsonWSO2Test("http://"+beego.AppConfig.String("UrlcrudWSO2")+"/"+beego.AppConfig.String("NscrudFinanciera")+"/"+"cdprp/"+numero_cdp+"/"+vigencia_cdp+"/01", &temp); (err == nil) && (response == 200) {
+	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlFinancieraJBPM")+"/"+"cdprp/"+numero_cdp+"/"+vigencia_cdp+"/01", &temp); (err == nil) && (response == 200) {
 		json_cdp_rp, error_json := json.Marshal(temp)
 
 		if error_json == nil {
@@ -297,7 +296,6 @@ func GetRP(numero_cdp string, vigencia_cdp string) (rp models.InformacionCdpRp, 
 			return rp, outputError
 		}
 	} else {
-		fmt.Println("http://" + beego.AppConfig.String("UrlcrudWSO2") + "/" + beego.AppConfig.String("NscrudFinanciera") + "/" + "cdprp/" + numero_cdp + "/" + vigencia_cdp + "/01")
 		logs.Error(err)
 		outputError = map[string]interface{}{"funcion": "/GetRP3", "err": err, "status": "502"}
 		return rp, outputError
@@ -316,7 +314,8 @@ func GetContratosPersona(num_documento string) (contratos_persona models.Informa
 
 	var temp map[string]interface{}
 	var contratos models.InformacionContratosPersona
-	if response, err := getJsonWSO2Test("http://"+beego.AppConfig.String("UrlcrudWSO2")+"/"+beego.AppConfig.String("NscrudAdministrativa")+"/"+"contratos_persona/"+num_documento, &temp); (err == nil) && (response == 200) {
+	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contratos_persona/"+num_documento, &temp); (err == nil) && (response == 200) {
+		fmt.Println(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contratos_persona/"+num_documento)
 		json_contratos, error_json := json.Marshal(temp)
 		if error_json == nil {
 			err := json.Unmarshal(json_contratos, &contratos)
@@ -355,7 +354,7 @@ func GetContrato(num_contrato_suscrito string, vigencia string) (informacion_con
 	}()
 
 	var temp map[string]interface{}
-	if response, err := getJsonWSO2Test("http://"+beego.AppConfig.String("UrlcrudWSO2")+"/"+beego.AppConfig.String("NscrudAdministrativa")+"/"+"contrato/"+num_contrato_suscrito+"/"+vigencia, &temp); (err == nil) && (response == 200) {
+	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contrato/"+num_contrato_suscrito+"/"+vigencia, &temp); (err == nil) && (response == 200) {
 		json_contrato, error_json := json.Marshal(temp)
 		if error_json == nil {
 			var contrato models.InformacionContrato
@@ -393,7 +392,7 @@ func GetInformacionContratoContratista(num_contrato_suscrito string, vigencia st
 
 	var temp map[string]interface{}
 
-	if response, err := getJsonWSO2Test("http://"+beego.AppConfig.String("UrlcrudWSO2")+"/"+beego.AppConfig.String("NscrudAdministrativa")+"/"+"informacion_contrato_contratista/"+num_contrato_suscrito+"/"+vigencia, &temp); (err == nil) && (response == 200) {
+	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"informacion_contrato_contratista/"+num_contrato_suscrito+"/"+vigencia, &temp); (err == nil) && (response == 200) {
 		json_contrato, error_json := json.Marshal(temp)
 		if error_json == nil {
 			var contrato_contratista models.InformacionContratoContratista
