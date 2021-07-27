@@ -42,8 +42,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 									if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=NumeroContrato:"+novedad.NumeroContrato+",Vigencia:"+strconv.Itoa(novedad.Vigencia)+"&sortby=FechaInicio&order=desc&limit=1", &novedades_novedad); (err == nil) && (response == 200) {
 										for _, novedad_novedad := range novedades_novedad {
 											if novedad_novedad != novedad {
-												if (novedad_novedad.FechaInicio.Year() == time.Now().Year() && int(novedad_novedad.FechaFin.Month()) >= int(time.Now().Month())-2 && novedad_novedad.FechaFin.Year() == time.Now().Year()) ||
-													(novedad_novedad.FechaInicio.Year() <= time.Now().Year() && int(novedad_novedad.FechaFin.Month()) >= int(time.Now().Month())-2 && novedad_novedad.FechaFin.Year() >= time.Now().Year() && novedad_novedad.FechaFin.Year() > novedad_novedad.FechaInicio.Year()) {
+												if(novedad_novedad.FechaInicio.Before(novedad_novedad.FechaFin) && time.Now().After(novedad_novedad.FechaInicio) &&  time.Now().Before(novedad_novedad.FechaFin.AddDate(0, 2, 0))) {
 													if novedad_novedad.TipoNovedad == 219 { // si es una cesión
 													} else {
 														var cdprp models.InformacionCdpRp
@@ -67,8 +66,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 													}
 												}
 											} else {
-												if (novedad.FechaInicio.Year() == time.Now().Year() && int(novedad.FechaFin.Month()) >= int(time.Now().Month())-2 && novedad.FechaFin.Year() == time.Now().Year()) ||
-													(novedad.FechaInicio.Year() <= time.Now().Year() && int(novedad.FechaFin.Month()) >= int(time.Now().Month())-2 && novedad.FechaFin.Year() >= time.Now().Year() && novedad.FechaFin.Year() > novedad.FechaInicio.Year()) {
+												if(novedad.FechaInicio.Before(novedad.FechaFin) && time.Now().After(novedad.FechaInicio) &&  time.Now().Before(novedad.FechaFin.AddDate(0, 2, 0))) {
 													if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
 														for _, contrato_disponibilidad := range contratos_disponibilidad {
 															var cdprp models.InformacionCdpRp
