@@ -145,6 +145,212 @@
                 }
             }
         },
+        "/informe/": {
+            "get": {
+                "tags": [
+                    "informe"
+                ],
+                "description": "get Informe",
+                "operationId": "InformeController.GetAll",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "query",
+                        "description": "Filter. e.g. col1:v1,col2:v2 ...",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "fields",
+                        "description": "Fields returned. e.g. col1,col2 ...",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sortby",
+                        "description": "Sorted-by fields. e.g. col1,col2 ...",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "order",
+                        "description": "Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ...",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "Limit the size of result set. Must be an integer",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "description": "Start position of result set. Must be an integer",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Informe"
+                        }
+                    },
+                    "403": {
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "informe"
+                ],
+                "description": "create Informe",
+                "operationId": "InformeController.Create",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Informe content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Informe"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Informe"
+                        }
+                    },
+                    "403": {
+                        "description": "body is empty"
+                    }
+                }
+            }
+        },
+        "/informe/{id}": {
+            "put": {
+                "tags": [
+                    "informe"
+                ],
+                "description": "update the Informe",
+                "operationId": "InformeController.Put",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The id you want to update",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Informe content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Informe"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Informe"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is not int"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "informe"
+                ],
+                "description": "delete the Informe",
+                "operationId": "InformeController.Delete",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The id you want to delete",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} delete success!"
+                    },
+                    "403": {
+                        "description": "id is empty"
+                    }
+                }
+            }
+        },
+        "/informe/{num_documento}/{contrato}/{vigencia}/{anio}/{mes}": {
+            "get": {
+                "tags": [
+                    "informe"
+                ],
+                "description": "get Informe by num_documento",
+                "operationId": "InformeController.GetOne",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "num_documento",
+                        "description": "numero documento contratista",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "contrato",
+                        "description": "numero de contrato",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "vigencia",
+                        "description": "vigencia del contrato",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "anio",
+                        "description": "añio del cumplido",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "mes",
+                        "description": "mes del cumplido",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Informe"
+                        }
+                    },
+                    "403": {
+                        "description": ":num_documento is empty"
+                    }
+                }
+            }
+        },
         "/solicitudes_coordinador/{doccoordinador}": {
             "get": {
                 "tags": [
@@ -573,6 +779,10 @@
                 }
             }
         },
+        "models.Informe": {
+            "title": "Informe",
+            "type": "object"
+        },
         "models.PagoContratistaCdpRp": {
             "title": "PagoContratistaCdpRp",
             "type": "object",
@@ -713,6 +923,10 @@
         {
             "name": "certificacion",
             "description": "AprobacionPagoController operations for AprobacionPago\n"
+        },
+        {
+            "name": "informe",
+            "description": "InformeController operations for Informe\n"
         }
     ]
 }
