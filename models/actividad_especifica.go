@@ -2,51 +2,45 @@ package models
 
 import "time"
 
-type Informe struct {
-	Id                     int
-	Activo                 bool
-	FechaCreacion          time.Time
-	FechaModificacion      time.Time
-	Contrato               string
-	Vigencia               int
-	Mes                    int
-	Anio                   int
-	PeriodoInformeInicio   time.Time
-	PeriodoInformeFin      time.Time
-	Proceso                string
-	DocumentoContratista   int
-	ActividadesEspecificas *[]ActividadEspecifica
+type ActividadEspecifica struct {
+	Id                    int
+	Activo                bool
+	FechaCreacion         time.Time
+	FechaModificacion     time.Time
+	ActividadEspecifica   string
+	Avance                int
+	ActividadesRealizadas *[]ActividadRealizada
 }
 
 // func init() {
-// 	orm.RegisterModel(new(Informe))
+// 	orm.RegisterModel(new(ActividadEspecifica))
 // }
 
-// // AddInforme insert a new Informe into database and returns
+// // AddActividadEspecifica insert a new ActividadEspecifica into database and returns
 // // last inserted Id on success.
-// func AddInforme(m *Informe) (id int64, err error) {
+// func AddActividadEspecifica(m *ActividadEspecifica) (id int64, err error) {
 // 	o := orm.NewOrm()
 // 	id, err = o.Insert(m)
 // 	return
 // }
 
-// // GetInformeById retrieves Informe by Id. Returns error if
+// // GetActividadEspecificaById retrieves ActividadEspecifica by Id. Returns error if
 // // Id doesn't exist
-// func GetInformeById(id int64) (v *Informe, err error) {
+// func GetActividadEspecificaById(id int64) (v *ActividadEspecifica, err error) {
 // 	o := orm.NewOrm()
-// 	v = &Informe{Id: id}
-// 	if err = o.QueryTable(new(Informe)).Filter("Id", id).RelatedSel().One(v); err == nil {
+// 	v = &ActividadEspecifica{Id: id}
+// 	if err = o.QueryTable(new(ActividadEspecifica)).Filter("Id", id).RelatedSel().One(v); err == nil {
 // 		return v, nil
 // 	}
 // 	return nil, err
 // }
 
-// // GetAllInforme retrieves all Informe matches certain condition. Returns empty list if
+// // GetAllActividadEspecifica retrieves all ActividadEspecifica matches certain condition. Returns empty list if
 // // no records exist
-// func GetAllInforme(query map[string]string, fields []string, sortby []string, order []string,
+// func GetAllActividadEspecifica(query map[string]string, fields []string, sortby []string, order []string,
 // 	offset int64, limit int64) (ml []interface{}, err error) {
 // 	o := orm.NewOrm()
-// 	qs := o.QueryTable(new(Informe))
+// 	qs := o.QueryTable(new(ActividadEspecifica))
 // 	// query k=v
 // 	for k, v := range query {
 // 		// rewrite dot-notation to Object__Attribute
@@ -92,7 +86,7 @@ type Informe struct {
 // 		}
 // 	}
 
-// 	var l []Informe
+// 	var l []ActividadEspecifica
 // 	qs = qs.OrderBy(sortFields...).RelatedSel()
 // 	if _, err = qs.Limit(limit, offset).All(&l, fields...); err == nil {
 // 		if len(fields) == 0 {
@@ -115,11 +109,11 @@ type Informe struct {
 // 	return nil, err
 // }
 
-// // UpdateInforme updates Informe by Id and returns error if
+// // UpdateActividadEspecifica updates ActividadEspecifica by Id and returns error if
 // // the record to be updated doesn't exist
-// func UpdateInformeById(m *Informe) (err error) {
+// func UpdateActividadEspecificaById(m *ActividadEspecifica) (err error) {
 // 	o := orm.NewOrm()
-// 	v := Informe{Id: m.Id}
+// 	v := ActividadEspecifica{Id: m.Id}
 // 	// ascertain id exists in the database
 // 	if err = o.Read(&v); err == nil {
 // 		var num int64
@@ -130,15 +124,15 @@ type Informe struct {
 // 	return
 // }
 
-// // DeleteInforme deletes Informe by Id and returns error if
+// // DeleteActividadEspecifica deletes ActividadEspecifica by Id and returns error if
 // // the record to be deleted doesn't exist
-// func DeleteInforme(id int64) (err error) {
+// func DeleteActividadEspecifica(id int64) (err error) {
 // 	o := orm.NewOrm()
-// 	v := Informe{Id: id}
+// 	v := ActividadEspecifica{Id: id}
 // 	// ascertain id exists in the database
 // 	if err = o.Read(&v); err == nil {
 // 		var num int64
-// 		if num, err = o.Delete(&Informe{Id: id}); err == nil {
+// 		if num, err = o.Delete(&ActividadEspecifica{Id: id}); err == nil {
 // 			fmt.Println("Number of records deleted in database:", num)
 // 		}
 // 	}
