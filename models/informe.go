@@ -15,7 +15,7 @@ type Informe struct {
 	PeriodoInformeFin      time.Time
 	Proceso                string
 	DocumentoContratista   int
-	ActividadesEspecificas *[]ActividadEspecifica
+	ActividadesEspecificas []ActividadEspecifica
 }
 
 // func init() {

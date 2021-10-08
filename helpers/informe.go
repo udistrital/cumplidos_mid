@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"fmt"
-
 	"strconv"
 
 	"github.com/astaxie/beego"
@@ -34,7 +33,7 @@ func Informe(contrato string, vigencia string, mes string, anio string) (informe
 				actividadesEsp, err := getActividadesEspecificas(idInforme)
 				fmt.Println(actividadesEsp)
 				if err == nil {
-					informe[i].ActividadesEspecificas = &actividadesEsp
+					informe[i].ActividadesEspecificas = actividadesEsp
 				}
 				fmt.Println(inf.ActividadesEspecificas)
 			}
@@ -55,7 +54,7 @@ func getActividadesEspecificas(idInforme string) (actividades_especificas []mode
 	defer func() {
 		if err := recover(); err != nil {
 			//fmt.Println("error", err)
-			outputError = map[string]interface{}{"funcion": "/Informe", "err": err, "status": "502"}
+			outputError = map[string]interface{}{"funcion": "/getActividadesEspecificas", "err": err, "status": "502"}
 			panic(outputError)
 		}
 	}()
@@ -74,7 +73,7 @@ func getActividadesEspecificas(idInforme string) (actividades_especificas []mode
 				idactEsp := strconv.Itoa(actEsp.Id)
 				actividadesRea, err := getActividadesRealizadas(idactEsp)
 				if err == nil {
-					actividades_especificas[i].ActividadesRealizadas = &actividadesRea
+					actividades_especificas[i].ActividadesRealizadas = actividadesRea
 				}
 			}
 		}
@@ -83,7 +82,7 @@ func getActividadesEspecificas(idInforme string) (actividades_especificas []mode
 		// informe = append(informe, aux_informe)
 	} else {
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/Informe", "err": err, "status": "502"}
+		outputError = map[string]interface{}{"funcion": "/getActividadesEspecificas", "err": err, "status": "502"}
 		return nil, outputError
 	}
 
@@ -94,7 +93,7 @@ func getActividadesRealizadas(idActividadEspecifica string) (actividades_realiza
 	defer func() {
 		if err := recover(); err != nil {
 			//fmt.Println("error", err)
-			outputError = map[string]interface{}{"funcion": "/Informe", "err": err, "status": "502"}
+			outputError = map[string]interface{}{"funcion": "/getActividadesRealizadas", "err": err, "status": "502"}
 			panic(outputError)
 		}
 	}()
@@ -115,8 +114,90 @@ func getActividadesRealizadas(idActividadEspecifica string) (actividades_realiza
 		// informe = append(informe, aux_informe)
 	} else {
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/Informe", "err": err, "status": "502"}
+		outputError = map[string]interface{}{"funcion": "/getActividadesRealizadas", "err": err, "status": "502"}
 		return nil, outputError
+	}
+
+	return
+}
+
+func AddInforme(informe models.Informe) (response map[string]interface{}, outputError map[string]interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			//fmt.Println("error", err)
+			outputError = map[string]interface{}{"funcion": "/AddInforme", "err": err, "status": "502"}
+			panic(outputError)
+		}
+	}()
+
+	var informe_creado models.Informe
+	fmt.Println("informe", informe)
+	informe_creado.Contrato = informe.Contrato
+	informe_creado.Vigencia = informe.Vigencia
+	informe_creado.Mes = informe.Mes
+	informe_creado.Anio = informe.Anio
+	informe_creado.PeriodoInformeFin = informe.PeriodoInformeFin
+	informe_creado.PeriodoInformeInicio = informe.PeriodoInformeInicio
+	informe_creado.Proceso = informe.Proceso
+	informe_creado.DocumentoContratista = informe.DocumentoContratista
+	actividades_especificas := informe.ActividadesEspecificas
+	fmt.Println("tamaño arreglo act_esp: ", len(actividades_especificas))
+	var res map[string]interface{}
+	if err := sendJson(beego.AppConfig.String("UrlCrudCumplidos")+"/informe", "POST", &res, informe_creado); err == nil {
+		fmt.Println("respuesta del post al crud", res)
+		LimpiezaRespuestaRefactor(res, &informe_creado)
+		for i_actEsp, actEsp := range actividades_especificas {
+			fmt.Println("index actividad especifica: ", i_actEsp)
+			var actividad_esp = map[string]interface{}{"ActividadEspecifica": actEsp.ActividadEspecifica, "Avance": actEsp.Avance, "InformeId": map[string]interface{}{"Id": informe_creado.Id}}
+			fmt.Println("Actividad a crear: ", actividad_esp)
+			if res, err := AddActividadEspecifica(actividad_esp); err == nil {
+				fmt.Println("respuesta de crear la actividad especifica:", res)
+				for i_actRea, actRea := range actEsp.ActividadesRealizadas {
+					fmt.Println("index actividad especifica: ", i_actRea)
+					var actividad_rea = map[string]interface{}{"Actividad": actRea.Actividad, "ProductoAsociado": actRea.ProductoAsociado, "Evidencia": actRea.Evidencia, "ActividadEspecificaId": map[string]interface{}{"Id": res.Id}}
+					if err == nil {
+						if res, err := AddActividadRealizada(actividad_rea); err == nil {
+							fmt.Println(res)
+							response = map[string]interface{}{"result": "succesfully created"}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return
+}
+
+func AddActividadEspecifica(actividad_especifica map[string]interface{}) (actividad_especifica_creada models.ActividadEspecifica, outputError map[string]interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			//fmt.Println("error", err)
+			outputError = map[string]interface{}{"funcion": "/AddActividadEspecifica", "err": err, "status": "502"}
+			panic(outputError)
+		}
+	}()
+	var response map[string]interface{}
+	if err := sendJson(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica", "POST", &response, actividad_especifica); err == nil {
+		fmt.Println("respuesta del post al crud actividad especifica:", response)
+		LimpiezaRespuestaRefactor(response, &actividad_especifica_creada)
+	}
+
+	return actividad_especifica_creada, outputError
+}
+
+func AddActividadRealizada(actividad_realizada map[string]interface{}) (actividad_realizada_creada models.ActividadRealizada, outputError map[string]interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			//fmt.Println("error", err)
+			outputError = map[string]interface{}{"funcion": "/AddActividadRealizada", "err": err, "status": "502"}
+			panic(outputError)
+		}
+	}()
+	var response map[string]interface{}
+	if err := sendJson(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_realizada", "POST", &response, actividad_realizada); err == nil {
+		fmt.Println("respuesta del post al crud actividad realizada: ", response)
+		LimpiezaRespuestaRefactor(response, &actividad_realizada_creada)
 	}
 
 	return

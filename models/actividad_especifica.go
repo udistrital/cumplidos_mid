@@ -9,7 +9,7 @@ type ActividadEspecifica struct {
 	FechaModificacion     time.Time
 	ActividadEspecifica   string
 	Avance                int
-	ActividadesRealizadas *[]ActividadRealizada
+	ActividadesRealizadas []ActividadRealizada
 }
 
 // func init() {

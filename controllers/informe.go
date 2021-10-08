@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
@@ -16,7 +17,7 @@ type InformeController struct {
 
 // URLMapping ...
 func (c *InformeController) URLMapping() {
-	c.Mapping("Post", c.Post)
+	c.Mapping("Post", c.PostInforme)
 	c.Mapping("GetOne", c.GetInforme)
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
@@ -30,16 +31,18 @@ func (c *InformeController) URLMapping() {
 // @Success 201 {int} models.Informe
 // @Failure 403 body is empty
 // @router / [post]
-func (c *InformeController) Post() {
+func (c *InformeController) PostInforme() {
 	var v models.Informe
+	//var v map[string]interface{}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	// if _, err := models.AddInforme(&v); err == nil {
-	// 	c.Ctx.Output.SetStatus(201)
-	// 	c.Data["json"] = v
-	// } else {
-	// 	c.Data["json"] = err.Error()
-	// }
-	// c.ServeJSON()
+	fmt.Println("Informe al llegar", v)
+	if response, err := helpers.AddInforme(v); err == nil {
+		c.Ctx.Output.SetStatus(201)
+		c.Data["json"] = response
+	} else {
+		c.Data["json"] = err
+	}
+	c.ServeJSON()
 }
 
 // GetOne ...
