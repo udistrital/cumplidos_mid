@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
@@ -20,7 +21,7 @@ func (c *InformeController) URLMapping() {
 	c.Mapping("Post", c.PostInforme)
 	c.Mapping("GetOne", c.GetInforme)
 	c.Mapping("GetAll", c.GetAll)
-	c.Mapping("Put", c.Put)
+	c.Mapping("Put", c.PutInforme)
 	c.Mapping("Delete", c.Delete)
 }
 
@@ -159,17 +160,24 @@ func (c *InformeController) GetAll() {
 // @Success 200 {object} models.Informe
 // @Failure 403 :id is not int
 // @router /:id [put]
-func (c *InformeController) Put() {
-	// idStr := c.Ctx.Input.Param(":id")
-	// id, _ := strconv.ParseInt(idStr, 0, 64)
-	// v := models.Informe{Id: id}
-	// json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	// if err := models.UpdateInformeById(&v); err == nil {
-	// 	c.Data["json"] = "OK"
-	// } else {
-	// 	c.Data["json"] = err.Error()
-	// }
-	// c.ServeJSON()
+func (c *InformeController) PutInforme() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.Atoi(idStr)
+	v := models.Informe{Id: id}
+	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
+		if err := helpers.UpdateInformeById(v); err == nil {
+			c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Update successful", "Data": "Informe actualizado"}
+		} else {
+			logs.Error(err)
+			c.Data["mesaage"] = "Error service Put: The request contains an incorrect data type or an invalid parameter"
+			c.Abort("400")
+		}
+	} else {
+		logs.Error(err)
+		c.Data["mesaage"] = "Error service Put: The request contains an incorrect data type or an invalid parameter"
+		c.Abort("400")
+	}
+	c.ServeJSON()
 }
 
 // Delete ...

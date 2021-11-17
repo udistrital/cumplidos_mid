@@ -14,7 +14,7 @@ type Informe struct {
 	PeriodoInformeInicio   time.Time
 	PeriodoInformeFin      time.Time
 	Proceso                string
-	DocumentoContratista   int
+	DocumentoContratista   string
 	ActividadesEspecificas []ActividadEspecifica
 }
 
