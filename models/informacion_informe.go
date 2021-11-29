@@ -1,21 +1,47 @@
 package models
 
+import "time"
+
 //import (
 //	"time"
 //)
 
 type InformacionInforme struct {
-	Sede        string
-	Dependencia string
-	//FechaInicio time.Time
-	//FechaFinal  time.Time
-	//disponibilidad_presupuestal {}
-	//Certificado_registro_presupuesta {}
-	//Novedades []
-	//ActividadesEspecificas []
-	NombreContratista  string
-	TipoIdentificacion string
-	NumeroDocumento    string
-	//InformacionCdpRp   *InformacionCdpRp
-	//NivelJerarquico    string
+	Supervisor struct {
+		Cargo  string
+		Nombre string
+	}
+	ValorContrato string
+	FechaCPS      string
+	Dependencia   string
+	Sede          string
+	Objeto        string
+	CDP           struct {
+		Consecutivo string
+		Fecha       time.Time
+	}
+	RP struct {
+		Consecutivo string
+		Fecha       time.Time
+	}
+	Novedades struct {
+		Otrosi []Otrosi
+		Cesion []Cesion
+	}
+	InformacionContratista struct {
+		Nombre             string
+		TipoIdentificacion string
+		CiudadExpedicion   string
+	}
+	ActividadesEspecificas string
+}
+
+type Otrosi struct {
+	FechaAdiccion  string
+	FechaProrroga  string
+	TiempoProrroga interface{}
+}
+
+type Cesion struct {
+	FechaCesion string
 }

@@ -145,13 +145,70 @@
                 }
             }
         },
+        "/informacion_informe/{num_documento}/{contrato}/{vigencia}/{cdp}/{vigencia_cdp}": {
+            "get": {
+                "tags": [
+                    "informacion_informe"
+                ],
+                "description": "get InformacionInforme by num_documento",
+                "operationId": "InformacionInformeController.GetInformacionInforme",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "num_documento",
+                        "description": "numero documento contratista",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "contrato",
+                        "description": "numero de contrato",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "vigencia",
+                        "description": "vigencia del contrato",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "cdp",
+                        "description": "cdp del contrato",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "vigencia_cdp",
+                        "description": "vigencia del cdp del contrato",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.InformacionInforme"
+                        }
+                    },
+                    "403": {
+                        "description": ":vigencia_cdp is empty"
+                    }
+                }
+            }
+        },
         "/informe/": {
             "get": {
                 "tags": [
                     "informe"
                 ],
                 "description": "get Informe",
-                "operationId": "InformeController.GetAll",
+                "operationId": "InformeController.Get All",
                 "parameters": [
                     {
                         "in": "query",
@@ -207,7 +264,7 @@
                     "informe"
                 ],
                 "description": "create Informe",
-                "operationId": "InformeController.Create",
+                "operationId": "InformeController.Post",
                 "parameters": [
                     {
                         "in": "body",
@@ -221,13 +278,60 @@
                 ],
                 "responses": {
                     "201": {
+                        "description": "{int} models.Informe"
+                    },
+                    "403": {
+                        "description": "body is empty"
+                    }
+                }
+            }
+        },
+        "/informe/{contrato}/{vigencia}/{mes}/{anio}": {
+            "get": {
+                "tags": [
+                    "informe"
+                ],
+                "description": "get Informe by contrato,vigencia,mes y anio",
+                "operationId": "InformeController.Get One",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "contrato",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "vigencia",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "mes",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "anio",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/models.Informe"
                         }
                     },
                     "403": {
-                        "description": "body is empty"
+                        "description": ":id is empty"
                     }
                 }
             }
@@ -290,63 +394,6 @@
                     },
                     "403": {
                         "description": "id is empty"
-                    }
-                }
-            }
-        },
-        "/informe/{num_documento}/{contrato}/{vigencia}/{anio}/{mes}": {
-            "get": {
-                "tags": [
-                    "informe"
-                ],
-                "description": "get Informe by num_documento",
-                "operationId": "InformeController.GetOne",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "num_documento",
-                        "description": "numero documento contratista",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "contrato",
-                        "description": "numero de contrato",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "vigencia",
-                        "description": "vigencia del contrato",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "anio",
-                        "description": "añio del cumplido",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "mes",
-                        "description": "mes del cumplido",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/models.Informe"
-                        }
-                    },
-                    "403": {
-                        "description": ":num_documento is empty"
                     }
                 }
             }
@@ -684,6 +731,90 @@
         }
     },
     "definitions": {
+        "15723.0xc0005a02a0.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "15892.0xc0005a02d0.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "15953.0xc0005a0300.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "16021.0xc0005a0390.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "16093.0xc0005a03c0.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "models.ActividadEspecifica": {
+            "title": "ActividadEspecifica",
+            "type": "object",
+            "properties": {
+                "ActividadEspecifica": {
+                    "type": "string"
+                },
+                "ActividadesRealizadas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ActividadRealizada"
+                    }
+                },
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Avance": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "FechaCreacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaModificacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.ActividadRealizada": {
+            "title": "ActividadRealizada",
+            "type": "object",
+            "properties": {
+                "Actividad": {
+                    "type": "string"
+                },
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Evidencia": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaModificacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "ProductoAsociado": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ContratoDisponibilidadRp": {
             "title": "ContratoDisponibilidadRp",
             "type": "object",
@@ -759,6 +890,45 @@
                 }
             }
         },
+        "models.InformacionInforme": {
+            "title": "InformacionInforme",
+            "type": "object",
+            "properties": {
+                "ActividadesEspecificas": {
+                    "type": "string"
+                },
+                "CDP": {
+                    "$ref": "#/definitions/15892.0xc0005a02d0.false"
+                },
+                "Dependencia": {
+                    "type": "string"
+                },
+                "FechaCPS": {
+                    "type": "string"
+                },
+                "InformacionContratista": {
+                    "$ref": "#/definitions/16093.0xc0005a03c0.false"
+                },
+                "Novedades": {
+                    "$ref": "#/definitions/16021.0xc0005a0390.false"
+                },
+                "Objeto": {
+                    "type": "string"
+                },
+                "RP": {
+                    "$ref": "#/definitions/15953.0xc0005a0300.false"
+                },
+                "Sede": {
+                    "type": "string"
+                },
+                "Supervisor": {
+                    "$ref": "#/definitions/15723.0xc0005a02a0.false"
+                },
+                "ValorContrato": {
+                    "type": "string"
+                }
+            }
+        },
         "models.InformacionOrdenador": {
             "title": "InformacionOrdenador",
             "type": "object",
@@ -781,7 +951,59 @@
         },
         "models.Informe": {
             "title": "Informe",
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "ActividadesEspecificas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ActividadEspecifica"
+                    }
+                },
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Anio": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Contrato": {
+                    "type": "string"
+                },
+                "DocumentoContratista": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaModificacion": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Mes": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "PeriodoInformeFin": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "PeriodoInformeInicio": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "Proceso": {
+                    "type": "string"
+                },
+                "Vigencia": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
         },
         "models.PagoContratistaCdpRp": {
             "title": "PagoContratistaCdpRp",
@@ -925,8 +1147,12 @@
             "description": "AprobacionPagoController operations for AprobacionPago\n"
         },
         {
+            "name": "informacion_informe",
+            "description": "InformacionInformeController operations for InformacionInforme\n"
+        },
+        {
             "name": "informe",
-            "description": "InformeController operations for Informe\n"
+            "description": " InformeController operations for Informe\n"
         }
     ]
 }

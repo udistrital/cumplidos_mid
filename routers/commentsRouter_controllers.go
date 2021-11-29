@@ -126,8 +126,8 @@ func init() {
 	// Informacion Informe
 	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:InformacionInformeController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:InformacionInformeController"],
 		beego.ControllerComments{
-			Method:           "GetOne",
-			Router:           "/:num_documento/:contrato/:vigencia/:anio/:mes",
+			Method:           "GetInformacionInforme",
+			Router:           "/:num_documento/:contrato/:vigencia/:cdp/:vigencia_cdp",
 			AllowHTTPMethods: []string{"get"},
 			MethodParams:     param.Make(),
 			Filters:          nil,
