@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/astaxie/beego"
 	_ "github.com/astaxie/beego/httplib"
@@ -74,12 +75,28 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 					}
 
 				} else { //si no son docentes
-					if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=IdOrdenador:"+contrato_elaborado.Contrato.OrdenadorGasto+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
+					fecha := strings.Split(contrato_elaborado.Contrato.FechaRegistro, "+")
+					fecha = strings.Split(fecha[0], "-")
+
+					//RFC 45758 Se consulta el ordenador inmediatamente anterior a la fecha de registro del contrato
+					if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=IdOrdenador:"+contrato_elaborado.Contrato.OrdenadorGasto+",FechaInicio__lt:"+fecha[1]+"/"+fecha[2]+"/"+fecha[0]+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
+
 						for _, ordenador := range ordenadores {
-							informacion_ordenador.NumeroDocumento = ordenador.Documento
-							informacion_ordenador.Cargo = ordenador.RolOrdenador
-							informacion_ordenador.Nombre = ordenador.NombreOrdenador
-							//c.Data["json"] = informacion_ordenador
+
+							//RFC 45758 Se consulta el ordenador más reciente vinculado al rol obtenido con la consulta anterior
+							if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=RolOrdenador:"+strings.Replace(ordenador.RolOrdenador, " ", "%20", -1)+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
+
+								for _, ordenador := range ordenadores {
+									informacion_ordenador.NumeroDocumento = ordenador.Documento
+									informacion_ordenador.Cargo = ordenador.RolOrdenador
+									informacion_ordenador.Nombre = ordenador.NombreOrdenador
+									//c.Data["json"] = informacion_ordenador
+								}
+							} else {
+								logs.Error(err)
+								outputError = map[string]interface{}{"funcion": "/TraerInfoOrdenador", "err": err.Error(), "status": "502"}
+								return informacion_ordenador, outputError
+							}
 						}
 
 					} else {
