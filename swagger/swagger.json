@@ -731,23 +731,23 @@
         }
     },
     "definitions": {
-        "15723.0xc0005a02a0.false": {
+        "15779.0xc00059dc50.false": {
             "title": "false",
             "type": "object"
         },
-        "15892.0xc0005a02d0.false": {
+        "15948.0xc00059dc80.false": {
             "title": "false",
             "type": "object"
         },
-        "15953.0xc0005a0300.false": {
+        "16009.0xc00059dcb0.false": {
             "title": "false",
             "type": "object"
         },
-        "16021.0xc0005a0390.false": {
+        "16077.0xc00059dd40.false": {
             "title": "false",
             "type": "object"
         },
-        "16093.0xc0005a03c0.false": {
+        "16149.0xc00059dd70.false": {
             "title": "false",
             "type": "object"
         },
@@ -898,7 +898,7 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/15892.0xc0005a02d0.false"
+                    "$ref": "#/definitions/15948.0xc00059dc80.false"
                 },
                 "Dependencia": {
                     "type": "string"
@@ -907,22 +907,22 @@
                     "type": "string"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/16093.0xc0005a03c0.false"
+                    "$ref": "#/definitions/16149.0xc00059dd70.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/16021.0xc0005a0390.false"
+                    "$ref": "#/definitions/16077.0xc00059dd40.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/15953.0xc0005a0300.false"
+                    "$ref": "#/definitions/16009.0xc00059dcb0.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/15723.0xc0005a02a0.false"
+                    "$ref": "#/definitions/15779.0xc00059dc50.false"
                 },
                 "ValorContrato": {
                     "type": "string"
