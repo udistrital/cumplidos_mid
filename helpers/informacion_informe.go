@@ -29,8 +29,6 @@ func InformacionInforme(num_documento string, contrato string, vigencia string, 
 			panic(err)
 		}
 		json.Unmarshal(b, &informacion_contrato)
-		informacion_informe.Supervisor.Cargo = informacion_contrato.Contrato.Supervisor.Cargo
-		informacion_informe.Supervisor.Nombre = informacion_contrato.Contrato.Supervisor.Nombre
 		informacion_informe.ValorContrato = informacion_contrato.Contrato.ValorContrato
 		informacion_informe.Objeto = informacion_contrato.Contrato.ObjetoContrato
 		informacion_informe.ActividadesEspecificas = informacion_contrato.Contrato.Actividades
@@ -62,6 +60,7 @@ func InformacionInforme(num_documento string, contrato string, vigencia string, 
 
 	var contrato_general []models.ContratoGeneral
 	var sede []models.Sede
+	var supervisor_contrato []models.SupervisorContrato
 	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/contrato_general/?query=ContratoSuscrito.NumeroContratoSuscrito:" + contrato + ",VigenciaContrato:" + vigencia)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_general/?query=ContratoSuscrito.NumeroContratoSuscrito:"+contrato+",VigenciaContrato:"+vigencia, &contrato_general); (err == nil) && (response == 200) {
 		fmt.Println("contrato_general:", contrato_general)
@@ -74,6 +73,17 @@ func InformacionInforme(num_documento string, contrato string, vigencia string, 
 			outputError = map[string]interface{}{"funcion": "/InformacionInforme/contrato_general/sedes_SIC", "err": err, "status": "502"}
 			panic(outputError)
 		}
+
+		if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/supervisor_contrato?query=DependenciaSupervisor:"+contrato_general[0].Supervisor.DependenciaSupervisor+"&sortby=FechaInicio&order=desc", &supervisor_contrato); (err == nil) && (response == 200) {
+			fmt.Println("supervisor_contrato:", supervisor_contrato)
+			informacion_informe.Supervisor.Cargo = supervisor_contrato[0].Cargo
+			informacion_informe.Supervisor.Nombre = supervisor_contrato[0].Nombre
+		} else {
+			logs.Error(err)
+			outputError = map[string]interface{}{"funcion": "/InformacionInforme/contrato_general/sedes_SIC", "err": err, "status": "502"}
+			panic(outputError)
+		}
+
 	} else {
 		logs.Error(err)
 		outputError = map[string]interface{}{"funcion": "/InformacionInforme/contrato_general", "err": err, "status": "502"}

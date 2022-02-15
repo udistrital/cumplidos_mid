@@ -5,4 +5,8 @@ type ContratoGeneral struct {
 		Sede        string
 		Dependencia string
 	}
+
+	Supervisor struct {
+		DependenciaSupervisor string
+	}
 }

@@ -164,6 +164,10 @@ func AddInforme(informe models.Informe) (response map[string]interface{}, output
 				}
 			}
 		}
+	}else{
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/Informe/AddInforme", "err": err, "status": "502"}
+		panic(outputError)
 	}
 
 	return
@@ -181,6 +185,10 @@ func AddActividadEspecifica(actividad_especifica map[string]interface{}) (activi
 	if err := sendJson(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica", "POST", &response, actividad_especifica); err == nil {
 		fmt.Println("respuesta del post al crud actividad especifica:", response)
 		LimpiezaRespuestaRefactor(response, &actividad_especifica_creada)
+	}else{
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/Informe/AddActividadEspecifica", "err": err, "status": "502"}
+		panic(outputError)
 	}
 
 	return actividad_especifica_creada, outputError
@@ -198,6 +206,10 @@ func AddActividadRealizada(actividad_realizada map[string]interface{}) (activida
 	if err := sendJson(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_realizada", "POST", &response, actividad_realizada); err == nil {
 		fmt.Println("respuesta del post al crud actividad realizada: ", response)
 		LimpiezaRespuestaRefactor(response, &actividad_realizada_creada)
+	}else{
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/Informe/AddActividadRealizada", "err": err, "status": "502"}
+		panic(outputError)
 	}
 
 	return
