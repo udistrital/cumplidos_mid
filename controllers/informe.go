@@ -39,9 +39,9 @@ func (c *InformeController) PostInforme() {
 	fmt.Println("Informe al llegar", v)
 	if response, err := helpers.AddInforme(v); err == nil {
 		c.Ctx.Output.SetStatus(201)
-		c.Data["json"] = response
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "201", "Message": "Successful", "Data": response}
 	} else {
-		c.Data["json"] = err
+		panic(err)
 	}
 	c.ServeJSON()
 }

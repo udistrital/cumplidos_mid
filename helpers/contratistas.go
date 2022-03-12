@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"strconv"
+
 	"github.com/astaxie/beego"
 	_ "github.com/astaxie/beego/httplib"
 	"github.com/astaxie/beego/logs"
@@ -64,6 +65,21 @@ import (
 	return
 }*/
 
+//RFC 45758 Se agrega función para comparar los contratos de la dependencia con la informacion de los cumplidos solicitados
+func contratoExists(vigencia string, numero string, contratos []struct {
+	Vigencia       string "json:\"vigencia\""
+	NumeroContrato string "json:\"numero_contrato\""
+}) (result bool) {
+	result = false
+	for _, contrato := range contratos {
+		if contrato.Vigencia == vigencia && contrato.NumeroContrato == numero {
+			result = true
+			break
+		}
+	}
+	return result
+}
+
 func CertificacionCumplidosContratistas(dependencia string, mes string, anio string) (personas []models.Persona, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
@@ -72,7 +88,7 @@ func CertificacionCumplidosContratistas(dependencia string, mes string, anio str
 		}
 	}()
 	//var contrato_dependencia models.ContratoDependencia
-	var contrato_dependencia map[string]string
+	var contratos_dependencia models.ContratoDependencia
 	var pagos_mensuales []models.PagoMensual
 	var contratistas []models.InformacionProveedor
 	var persona models.Persona
@@ -80,7 +96,9 @@ func CertificacionCumplidosContratistas(dependencia string, mes string, anio str
 	var nmes, _ = strconv.Atoi(mes)
 	var respuesta_peticion map[string]interface{}
 	//traemos los contratos activos para un mes en una dependencia
-	if contrato_dependencia, outputError = GetContratosDependencia(dependencia, anio+"-"+mes); outputError != nil {
+
+	//RFC 45758 Se modifica la función que trae los contratos por dependencia a la funcion GetContratosDependenciaFiltro
+	if contratos_dependencia, outputError = GetContratosDependenciaFiltro(dependencia, anio+"-"+mes, anio+"-"+mes); outputError != nil {
 		return nil, outputError
 	}
 
@@ -89,8 +107,9 @@ func CertificacionCumplidosContratistas(dependencia string, mes string, anio str
 		pagos_mensuales = []models.PagoMensual{}
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
 		for _, pago_mensual := range pagos_mensuales {
-			if vigencia, ok := contrato_dependencia[pago_mensual.NumeroContrato]; ok == true && vigencia == strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64) {
 
+			//RFC 45758 Se modifica la condición para comparar los contratos de la dependencia con los cumpñlidos solicitados en el mes
+			if contratoExists(strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64), pago_mensual.NumeroContrato, contratos_dependencia.Contratos.Contrato) {
 				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago_mensual.DocumentoPersonaId, &contratistas); (err == nil) && (response == 200) {
 					var contrato models.InformacionContrato
 					contrato, outputError = GetContrato(pago_mensual.NumeroContrato, strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64))
