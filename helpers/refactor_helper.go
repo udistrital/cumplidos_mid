@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"encoding/json"
-	_ "fmt"
 )
 
 func LimpiezaRespuestaRefactor(respuesta map[string]interface{}, v interface{}) {
@@ -10,6 +9,6 @@ func LimpiezaRespuestaRefactor(respuesta map[string]interface{}, v interface{}) 
 	if err != nil {
 		panic(err)
 	}
+
 	json.Unmarshal(b, v)
 }
-
