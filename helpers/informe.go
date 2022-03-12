@@ -189,6 +189,7 @@ func AddActividadEspecifica(actividad_especifica map[string]interface{}) (activi
 		logs.Error(err)
 		outputError = map[string]interface{}{"funcion": "/Informe/AddActividadEspecifica", "err": err, "status": "502"}
 		panic(outputError)
+
 	}
 
 	return actividad_especifica_creada, outputError
