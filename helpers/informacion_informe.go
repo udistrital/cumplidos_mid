@@ -120,24 +120,24 @@ func InformacionInforme(num_documento string, contrato string, vigencia string, 
 		panic(outputError)
 	}
 
-	var temp_novedades models.RespNov
-	fmt.Println(beego.AppConfig.String("UrlNovedadesMid") + "/novedad/" + contrato + "/" + vigencia)
-	if response, err := getJsonTest(beego.AppConfig.String("UrlNovedadesMid")+"/novedad/"+contrato+"/"+vigencia, &temp_novedades); (err == nil) && (response == 200) {
+	// var temp_novedades models.RespNov
+	// fmt.Println(beego.AppConfig.String("UrlNovedadesMid") + "/novedad/" + contrato + "/" + vigencia)
+	// if response, err := getJsonTest(beego.AppConfig.String("UrlNovedadesMid")+"/novedad/"+contrato+"/"+vigencia, &temp_novedades); (err == nil) && (response == 200) {
 
-		fmt.Println("temp_novedades", temp_novedades)
-		novedades := temp_novedades.Body
-		if novedades_cesion, err := getNovedadCesion(novedades); err == nil {
-			informacion_informe.Novedades.Cesion = novedades_cesion
+	// 	fmt.Println("temp_novedades", temp_novedades)
+	// 	novedades := temp_novedades.Body
+	// 	if novedades_cesion, err := getNovedadCesion(novedades); err == nil {
+	// 		informacion_informe.Novedades.Cesion = novedades_cesion
 
-		}
-		if novedades_otrosi, err := getNovedadOtroSi(novedades); err == nil {
-			informacion_informe.Novedades.Otrosi = novedades_otrosi
-		}
-	} else {
-		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/InformacionInforme/novedades", "err": err, "status": "502"}
-		panic(outputError)
-	}
+	// 	}
+	// 	if novedades_otrosi, err := getNovedadOtroSi(novedades); err == nil {
+	// 		informacion_informe.Novedades.Otrosi = novedades_otrosi
+	// 	}
+	// } else {
+	// 	logs.Error(err)
+	// 	outputError = map[string]interface{}{"funcion": "/InformacionInforme/novedades", "err": err, "status": "502"}
+	// 	panic(outputError)
+	// }
 
 	return
 }
