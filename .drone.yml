@@ -60,7 +60,7 @@ steps:
     - master
     event:
     - push
-
+    
 - name: go_run_test
   image: golang:1.14
   commands:
