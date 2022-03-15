@@ -3,6 +3,7 @@ package helpers
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/astaxie/beego/logs"
 
@@ -39,6 +40,30 @@ func InformacionInforme(num_documento string, contrato string, vigencia string, 
 		panic(outputError)
 	}
 
+	var informacion_persona_natural []models.InformacionPersonaNatural
+	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/informacion_persona_natural?query=Id:" + num_documento)
+	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_persona_natural?query=Id:"+num_documento, &informacion_persona_natural); (err == nil) && (response == 200) {
+		fmt.Println("informacion_persona natural:", informacion_persona_natural)
+		//informacion_informe.InformacionContratista.CiudadExpedicion = informacion_contrato_contratista.InformacionContratista.Documento.Ciudad
+		informacion_informe.InformacionContratista.Nombre = informacion_persona_natural[0].PrimerNombre + " " + informacion_persona_natural[0].SegundoNombre + " " + informacion_persona_natural[0].PrimerApellido + " " + informacion_persona_natural[0].SegundoApellido
+		informacion_informe.InformacionContratista.TipoIdentificacion = informacion_persona_natural[0].TipoDocumento.ValorParametro
+
+		fmt.Println(beego.AppConfig.String("UrlcrudCore") + "/ciudad/" + strconv.Itoa(informacion_persona_natural[0].IdCiudadExpedicionDocumento))
+		var ciudad models.Ciudad
+		if response, err := getJsonTest(beego.AppConfig.String("UrlcrudCore")+"/ciudad/"+strconv.Itoa(informacion_persona_natural[0].IdCiudadExpedicionDocumento), &ciudad); (err == nil) && (response == 200) {
+			fmt.Println("ciudad:", ciudad)
+			informacion_informe.InformacionContratista.CiudadExpedicion = ciudad.Nombre
+		} else {
+			logs.Error(err)
+			outputError = map[string]interface{}{"funcion": "/InformacionInforme/ciudad", "err": err, "status": "502"}
+			panic(outputError)
+		}
+	} else {
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/InformacionInforme/Informacion_persona_natural", "err": err, "status": "502"}
+		panic(outputError)
+	}
+
 	var informacion_contrato_contratista models.InformacionContratoContratista
 	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"informacion_contrato_contratista/"+contrato+"/"+vigencia, &res_informacion_proveedor); (err == nil) && (response == 200) {
 		fmt.Println("informacion_contrato_contratista:", res_informacion_proveedor)
@@ -47,9 +72,6 @@ func InformacionInforme(num_documento string, contrato string, vigencia string, 
 			panic(err)
 		}
 		json.Unmarshal(b, &informacion_contrato_contratista)
-		informacion_informe.InformacionContratista.CiudadExpedicion = informacion_contrato_contratista.InformacionContratista.Documento.Ciudad
-		informacion_informe.InformacionContratista.Nombre = informacion_contrato_contratista.InformacionContratista.NombreCompleto
-		informacion_informe.InformacionContratista.TipoIdentificacion = informacion_contrato_contratista.InformacionContratista.Documento.Tipo
 		informacion_informe.Dependencia = informacion_contrato_contratista.InformacionContratista.Dependencia
 
 	} else {
