@@ -37,8 +37,9 @@ type InformacionInforme struct {
 }
 
 type Otrosi struct {
-	FechaInicio string
-	FechaFin    string
+	FechaInicio  string
+	FechaFin     string
+	ValorNovedad int
 }
 
 type Cesion struct {
