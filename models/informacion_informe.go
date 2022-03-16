@@ -37,11 +37,10 @@ type InformacionInforme struct {
 }
 
 type Otrosi struct {
-	FechaAdiccion  string
-	FechaProrroga  string
-	TiempoProrroga interface{}
+	FechaInicio string
+	FechaFin    string
 }
 
 type Cesion struct {
-	FechaCesion string
+	FechaInicio string
 }

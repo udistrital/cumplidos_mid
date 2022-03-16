@@ -161,48 +161,27 @@ func InformacionInforme(num_documento string, contrato string, vigencia string, 
 	// 	panic(outputError)
 	// }
 
-	return
-}
-
-func getNovedadOtroSi(novedades []models.Novedad) (novedad_otrosi []models.Otrosi, outputError map[string]interface{}) {
-	defer func() {
-		if err := recover(); err != nil {
-			outputError = map[string]interface{}{"funcion": "/getNovedadOtroSi", "err": err, "status": "502"}
-			panic(outputError)
-		}
-	}()
-
-	for _, novedad := range novedades {
-		var otrosi models.Otrosi
-		if novedad.TipoNovedad == 7 || novedad.TipoNovedad == 8 {
-			otrosi.FechaAdiccion = novedad.FechaAdiccion
-			otrosi.FechaProrroga = novedad.FechaProrroga
-			otrosi.TiempoProrroga = novedad.TiempoProrroga
-			fmt.Println("otrosi: ", otrosi)
-			novedad_otrosi = append(novedad_otrosi, otrosi)
-			fmt.Println("lista otrosi: ", novedad_otrosi)
-		}
+	// Consulta novedades OtroSi
+	var otrosi []models.Otrosi
+	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:220,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
+	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual?query=TipoNovedad:220,NumeroContrato:"+contrato+",Vigencia:"+vigencia+"&sortby=FechaInicio&order=desc", &otrosi); (err == nil) && (response == 200) {
+		fmt.Println("Otro si:", otrosi)
+		informacion_informe.Novedades.Otrosi = otrosi
+	} else {
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/OtroSi", "err": err, "status": "502"}
+		panic(outputError)
 	}
 
-	return
-}
-
-func getNovedadCesion(novedades []models.Novedad) (novedad_cesion []models.Cesion, outputError map[string]interface{}) {
-	defer func() {
-		if err := recover(); err != nil {
-			outputError = map[string]interface{}{"funcion": "/getNovedadCesion", "err": err, "status": "502"}
-			panic(outputError)
-		}
-	}()
-
-	for _, novedad := range novedades {
-		var cesion models.Cesion
-		if novedad.TipoNovedad == 2 {
-			cesion.FechaCesion = novedad.FechaCesion
-			fmt.Println("cesion:", cesion)
-			novedad_cesion = append(novedad_cesion, cesion)
-			fmt.Println("lista cesion: ", novedad_cesion)
-		}
+	var cesion []models.Cesion
+	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:219,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
+	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual?query=TipoNovedad:219,NumeroContrato:"+contrato+",Vigencia:"+vigencia+"&sortby=FechaInicio&order=desc", &cesion); (err == nil) && (response == 200) {
+		fmt.Println("Cesion:", cesion)
+		informacion_informe.Novedades.Cesion = cesion
+	} else {
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/OtroSi", "err": err, "status": "502"}
+		panic(outputError)
 	}
 
 	return
