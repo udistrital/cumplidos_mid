@@ -161,11 +161,11 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 									fmt.Println("Validacion:", time.Now().After(novedad.FechaInicio) && time.Now().Before(novedad.FechaInicio.AddDate(0, 2, 0)))
 									fmt.Println("fecha_inicio", novedad.FechaInicio)
 									fmt.Println("fecha ahora", time.Now())
-									fmt.Println("fecha inicio un mes despues", novedad.FechaInicio.AddDate(0, 1, 0))
-									if time.Now().After(novedad.FechaInicio) && time.Now().Before(novedad.FechaInicio.AddDate(0, 2, 0)) {
+									fmt.Println("fecha inicio un mes despues", novedad.FechaInicio.AddDate(0, 6, 0))
+									if time.Now().After(novedad.FechaInicio) && time.Now().Before(novedad.FechaInicio.AddDate(0, 6, 0)) {
 										fmt.Println("fecha_inicio", novedad.FechaInicio)
 										fmt.Println("fecha ahora", time.Now())
-										fmt.Println("fecha inicio un mes despues", novedad.FechaInicio.AddDate(0, 1, 0))
+										fmt.Println("fecha inicio un mes despues", novedad.FechaInicio.AddDate(0, 6, 0))
 										fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/informacion_proveedor/?query=NumDocumento:" + numero_documento)
 										if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+numero_documento, &informacion_proveedores); (err == nil) && (response == 200) {
 											fmt.Println("informacion proveedor", informacion_proveedores)
