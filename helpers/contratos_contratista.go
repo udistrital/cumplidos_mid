@@ -27,7 +27,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 	var novedades_novedad []models.NovedadPostcontractual
 	var informacion_proveedores []models.InformacionProveedor
 	contratos_persona, outputError := GetContratosPersona(numero_documento)
-	fmt.Println(contratos_persona)
+	fmt.Println("Contratos persona:", contratos_persona)
 	if outputError == nil {
 		fmt.Println("outputError==nil")
 		//if contratos_persona.ContratosPersonas.ContratoPersona == nil { // Si no tiene contrato
@@ -35,6 +35,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 		if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+numero_documento, &informacion_proveedores); (err == nil) && (response == 200) {
 			fmt.Println("informacion_proveedor:", informacion_proveedores)
 			for _, persona := range informacion_proveedores {
+				fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual/?query=Contratista:" + strconv.Itoa(persona.Id) + "&sortby=FechaInicio&order=desc&limit=1")
 				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=Contratista:"+strconv.Itoa(persona.Id)+"&sortby=FechaInicio&order=desc&limit=1", &novedades_postcontractuales); (err == nil) && (response == 200) {
 					fmt.Println("novedades", novedades_postcontractuales)
 					for _, novedad := range novedades_postcontractuales {
@@ -44,8 +45,9 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 							var informacion_contrato_contratista models.InformacionContratoContratista
 							informacion_contrato_contratista, outputError = GetInformacionContratoContratista(novedad.NumeroContrato, strconv.Itoa(novedad.Vigencia))
 							if outputError == nil {
-
+								fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual/?query=NumeroContrato:" + novedad.NumeroContrato + ",Vigencia:" + strconv.Itoa(novedad.Vigencia) + "&sortby=FechaInicio&order=desc&limit=1")
 								if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=NumeroContrato:"+novedad.NumeroContrato+",Vigencia:"+strconv.Itoa(novedad.Vigencia)+"&sortby=FechaInicio&order=desc&limit=1", &novedades_novedad); (err == nil) && (response == 200) {
+									fmt.Println("Novedades de nuevo", novedades_novedad)
 									for _, novedad_novedad := range novedades_novedad {
 										if novedad_novedad != novedad {
 											if novedad_novedad.FechaInicio.Before(novedad_novedad.FechaFin) && time.Now().After(novedad_novedad.FechaInicio) && time.Now().Before(novedad_novedad.FechaFin.AddDate(0, 2, 0)) {
@@ -136,73 +138,88 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 		}
 
 		//} else { // si tiene contrato
+		fmt.Println("contratos disponibilidad", contratos_disponibilidad_rp)
+		fmt.Println("for contrato persona")
 		for _, contrato_persona := range contratos_persona.ContratosPersonas.ContratoPersona {
 			var contrato models.InformacionContrato
 			contrato, outputError = GetContrato(contrato_persona.NumeroContrato, contrato_persona.Vigencia)
+			fmt.Println("contrato", contrato)
 			if outputError == nil {
+				fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual/?query=NumeroContrato:" + contrato_persona.NumeroContrato + ",Vigencia:" + contrato_persona.Vigencia + "&sortby=FechaInicio&order=desc&limit=1")
 				//var novedad_postcontractual models.NovedadPostcontractual
 				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=NumeroContrato:"+contrato_persona.NumeroContrato+",Vigencia:"+contrato_persona.Vigencia+"&sortby=FechaInicio&order=desc&limit=1", &novedades_postcontractuales); (err == nil) && (response == 200) {
 					//var	prueba []models.NovedadPostcontractual
 					//	json.NewDecoder(r.Body).Decode(prueba)
+					fmt.Println("Novedades postcontractualese", novedades_postcontractuales)
 					var informacion_contrato_contratista models.InformacionContratoContratista
 					informacion_contrato_contratista, outputError = GetInformacionContratoContratista(contrato_persona.NumeroContrato, contrato_persona.Vigencia)
+					fmt.Println("Informacion contrato contratista", informacion_contrato_contratista)
 					if outputError == nil {
 						if novedades_postcontractuales != nil { // Si tiene novedades
 							for _, novedad := range novedades_postcontractuales {
 								if novedad.TipoNovedad == 219 { // si es una cesión
-									if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+numero_documento, &informacion_proveedores); (err == nil) && (response == 200) {
-										for _, persona := range informacion_proveedores {
-											if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=Contratista:"+strconv.Itoa(persona.Id)+"&sortby=FechaInicio&order=desc&limit=1", &novedades_postcontractuales); (err == nil) && (response == 200) {
-												for _, novedad := range novedades_postcontractuales {
-													var contrato models.InformacionContrato
-													contrato, outputError = GetContrato(novedad.NumeroContrato, strconv.Itoa(novedad.Vigencia))
+									fmt.Println("Validacion:", time.Now().After(novedad.FechaInicio) && time.Now().Before(novedad.FechaInicio.AddDate(0, 2, 0)))
+									fmt.Println("fecha_inicio", novedad.FechaInicio)
+									fmt.Println("fecha ahora", time.Now())
+									fmt.Println("fecha inicio un mes despues", novedad.FechaInicio.AddDate(0, 6, 0))
+									if time.Now().After(novedad.FechaInicio) && time.Now().Before(novedad.FechaInicio.AddDate(0, 6, 0)) {
+										fmt.Println("fecha_inicio", novedad.FechaInicio)
+										fmt.Println("fecha ahora", time.Now())
+										fmt.Println("fecha inicio un mes despues", novedad.FechaInicio.AddDate(0, 6, 0))
+										fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/informacion_proveedor/?query=NumDocumento:" + numero_documento)
+										if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+numero_documento, &informacion_proveedores); (err == nil) && (response == 200) {
+											fmt.Println("informacion proveedor", informacion_proveedores)
+											for _, novedad := range novedades_postcontractuales {
+												var contrato models.InformacionContrato
+												contrato, outputError = GetContrato(novedad.NumeroContrato, strconv.Itoa(novedad.Vigencia))
+												fmt.Println("contrato", contrato)
+												if outputError == nil {
+													var informacion_contrato_contratista models.InformacionContratoContratista
+													informacion_contrato_contratista, outputError = GetInformacionContratoContratista(novedad.NumeroContrato, strconv.Itoa(novedad.Vigencia))
+													fmt.Println("informacion_contrato_contratista", informacion_contrato_contratista)
 													if outputError == nil {
-														var informacion_contrato_contratista models.InformacionContratoContratista
-														informacion_contrato_contratista, outputError = GetInformacionContratoContratista(novedad.NumeroContrato, strconv.Itoa(novedad.Vigencia))
-														if outputError == nil {
-															if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
-																for _, contrato_disponibilidad := range contratos_disponibilidad {
-																	var cdprp models.InformacionCdpRp
-																	cdprp, outputError = GetRP(strconv.Itoa(contrato_disponibilidad.NumeroCdp), strconv.Itoa(contrato_disponibilidad.VigenciaCdp))
-																	if outputError == nil {
-																		for _, rp := range cdprp.CdpXRp.CdpRp {
-																			var contrato_disponibilidad_rp models.ContratoDisponibilidadRp
-																			contrato_disponibilidad_rp.NumeroContratoSuscrito = novedad.NumeroContrato
-																			contrato_disponibilidad_rp.Vigencia = strconv.Itoa(novedad.Vigencia)
-																			contrato_disponibilidad_rp.NumeroCdp = strconv.Itoa(contrato_disponibilidad.NumeroCdp)
-																			contrato_disponibilidad_rp.VigenciaCdp = strconv.Itoa(contrato_disponibilidad.VigenciaCdp)
-																			contrato_disponibilidad_rp.NumeroRp = rp.RpNumeroRegistro
-																			contrato_disponibilidad_rp.VigenciaRp = rp.RpVigencia
-																			contrato_disponibilidad_rp.NombreDependencia = informacion_contrato_contratista.InformacionContratista.Dependencia
-																			contrato_disponibilidad_rp.NumDocumentoSupervisor = contrato.Contrato.Supervisor.DocumentoIdentificacion
-																			contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
-																		}
-																	} else {
-																		return nil, outputError
+														fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/contrato_disponibilidad/?query=NumeroContrato:" + contrato.Contrato.NumeroContrato + ",Vigencia:" + contrato.Contrato.Vigencia)
+														if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
+															fmt.Println("contratos_dispo", contratos_disponibilidad)
+															for _, contrato_disponibilidad := range contratos_disponibilidad {
+																var cdprp models.InformacionCdpRp
+																cdprp, outputError = GetRP(strconv.Itoa(contrato_disponibilidad.NumeroCdp), strconv.Itoa(contrato_disponibilidad.VigenciaCdp))
+																fmt.Println("cdprp", cdprp)
+																if outputError == nil {
+																	for _, rp := range cdprp.CdpXRp.CdpRp {
+																		var contrato_disponibilidad_rp models.ContratoDisponibilidadRp
+																		contrato_disponibilidad_rp.NumeroContratoSuscrito = novedad.NumeroContrato
+																		contrato_disponibilidad_rp.Vigencia = strconv.Itoa(novedad.Vigencia)
+																		contrato_disponibilidad_rp.NumeroCdp = strconv.Itoa(contrato_disponibilidad.NumeroCdp)
+																		contrato_disponibilidad_rp.VigenciaCdp = strconv.Itoa(contrato_disponibilidad.VigenciaCdp)
+																		contrato_disponibilidad_rp.NumeroRp = rp.RpNumeroRegistro
+																		contrato_disponibilidad_rp.VigenciaRp = rp.RpVigencia
+																		contrato_disponibilidad_rp.NombreDependencia = informacion_contrato_contratista.InformacionContratista.Dependencia
+																		contrato_disponibilidad_rp.NumDocumentoSupervisor = contrato.Contrato.Supervisor.DocumentoIdentificacion
+																		contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
+																		fmt.Println("contratos_dispo_rp", contrato_disponibilidad_rp)
 																	}
+																} else {
+																	return nil, outputError
 																}
-															} else { // If contrato_disponibilidad get
-																logs.Error(err)
-																outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
-																return nil, outputError
 															}
-														} else {
+														} else { // If contrato_disponibilidad get
+															logs.Error(err)
+															outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
 															return nil, outputError
 														}
 													} else {
 														return nil, outputError
 													}
+												} else {
+													return nil, outputError
 												}
-											} else { // If novedad_postcontractual get
-												logs.Error(err)
-												outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
-												return nil, outputError
 											}
+										} else { // If informacion_proveedor get
+											logs.Error(err)
+											outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
+											return nil, outputError
 										}
-									} else { // If informacion_proveedor get
-										logs.Error(err)
-										outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
-										return nil, outputError
 									}
 								} else { // si no es una cesión
 									var cdprp models.InformacionCdpRp
@@ -225,6 +242,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 									}
 								}
 							}
+							fmt.Println("contratos disponibilidad si tiene novedades", contratos_disponibilidad_rp)
 						} else { // si no tiene novedades
 							if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
 								for _, contrato_disponibilidad := range contratos_disponibilidad {
@@ -252,7 +270,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 								outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
 								return nil, outputError
 							}
-
+							fmt.Println("contratos disponibilidad si tiene novedades", contratos_disponibilidad_rp)
 						}
 					} else {
 						return nil, outputError
@@ -328,7 +346,7 @@ func GetContratosPersona(num_documento string) (contratos_persona models.Informa
 			err := json.Unmarshal(json_contratos, &contratos)
 			if err == nil {
 				contratos_persona = contratos
-				fmt.Println(contratos_persona)
+				fmt.Println("Contratos personas", contratos_persona)
 				return contratos_persona, nil
 			} else {
 				logs.Error(err)
