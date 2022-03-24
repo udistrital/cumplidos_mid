@@ -250,7 +250,7 @@ func UpdateInformeById(informe models.Informe) (outputError map[string]interface
 		var actividades_especificas []models.ActividadEspecifica
 		var respuesta_peticion map[string]interface{}
 		//consulta todas las antiguas actividades especificas
-		if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica/?query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
+		if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
 			fmt.Println("Actividades especificas:", respuesta_peticion)
 			if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 				LimpiezaRespuestaRefactor(respuesta_peticion, &actividades_especificas)
