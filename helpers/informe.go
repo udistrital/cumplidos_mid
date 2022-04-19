@@ -284,3 +284,46 @@ func UpdateInformeById(informe models.Informe) (outputError map[string]interface
 
 	return
 }
+
+func UltimoInformeContratista(contrato string, vigencia string, documento string) (informe []models.Informe, outputError map[string]interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			//fmt.Println("error", err)
+			outputError = map[string]interface{}{"funcion": "/UltimoInformeContratista", "err": err, "status": "502"}
+			panic(outputError)
+		}
+	}()
+
+	// var aux_informe models.Informe
+	var respuesta_peticion map[string]interface{}
+	query := "contrato:" + contrato + ",vigencia:" + vigencia + ",DocumentoContratista:" + documento
+	order := "&order=desc,desc"
+	sortby := "&sortby=Anio,Mes"
+	limit := "&limit=1"
+	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/informe/?query=" + query + sortby + order + limit)
+	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/?query="+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
+		fmt.Println("UltimoInformeContratista:", respuesta_peticion)
+		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
+
+			LimpiezaRespuestaRefactor(respuesta_peticion, &informe)
+			for i, inf := range informe {
+				idInforme := strconv.Itoa(inf.Id)
+				actividadesEsp, err := getActividadesEspecificas(idInforme)
+				fmt.Println(actividadesEsp)
+				if err == nil {
+					informe[i].ActividadesEspecificas = actividadesEsp
+				}
+				fmt.Println(inf.ActividadesEspecificas)
+			}
+		}
+
+		// aux_informe.Id= respuesta_peticion.Id
+		// informe = append(informe, aux_informe)
+	} else {
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/UltimoInformeContratista", "err": err, "status": "502"}
+		return nil, outputError
+	}
+
+	return
+}
