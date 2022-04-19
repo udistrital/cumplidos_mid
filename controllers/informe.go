@@ -20,9 +20,8 @@ type InformeController struct {
 func (c *InformeController) URLMapping() {
 	c.Mapping("Post", c.PostInforme)
 	c.Mapping("GetOne", c.GetInforme)
-	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.PutInforme)
-	c.Mapping("Delete", c.Delete)
+	c.Mapping("GetOne", c.GetUltimoInformeContratista)
 }
 
 // Post ...
@@ -89,6 +88,47 @@ func (c *InformeController) GetInforme() {
 	c.ServeJSON()
 }
 
+// GetUltimoInformeContratista ...
+// @Title Get UltimoInformeContratista
+// @Description get Ultimo Informe de un contratista by contrato,vigencia y documento
+// @Param	contrato		path 	string	true		"The key for staticblock"
+// @Param	vigencia		path 	string	true		"The key for staticblock"
+// @Param	documento		path 	string	true		"The key for staticblock"
+// @Success 200 {object} models.Informe
+// @Failure 403 :id is empty
+// @router /:contrato/:vigencia/:documento [get]
+func (c *InformeController) GetUltimoInformeContratista() {
+	defer func() {
+		if err := recover(); err != nil {
+			logs.Error(err)
+			localError := err.(map[string]interface{})
+			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "InformeController" + "/" + (localError["funcion"]).(string))
+			c.Data["data"] = (localError["err"])
+			if status, ok := localError["status"]; ok {
+				c.Abort(status.(string))
+			} else {
+				c.Abort("404")
+			}
+		}
+	}()
+
+	contrato := c.GetString(":contrato")
+	vigencia := c.GetString(":vigencia")
+	documento := c.GetString(":documento")
+
+	if len(vigencia) > 4 || len(documento) < 4 {
+		panic(map[string]interface{}{"funcion": "GetUltimoInformeContratista", "err": "Error en los parametros de ingreso", "status": "400"})
+	}
+
+	if informe, err := helpers.UltimoInformeContratista(contrato, vigencia, documento); (err == nil) || (len(informe) != 0) {
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": informe}
+	} else {
+		panic(err)
+	}
+	c.ServeJSON()
+}
+
 // GetAll ...
 // @Title Get All
 // @Description get Informe
@@ -101,56 +141,56 @@ func (c *InformeController) GetInforme() {
 // @Success 200 {object} models.Informe
 // @Failure 403
 // @router / [get]
-func (c *InformeController) GetAll() {
-	// var fields []string
-	// var sortby []string
-	// var order []string
-	// var query = make(map[string]string)
-	// var limit int64 = 10
-	// var offset int64
+//func (c *InformeController) GetAll() {
+// var fields []string
+// var sortby []string
+// var order []string
+// var query = make(map[string]string)
+// var limit int64 = 10
+// var offset int64
 
-	// // fields: col1,col2,entity.col3
-	// if v := c.GetString("fields"); v != "" {
-	// 	fields = strings.Split(v, ",")
-	// }
-	// // limit: 10 (default is 10)
-	// if v, err := c.GetInt64("limit"); err == nil {
-	// 	limit = v
-	// }
-	// // offset: 0 (default is 0)
-	// if v, err := c.GetInt64("offset"); err == nil {
-	// 	offset = v
-	// }
-	// // sortby: col1,col2
-	// if v := c.GetString("sortby"); v != "" {
-	// 	sortby = strings.Split(v, ",")
-	// }
-	// // order: desc,asc
-	// if v := c.GetString("order"); v != "" {
-	// 	order = strings.Split(v, ",")
-	// }
-	// // query: k:v,k:v
-	// if v := c.GetString("query"); v != "" {
-	// 	for _, cond := range strings.Split(v, ",") {
-	// 		kv := strings.SplitN(cond, ":", 2)
-	// 		if len(kv) != 2 {
-	// 			c.Data["json"] = errors.New("Error: invalid query key/value pair")
-	// 			c.ServeJSON()
-	// 			return
-	// 		}
-	// 		k, v := kv[0], kv[1]
-	// 		query[k] = v
-	// 	}
-	// }
+// // fields: col1,col2,entity.col3
+// if v := c.GetString("fields"); v != "" {
+// 	fields = strings.Split(v, ",")
+// }
+// // limit: 10 (default is 10)
+// if v, err := c.GetInt64("limit"); err == nil {
+// 	limit = v
+// }
+// // offset: 0 (default is 0)
+// if v, err := c.GetInt64("offset"); err == nil {
+// 	offset = v
+// }
+// // sortby: col1,col2
+// if v := c.GetString("sortby"); v != "" {
+// 	sortby = strings.Split(v, ",")
+// }
+// // order: desc,asc
+// if v := c.GetString("order"); v != "" {
+// 	order = strings.Split(v, ",")
+// }
+// // query: k:v,k:v
+// if v := c.GetString("query"); v != "" {
+// 	for _, cond := range strings.Split(v, ",") {
+// 		kv := strings.SplitN(cond, ":", 2)
+// 		if len(kv) != 2 {
+// 			c.Data["json"] = errors.New("Error: invalid query key/value pair")
+// 			c.ServeJSON()
+// 			return
+// 		}
+// 		k, v := kv[0], kv[1]
+// 		query[k] = v
+// 	}
+// }
 
-	// l, err := models.GetAllInforme(query, fields, sortby, order, offset, limit)
-	// if err != nil {
-	// 	c.Data["json"] = err.Error()
-	// } else {
-	// 	c.Data["json"] = l
-	// }
-	c.ServeJSON()
-}
+// l, err := models.GetAllInforme(query, fields, sortby, order, offset, limit)
+// if err != nil {
+// 	c.Data["json"] = err.Error()
+// } else {
+// 	c.Data["json"] = l
+// }
+//c.ServeJSON()
+//}
 
 // Put ...
 // @Title Put
@@ -187,13 +227,13 @@ func (c *InformeController) PutInforme() {
 // @Success 200 {string} delete success!
 // @Failure 403 id is empty
 // @router /:id [delete]
-func (c *InformeController) Delete() {
-	// idStr := c.Ctx.Input.Param(":id")
-	// id, _ := strconv.ParseInt(idStr, 0, 64)
-	// if err := models.DeleteInforme(id); err == nil {
-	// 	c.Data["json"] = "OK"
-	// } else {
-	// 	c.Data["json"] = err.Error()
-	// }
-	// c.ServeJSON()
-}
+//func (c *InformeController) Delete() {
+// idStr := c.Ctx.Input.Param(":id")
+// id, _ := strconv.ParseInt(idStr, 0, 64)
+// if err := models.DeleteInforme(id); err == nil {
+// 	c.Data["json"] = "OK"
+// } else {
+// 	c.Data["json"] = err.Error()
+// }
+// c.ServeJSON()
+//}
