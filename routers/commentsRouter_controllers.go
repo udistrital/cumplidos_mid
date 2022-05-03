@@ -165,5 +165,13 @@ func init() {
 			MethodParams:     param.Make(),
 			Filters:          nil,
 			Params:           nil})
+	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:ValidacionFechaCargaCumplidoController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:ValidacionFechaCargaCumplidoController"],
+		beego.ControllerComments{
+			Method:           "GetValidacionPeriodo",
+			Router:           "/:dependencia_supervisor/:anio/:mes",
+			AllowHTTPMethods: []string{"get"},
+			MethodParams:     param.Make(),
+			Filters:          nil,
+			Params:           nil})
 
 }
