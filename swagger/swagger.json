@@ -691,26 +691,76 @@
                     }
                 }
             }
+        },
+        "/validacion_periodo_carga_cumplido/{dependencia_supervisor}/{anio}/{mes}": {
+            "get": {
+                "tags": [
+                    "validacion_periodo_carga_cumplido"
+                ],
+                "description": "valida si se esta dentro del periodo de carga de cumplidos",
+                "operationId": "ValidacionFechaCargaCumplidoController.GetValidacionPeriodo",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "dependencia_supervisor",
+                        "description": "Dependencia supervisor",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "anio",
+                        "description": "anio",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "mes",
+                        "description": "mes",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ValidacionFechaCargaCumplido"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found resource"
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "15861.0xc0005acff0.false": {
+        "15861.0xc00055e1e0.false": {
             "title": "false",
             "type": "object"
         },
-        "16030.0xc0005ad020.false": {
+        "16030.0xc00055e210.false": {
             "title": "false",
             "type": "object"
         },
-        "16091.0xc0005ad050.false": {
+        "16091.0xc00055e240.false": {
             "title": "false",
             "type": "object"
         },
-        "16159.0xc0005ad0e0.false": {
+        "16159.0xc00055e2d0.false": {
             "title": "false",
             "type": "object"
         },
-        "16231.0xc0005ad110.false": {
+        "16231.0xc00055e300.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "27952.0xc00058ec90.false": {
             "title": "false",
             "type": "object"
         },
@@ -861,7 +911,8 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/16030.0xc0005ad020.false"
+
+                    "$ref": "#/definitions/16030.0xc00055e210.false"
                 },
                 "Dependencia": {
                     "type": "string"
@@ -870,22 +921,24 @@
                     "type": "string"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/16231.0xc0005ad110.false"
+                    "$ref": "#/definitions/16231.0xc00055e300.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/16159.0xc0005ad0e0.false"
+                    "$ref": "#/definitions/16159.0xc00055e2d0.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/16091.0xc0005ad050.false"
+                    "$ref": "#/definitions/16091.0xc00055e240.false"
+
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/15861.0xc0005acff0.false"
+
+                    "$ref": "#/definitions/15861.0xc00055e1e0.false"
                 },
                 "ValorContrato": {
                     "type": "string"
@@ -1082,6 +1135,22 @@
                     "format": "int64"
                 }
             }
+        },
+        "models.ValidacionFechaCargaCumplido": {
+            "title": "ValidacionFechaCargaCumplido",
+            "type": "object",
+            "properties": {
+                "CargaHabilitada": {
+                    "type": "boolean"
+                },
+                "FechaActual": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "Periodo": {
+                    "$ref": "#/definitions/27952.0xc00058ec90.false"
+                }
+            }
         }
     },
     "tags": [
@@ -1116,6 +1185,10 @@
         {
             "name": "informe",
             "description": " InformeController operations for Informe\n"
+        },
+        {
+            "name": "validacion_periodo_carga_cumplido",
+            "description": "ValidacionFechaCargaCumplidoController operations for validacion_fecha_carga_cumplido\n"
         }
     ]
 }
