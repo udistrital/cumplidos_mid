@@ -911,6 +911,7 @@
                     "type": "string"
                 },
                 "CDP": {
+
                     "$ref": "#/definitions/16030.0xc00055e210.false"
                 },
                 "Dependencia": {
@@ -930,11 +931,13 @@
                 },
                 "RP": {
                     "$ref": "#/definitions/16091.0xc00055e240.false"
+
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
+
                     "$ref": "#/definitions/15861.0xc00055e1e0.false"
                 },
                 "ValorContrato": {
