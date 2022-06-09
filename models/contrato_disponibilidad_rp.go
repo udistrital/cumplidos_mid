@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type ContratoDisponibilidadRp struct {
 	NumeroContratoSuscrito string
 	Vigencia               string
@@ -9,4 +11,6 @@ type ContratoDisponibilidadRp struct {
 	VigenciaRp             string
 	NombreDependencia      string
 	NumDocumentoSupervisor string
+	FechaInicio            time.Time
+	FechaFin               time.Time
 }

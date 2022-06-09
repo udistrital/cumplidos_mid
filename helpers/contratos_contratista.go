@@ -145,9 +145,9 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 			contrato, outputError = GetContrato(contrato_persona.NumeroContrato, contrato_persona.Vigencia)
 			fmt.Println("contrato", contrato)
 			if outputError == nil {
-				fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual/?query=NumeroContrato:" + contrato_persona.NumeroContrato + ",Vigencia:" + contrato_persona.Vigencia + "&sortby=FechaInicio&order=desc&limit=1")
+				fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual/?query=NumeroContrato:" + contrato_persona.NumeroContrato + ",Vigencia:" + contrato_persona.Vigencia + "&sortby=FechaInicio&order=desc&limit=-1")
 				//var novedad_postcontractual models.NovedadPostcontractual
-				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=NumeroContrato:"+contrato_persona.NumeroContrato+",Vigencia:"+contrato_persona.Vigencia+"&sortby=FechaInicio&order=desc&limit=1", &novedades_postcontractuales); (err == nil) && (response == 200) {
+				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=NumeroContrato:"+contrato_persona.NumeroContrato+",Vigencia:"+contrato_persona.Vigencia+"&sortby=FechaInicio&order=desc&limit=-1", &novedades_postcontractuales); (err == nil) && (response == 200) {
 					//var	prueba []models.NovedadPostcontractual
 					//	json.NewDecoder(r.Body).Decode(prueba)
 					fmt.Println("Novedades postcontractualese", novedades_postcontractuales)
@@ -196,6 +196,13 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 																		contrato_disponibilidad_rp.VigenciaRp = rp.RpVigencia
 																		contrato_disponibilidad_rp.NombreDependencia = informacion_contrato_contratista.InformacionContratista.Dependencia
 																		contrato_disponibilidad_rp.NumDocumentoSupervisor = contrato.Contrato.Supervisor.DocumentoIdentificacion
+																		var actasInicio []models.ActaInicio
+																		if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/acta_inicio/?query=NumeroContrato:"+contrato_disponibilidad.NumeroContrato+",Vigencia:"+strconv.Itoa(contrato_disponibilidad.Vigencia), &actasInicio); (err == nil) && (response == 200) {
+																			for _, actaInicio := range actasInicio {
+																				contrato_disponibilidad_rp.FechaInicio = actaInicio.FechaInicio
+																				contrato_disponibilidad_rp.FechaFin = actaInicio.FechaFin
+																			}
+																		}
 																		contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
 																		fmt.Println("contratos_dispo_rp", contrato_disponibilidad_rp)
 																	}
@@ -237,6 +244,8 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 												contrato_disponibilidad_rp.VigenciaRp = rp.RpVigencia
 												contrato_disponibilidad_rp.NombreDependencia = informacion_contrato_contratista.InformacionContratista.Dependencia
 												contrato_disponibilidad_rp.NumDocumentoSupervisor = contrato.Contrato.Supervisor.DocumentoIdentificacion
+												contrato_disponibilidad_rp.FechaInicio = novedad.FechaInicio
+												contrato_disponibilidad_rp.FechaFin = novedad.FechaFin
 												contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
 											}
 										} else {
@@ -258,6 +267,13 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 														contrato_disponibilidad_rp.VigenciaRp = rp.RpVigencia
 														contrato_disponibilidad_rp.NombreDependencia = informacion_contrato_contratista.InformacionContratista.Dependencia
 														contrato_disponibilidad_rp.NumDocumentoSupervisor = contrato.Contrato.Supervisor.DocumentoIdentificacion
+														var actasInicio []models.ActaInicio
+														if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/acta_inicio/?query=NumeroContrato:"+contrato_disponibilidad.NumeroContrato+",Vigencia:"+strconv.Itoa(contrato_disponibilidad.Vigencia), &actasInicio); (err == nil) && (response == 200) {
+															for _, actaInicio := range actasInicio {
+																contrato_disponibilidad_rp.FechaInicio = actaInicio.FechaInicio
+																contrato_disponibilidad_rp.FechaFin = actaInicio.FechaFin
+															}
+														}
 														contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
 													}
 												} else {
@@ -267,24 +283,6 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 										} else { // If contrato_disponibilidad get
 											logs.Error(err)
 											outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
-											return nil, outputError
-										}
-									} else {
-										cdprp, outputError = GetRP(strconv.Itoa(novedad.NumeroCdp), strconv.Itoa(novedad.VigenciaCdp))
-										if outputError == nil {
-											for _, rp := range cdprp.CdpXRp.CdpRp {
-												var contrato_disponibilidad_rp models.ContratoDisponibilidadRp
-												contrato_disponibilidad_rp.NumeroContratoSuscrito = novedad.NumeroContrato
-												contrato_disponibilidad_rp.Vigencia = strconv.Itoa(novedad.Vigencia)
-												contrato_disponibilidad_rp.NumeroCdp = strconv.Itoa(novedad.NumeroCdp)
-												contrato_disponibilidad_rp.VigenciaCdp = strconv.Itoa(novedad.VigenciaCdp)
-												contrato_disponibilidad_rp.NumeroRp = rp.RpNumeroRegistro
-												contrato_disponibilidad_rp.VigenciaRp = rp.RpVigencia
-												contrato_disponibilidad_rp.NombreDependencia = informacion_contrato_contratista.InformacionContratista.Dependencia
-												contrato_disponibilidad_rp.NumDocumentoSupervisor = contrato.Contrato.Supervisor.DocumentoIdentificacion
-												contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
-											}
-										} else {
 											return nil, outputError
 										}
 									}
