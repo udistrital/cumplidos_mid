@@ -49,7 +49,7 @@ type Cesion struct {
 }
 
 type Terminacion struct {
-	FechaInicio string
+	FechaFin string
 }
 
 type Suspencion struct {
