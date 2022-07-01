@@ -27,7 +27,7 @@ type InformacionInforme struct {
 	Novedades struct {
 		Otrosi      []Otrosi
 		Cesion      []Cesion
-		Terminacion Terminacion
+		Terminacion []Terminacion
 		Suspencion  []Suspencion
 	}
 	InformacionContratista struct {
