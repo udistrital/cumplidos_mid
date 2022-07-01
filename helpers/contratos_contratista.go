@@ -285,6 +285,43 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 											outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
 											return nil, outputError
 										}
+									} else {
+										if novedad.TipoNovedad == 218 { //Novedad de Terminacion anticipada
+											//Registro
+											if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+contrato.Contrato.NumeroContrato+",Vigencia:"+contrato.Contrato.Vigencia, &contratos_disponibilidad); (err == nil) && (response == 200) {
+												for _, contrato_disponibilidad := range contratos_disponibilidad {
+													var cdprp models.InformacionCdpRp
+													cdprp, outputError = GetRP(strconv.Itoa(contrato_disponibilidad.NumeroCdp), strconv.Itoa(contrato_disponibilidad.VigenciaCdp))
+													if outputError == nil {
+														for _, rp := range cdprp.CdpXRp.CdpRp {
+															var contrato_disponibilidad_rp models.ContratoDisponibilidadRp
+															contrato_disponibilidad_rp.NumeroContratoSuscrito = contrato_persona.NumeroContrato
+															contrato_disponibilidad_rp.Vigencia = contrato_persona.Vigencia
+															contrato_disponibilidad_rp.NumeroCdp = strconv.Itoa(contrato_disponibilidad.NumeroCdp)
+															contrato_disponibilidad_rp.VigenciaCdp = strconv.Itoa(contrato_disponibilidad.VigenciaCdp)
+															contrato_disponibilidad_rp.NumeroRp = rp.RpNumeroRegistro
+															contrato_disponibilidad_rp.VigenciaRp = rp.RpVigencia
+															contrato_disponibilidad_rp.NombreDependencia = informacion_contrato_contratista.InformacionContratista.Dependencia
+															contrato_disponibilidad_rp.NumDocumentoSupervisor = contrato.Contrato.Supervisor.DocumentoIdentificacion
+															var actasInicio []models.ActaInicio
+															if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/acta_inicio/?query=NumeroContrato:"+contrato_disponibilidad.NumeroContrato+",Vigencia:"+strconv.Itoa(contrato_disponibilidad.Vigencia), &actasInicio); (err == nil) && (response == 200) {
+																for _, actaInicio := range actasInicio {
+																	contrato_disponibilidad_rp.FechaInicio = actaInicio.FechaInicio
+																	contrato_disponibilidad_rp.FechaFin = novedad.FechaFin
+																}
+															}
+															contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
+														}
+													} else {
+														return nil, outputError
+													}
+												}
+											} else { // If contrato_disponibilidad get
+												logs.Error(err)
+												outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
+												return nil, outputError
+											}
+										}
 									}
 								}
 							}
