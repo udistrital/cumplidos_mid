@@ -7,14 +7,10 @@ type Informe struct {
 	Activo                 bool
 	FechaCreacion          time.Time
 	FechaModificacion      time.Time
-	Contrato               string
-	Vigencia               int
-	Mes                    int
-	Anio                   int
 	PeriodoInformeInicio   time.Time
 	PeriodoInformeFin      time.Time
 	Proceso                string
-	DocumentoContratista   string
+	PagoMensualId          *PagoMensual
 	ActividadesEspecificas []ActividadEspecifica
 }
 

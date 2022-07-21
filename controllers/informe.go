@@ -47,14 +47,11 @@ func (c *InformeController) PostInforme() {
 
 // GetOne ...
 // @Title Get One
-// @Description get Informe by contrato,vigencia,mes y anio
-// @Param	contrato		path 	string	true		"The key for staticblock"
-// @Param	vigencia		path 	string	true		"The key for staticblock"
-// @Param	mes		path 	string	true		"The key for staticblock"
-// @Param	anio		path 	string	true		"The key for staticblock"
+// @Description get Informe by pago_mensual_id
+// @Param	pago_mensual_id		path 	string	true		"The key for staticblock"
 // @Success 200 {object} models.Informe
-// @Failure 403 :id is empty
-// @router /:contrato/:vigencia/:mes/:anio [get]
+// @Failure 403 :pago_mensual_id is empty
+// @router /:pago_mensual_id [get]
 func (c *InformeController) GetInforme() {
 	defer func() {
 		if err := recover(); err != nil {
@@ -70,16 +67,13 @@ func (c *InformeController) GetInforme() {
 		}
 	}()
 
-	contrato := c.GetString(":contrato")
-	vigencia := c.GetString(":vigencia")
-	mes := c.GetString(":mes")
-	anio := c.GetString(":anio")
+	pago_mensual_id := c.GetString(":pago_mensual_id")
 
-	if len(vigencia) > 4 || len(mes) > 2 || len(anio) > 4 {
+	if len(pago_mensual_id) == 0 {
 		panic(map[string]interface{}{"funcion": "GetInforme", "err": "Error en los parametros de ingreso", "status": "400"})
 	}
 
-	if informe, err := helpers.Informe(contrato, vigencia, mes, anio); (err == nil) || (len(informe) != 0) {
+	if informe, err := helpers.Informe(pago_mensual_id); (err == nil) || (len(informe) != 0) {
 		c.Ctx.Output.SetStatus(200)
 		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": informe}
 	} else {
