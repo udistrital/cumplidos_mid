@@ -45,7 +45,7 @@ func Informe(pago_mensual_id string) (informe []models.Informe, outputError map[
 			}
 			for i, inf := range informe {
 				idInforme := strconv.Itoa(inf.Id)
-				actividadesEsp, err := getActividadesEspecificas(idInforme)
+				actividadesEsp, err := GetActividadesEspecificas(idInforme)
 				fmt.Println(actividadesEsp)
 				if err == nil {
 					informe[i].ActividadesEspecificas = actividadesEsp
@@ -65,11 +65,11 @@ func Informe(pago_mensual_id string) (informe []models.Informe, outputError map[
 	return
 }
 
-func getActividadesEspecificas(idInforme string) (actividades_especificas []models.ActividadEspecifica, outputError map[string]interface{}) {
+func GetActividadesEspecificas(idInforme string) (actividades_especificas []models.ActividadEspecifica, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			//fmt.Println("error", err)
-			outputError = map[string]interface{}{"funcion": "/getActividadesEspecificas", "err": err, "status": "502"}
+			outputError = map[string]interface{}{"funcion": "/GetActividadesEspecificas", "err": err, "status": "502"}
 			panic(outputError)
 		}
 	}()
@@ -88,7 +88,7 @@ func getActividadesEspecificas(idInforme string) (actividades_especificas []mode
 			for i, actEsp := range actividades_especificas {
 				fmt.Println(i, actEsp)
 				idactEsp := strconv.Itoa(actEsp.Id)
-				actividadesRea, err := getActividadesRealizadas(idactEsp)
+				actividadesRea, err := GetActividadesRealizadas(idactEsp)
 				if err == nil {
 					actividades_especificas[i].ActividadesRealizadas = actividadesRea
 				}
@@ -99,18 +99,18 @@ func getActividadesEspecificas(idInforme string) (actividades_especificas []mode
 		// informe = append(informe, aux_informe)
 	} else {
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/getActividadesEspecificas", "err": err, "status": "502"}
+		outputError = map[string]interface{}{"funcion": "/GetActividadesEspecificas", "err": err, "status": "502"}
 		return nil, outputError
 	}
 
 	return
 }
 
-func getActividadesRealizadas(idActividadEspecifica string) (actividades_realizadas []models.ActividadRealizada, outputError map[string]interface{}) {
+func GetActividadesRealizadas(idActividadEspecifica string) (actividades_realizadas []models.ActividadRealizada, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			//fmt.Println("error", err)
-			outputError = map[string]interface{}{"funcion": "/getActividadesRealizadas", "err": err, "status": "502"}
+			outputError = map[string]interface{}{"funcion": "/GetActividadesRealizadas", "err": err, "status": "502"}
 			panic(outputError)
 		}
 	}()
@@ -131,7 +131,7 @@ func getActividadesRealizadas(idActividadEspecifica string) (actividades_realiza
 		// informe = append(informe, aux_informe)
 	} else {
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/getActividadesRealizadas", "err": err, "status": "502"}
+		outputError = map[string]interface{}{"funcion": "/GetActividadesRealizadas", "err": err, "status": "502"}
 		return nil, outputError
 	}
 
