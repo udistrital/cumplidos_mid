@@ -719,27 +719,27 @@
         }
     },
     "definitions": {
-        "15944.0xc00060c390.false": {
+        "15944.0xc00063a000.false": {
             "title": "false",
             "type": "object"
         },
-        "16113.0xc00060c3c0.false": {
+        "16113.0xc00063a030.false": {
             "title": "false",
             "type": "object"
         },
-        "16174.0xc00060c3f0.false": {
+        "16174.0xc00063a060.false": {
             "title": "false",
             "type": "object"
         },
-        "16242.0xc00060c4e0.false": {
+        "16242.0xc00063a150.false": {
             "title": "false",
             "type": "object"
         },
-        "16379.0xc00060c510.false": {
+        "16379.0xc00063a180.false": {
             "title": "false",
             "type": "object"
         },
-        "28105.0xc000634f60.false": {
+        "28105.0xc000664bd0.false": {
             "title": "false",
             "type": "object"
         },
@@ -898,7 +898,7 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/16113.0xc00060c3c0.false"
+                    "$ref": "#/definitions/16113.0xc00063a030.false"
                 },
                 "Dependencia": {
                     "type": "string"
@@ -907,22 +907,22 @@
                     "type": "string"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/16379.0xc00060c510.false"
+                    "$ref": "#/definitions/16379.0xc00063a180.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/16242.0xc00060c4e0.false"
+                    "$ref": "#/definitions/16242.0xc00063a150.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/16174.0xc00060c3f0.false"
+                    "$ref": "#/definitions/16174.0xc00063a060.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/15944.0xc00060c390.false"
+                    "$ref": "#/definitions/15944.0xc00063a000.false"
                 },
                 "ValorContrato": {
                     "type": "string"
@@ -1117,7 +1117,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/28105.0xc000634f60.false"
+                    "$ref": "#/definitions/28105.0xc000664bd0.false"
                 }
             }
         }
