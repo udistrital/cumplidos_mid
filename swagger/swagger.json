@@ -273,56 +273,6 @@
                 }
             }
         },
-        "/informe/{contrato}/{vigencia}/{mes}/{anio}": {
-            "get": {
-                "tags": [
-                    "informe"
-                ],
-                "description": "get Informe by contrato,vigencia,mes y anio",
-                "operationId": "InformeController.Get One",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "contrato",
-                        "description": "The key for staticblock",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "vigencia",
-                        "description": "The key for staticblock",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "mes",
-                        "description": "The key for staticblock",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "anio",
-                        "description": "The key for staticblock",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/models.Informe"
-                        }
-                    },
-                    "403": {
-                        "description": ":id is empty"
-                    }
-                }
-            }
-        },
         "/informe/{id}": {
             "put": {
                 "tags": [
@@ -357,6 +307,35 @@
                     },
                     "403": {
                         "description": ":id is not int"
+                    }
+                }
+            }
+        },
+        "/informe/{pago_mensual_id}": {
+            "get": {
+                "tags": [
+                    "informe"
+                ],
+                "description": "get Informe by pago_mensual_id",
+                "operationId": "InformeController.Get One",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "pago_mensual_id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Informe"
+                        }
+                    },
+                    "403": {
+                        "description": ":pago_mensual_id is empty"
                     }
                 }
             }
@@ -740,27 +719,27 @@
         }
     },
     "definitions": {
-        "15944.0xc0005c3c20.false": {
+        "15944.0xc00063a000.false": {
             "title": "false",
             "type": "object"
         },
-        "16113.0xc0005c3c50.false": {
+        "16113.0xc00063a030.false": {
             "title": "false",
             "type": "object"
         },
-        "16174.0xc0005c3c80.false": {
+        "16174.0xc00063a060.false": {
             "title": "false",
             "type": "object"
         },
-        "16242.0xc0005c3d70.false": {
+        "16242.0xc00063a150.false": {
             "title": "false",
             "type": "object"
         },
-        "16379.0xc0005c3da0.false": {
+        "16379.0xc00063a180.false": {
             "title": "false",
             "type": "object"
         },
-        "28217.0xc000626810.false": {
+        "28105.0xc000664bd0.false": {
             "title": "false",
             "type": "object"
         },
@@ -919,7 +898,7 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/16113.0xc0005c3c50.false"
+                    "$ref": "#/definitions/16113.0xc00063a030.false"
                 },
                 "Dependencia": {
                     "type": "string"
@@ -928,22 +907,22 @@
                     "type": "string"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/16379.0xc0005c3da0.false"
+                    "$ref": "#/definitions/16379.0xc00063a180.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/16242.0xc0005c3d70.false"
+                    "$ref": "#/definitions/16242.0xc00063a150.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/16174.0xc0005c3c80.false"
+                    "$ref": "#/definitions/16174.0xc00063a060.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/15944.0xc0005c3c20.false"
+                    "$ref": "#/definitions/15944.0xc00063a000.false"
                 },
                 "ValorContrato": {
                     "type": "string"
@@ -983,16 +962,6 @@
                 "Activo": {
                     "type": "boolean"
                 },
-                "Anio": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "Contrato": {
-                    "type": "string"
-                },
-                "DocumentoContratista": {
-                    "type": "string"
-                },
                 "FechaCreacion": {
                     "type": "string",
                     "format": "datetime"
@@ -1005,9 +974,8 @@
                     "type": "integer",
                     "format": "int64"
                 },
-                "Mes": {
-                    "type": "integer",
-                    "format": "int64"
+                "PagoMensualId": {
+                    "$ref": "#/definitions/models.PagoMensual"
                 },
                 "PeriodoInformeFin": {
                     "type": "string",
@@ -1019,10 +987,6 @@
                 },
                 "Proceso": {
                     "type": "string"
-                },
-                "Vigencia": {
-                    "type": "integer",
-                    "format": "int64"
                 }
             }
         },
@@ -1153,7 +1117,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/28217.0xc000626810.false"
+                    "$ref": "#/definitions/28105.0xc000664bd0.false"
                 }
             }
         }

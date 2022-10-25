@@ -9,7 +9,7 @@ import (
 	"github.com/udistrital/cumplidos_mid/models"
 )
 
-func Informe(contrato string, vigencia string, mes string, anio string) (informe []models.Informe, outputError map[string]interface{}) {
+func Informe(pago_mensual_id string) (informe []models.Informe, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			//fmt.Println("error", err)
@@ -21,16 +21,31 @@ func Informe(contrato string, vigencia string, mes string, anio string) (informe
 	// var aux_informe models.Informe
 	var query string
 	var respuesta_peticion map[string]interface{}
-	query = "contrato:" + contrato + ",vigencia:" + vigencia + ",mes:" + mes + ",anio:" + anio
+	query = "PagoMensualId.Id:" + pago_mensual_id
 	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/informe/?query=" + query)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/?query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
 		fmt.Println("informe:", respuesta_peticion)
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
 			LimpiezaRespuestaRefactor(respuesta_peticion, &informe)
+			var pagos_mensuales []models.PagoMensual
+			if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=Id:"+pago_mensual_id, &respuesta_peticion); (err == nil) && (response == 200) {
+				LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
+				informe[0].PagoMensualId.NumeroContrato = pagos_mensuales[0].NumeroContrato
+				informe[0].PagoMensualId.VigenciaContrato = pagos_mensuales[0].VigenciaContrato
+				informe[0].PagoMensualId.Mes = pagos_mensuales[0].Mes
+				informe[0].PagoMensualId.Ano = pagos_mensuales[0].Ano
+				informe[0].PagoMensualId.DocumentoPersonaId = pagos_mensuales[0].DocumentoPersonaId
+				informe[0].PagoMensualId.DocumentoResponsableId = pagos_mensuales[0].DocumentoResponsableId
+				informe[0].PagoMensualId.EstadoPagoMensualId = pagos_mensuales[0].EstadoPagoMensualId
+				informe[0].PagoMensualId.CargoResponsable = pagos_mensuales[0].CargoResponsable
+				informe[0].PagoMensualId.Activo = pagos_mensuales[0].Activo
+				informe[0].PagoMensualId.FechaCreacion = pagos_mensuales[0].FechaCreacion
+				informe[0].PagoMensualId.FechaModificacion = pagos_mensuales[0].FechaModificacion
+			}
 			for i, inf := range informe {
 				idInforme := strconv.Itoa(inf.Id)
-				actividadesEsp, err := getActividadesEspecificas(idInforme)
+				actividadesEsp, err := GetActividadesEspecificas(idInforme)
 				fmt.Println(actividadesEsp)
 				if err == nil {
 					informe[i].ActividadesEspecificas = actividadesEsp
@@ -50,11 +65,11 @@ func Informe(contrato string, vigencia string, mes string, anio string) (informe
 	return
 }
 
-func getActividadesEspecificas(idInforme string) (actividades_especificas []models.ActividadEspecifica, outputError map[string]interface{}) {
+func GetActividadesEspecificas(idInforme string) (actividades_especificas []models.ActividadEspecifica, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			//fmt.Println("error", err)
-			outputError = map[string]interface{}{"funcion": "/getActividadesEspecificas", "err": err, "status": "502"}
+			outputError = map[string]interface{}{"funcion": "/GetActividadesEspecificas", "err": err, "status": "502"}
 			panic(outputError)
 		}
 	}()
@@ -73,7 +88,7 @@ func getActividadesEspecificas(idInforme string) (actividades_especificas []mode
 			for i, actEsp := range actividades_especificas {
 				fmt.Println(i, actEsp)
 				idactEsp := strconv.Itoa(actEsp.Id)
-				actividadesRea, err := getActividadesRealizadas(idactEsp)
+				actividadesRea, err := GetActividadesRealizadas(idactEsp)
 				if err == nil {
 					actividades_especificas[i].ActividadesRealizadas = actividadesRea
 				}
@@ -84,18 +99,18 @@ func getActividadesEspecificas(idInforme string) (actividades_especificas []mode
 		// informe = append(informe, aux_informe)
 	} else {
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/getActividadesEspecificas", "err": err, "status": "502"}
+		outputError = map[string]interface{}{"funcion": "/GetActividadesEspecificas", "err": err, "status": "502"}
 		return nil, outputError
 	}
 
 	return
 }
 
-func getActividadesRealizadas(idActividadEspecifica string) (actividades_realizadas []models.ActividadRealizada, outputError map[string]interface{}) {
+func GetActividadesRealizadas(idActividadEspecifica string) (actividades_realizadas []models.ActividadRealizada, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			//fmt.Println("error", err)
-			outputError = map[string]interface{}{"funcion": "/getActividadesRealizadas", "err": err, "status": "502"}
+			outputError = map[string]interface{}{"funcion": "/GetActividadesRealizadas", "err": err, "status": "502"}
 			panic(outputError)
 		}
 	}()
@@ -116,7 +131,7 @@ func getActividadesRealizadas(idActividadEspecifica string) (actividades_realiza
 		// informe = append(informe, aux_informe)
 	} else {
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/getActividadesRealizadas", "err": err, "status": "502"}
+		outputError = map[string]interface{}{"funcion": "/GetActividadesRealizadas", "err": err, "status": "502"}
 		return nil, outputError
 	}
 
@@ -134,14 +149,10 @@ func AddInforme(informe models.Informe) (response map[string]interface{}, output
 
 	var informe_creado models.Informe
 	fmt.Println("informe", informe)
-	informe_creado.Contrato = informe.Contrato
-	informe_creado.Vigencia = informe.Vigencia
-	informe_creado.Mes = informe.Mes
-	informe_creado.Anio = informe.Anio
 	informe_creado.PeriodoInformeFin = informe.PeriodoInformeFin
 	informe_creado.PeriodoInformeInicio = informe.PeriodoInformeInicio
 	informe_creado.Proceso = informe.Proceso
-	informe_creado.DocumentoContratista = informe.DocumentoContratista
+	informe_creado.PagoMensualId = informe.PagoMensualId
 	actividades_especificas := informe.ActividadesEspecificas
 	fmt.Println("tamaño arreglo act_esp: ", len(actividades_especificas))
 	var res map[string]interface{}
@@ -230,14 +241,10 @@ func UpdateInformeById(informe models.Informe) (outputError map[string]interface
 	var informe_Actualizado models.Informe
 	informe_Actualizado.Id = informe.Id
 	informe_Actualizado.FechaCreacion = informe.FechaCreacion
-	informe_Actualizado.Contrato = informe.Contrato
-	informe_Actualizado.Vigencia = informe.Vigencia
-	informe_Actualizado.Mes = informe.Mes
-	informe_Actualizado.Anio = informe.Anio
 	informe_Actualizado.PeriodoInformeFin = informe.PeriodoInformeFin
 	informe_Actualizado.PeriodoInformeInicio = informe.PeriodoInformeInicio
 	informe_Actualizado.Proceso = informe.Proceso
-	informe_Actualizado.DocumentoContratista = informe.DocumentoContratista
+	informe_Actualizado.PagoMensualId = informe.PagoMensualId
 	informe_Actualizado.Activo = informe.Activo
 	actividades_especificas_update := informe.ActividadesEspecificas
 	id := strconv.Itoa(informe.Id)
@@ -296,25 +303,19 @@ func UltimoInformeContratista(contrato string, vigencia string, documento string
 
 	// var aux_informe models.Informe
 	var respuesta_peticion map[string]interface{}
-	query := "contrato:" + contrato + ",vigencia:" + vigencia + ",DocumentoContratista:" + documento
+	query := "NumeroContrato:" + contrato + ",VigenciaContrato:" + vigencia + ",DocumentoPersonaId:" + documento
 	order := "&order=desc,desc"
-	sortby := "&sortby=Anio,Mes"
+	sortby := "&sortby=Ano,Mes"
 	limit := "&limit=1"
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/informe/?query=" + query + sortby + order + limit)
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/?query="+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
+	var pagos_mensuales []models.PagoMensual
+	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?query=" + query + sortby + order + limit)
+	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query="+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
 		fmt.Println("UltimoInformeContratista:", respuesta_peticion)
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
-			LimpiezaRespuestaRefactor(respuesta_peticion, &informe)
-			for i, inf := range informe {
-				idInforme := strconv.Itoa(inf.Id)
-				actividadesEsp, err := getActividadesEspecificas(idInforme)
-				fmt.Println(actividadesEsp)
-				if err == nil {
-					informe[i].ActividadesEspecificas = actividadesEsp
-				}
-				fmt.Println(inf.ActividadesEspecificas)
-			}
+			LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
+			pago_mensual_id := strconv.Itoa(pagos_mensuales[0].Id)
+			return Informe(pago_mensual_id)
 		}
 
 		// aux_informe.Id= respuesta_peticion.Id
