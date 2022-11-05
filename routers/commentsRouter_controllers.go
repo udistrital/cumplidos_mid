@@ -136,7 +136,7 @@ func init() {
 	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:InformeController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:InformeController"],
 		beego.ControllerComments{
 			Method:           "GetInforme",
-			Router:           "/:contrato/:vigencia/:mes/:anio",
+			Router:           "/:pago_mensual_id",
 			AllowHTTPMethods: []string{"get"},
 			MethodParams:     param.Make(),
 			Filters:          nil,
@@ -161,6 +161,14 @@ func init() {
 		beego.ControllerComments{
 			Method:           "GetUltimoInformeContratista",
 			Router:           "/:contrato/:vigencia/:documento",
+			AllowHTTPMethods: []string{"get"},
+			MethodParams:     param.Make(),
+			Filters:          nil,
+			Params:           nil})
+	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:ValidacionFechaCargaCumplidoController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:ValidacionFechaCargaCumplidoController"],
+		beego.ControllerComments{
+			Method:           "GetValidacionPeriodo",
+			Router:           "/:dependencia_supervisor/:anio/:mes",
 			AllowHTTPMethods: []string{"get"},
 			MethodParams:     param.Make(),
 			Filters:          nil,

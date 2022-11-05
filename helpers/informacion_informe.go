@@ -184,5 +184,26 @@ func InformacionInforme(num_documento string, contrato string, vigencia string, 
 		panic(outputError)
 	}
 
+	var terminacion []models.Terminacion
+	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:218,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
+	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual?query=TipoNovedad:218,NumeroContrato:"+contrato+",Vigencia:"+vigencia+"&sortby=FechaInicio&order=desc", &terminacion); (err == nil) && (response == 200) {
+		fmt.Println("terminacion:", terminacion)
+		informacion_informe.Novedades.Terminacion = terminacion
+	} else {
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/Terminacion", "err": err, "status": "502"}
+		panic(outputError)
+	}
+
+	var suspencion []models.Suspencion
+	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:216,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
+	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual?query=TipoNovedad:216,NumeroContrato:"+contrato+",Vigencia:"+vigencia+"&sortby=FechaInicio&order=desc", &suspencion); (err == nil) && (response == 200) {
+		fmt.Println("Suspencion:", suspencion)
+		informacion_informe.Novedades.Suspencion = suspencion
+	} else {
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/Suspencion", "err": err, "status": "502"}
+		panic(outputError)
+	}
 	return
 }

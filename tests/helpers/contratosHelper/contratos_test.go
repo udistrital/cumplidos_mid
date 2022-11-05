@@ -10,7 +10,7 @@ import (
 )
 
 var parameters struct {
-	UrlcrudWSO2 string
+	UrlcrudWSO2          string
 	NscrudAdministrativa string
 }
 
@@ -25,7 +25,7 @@ func TestMain(m *testing.M) {
 
 // GetContratosDependencia ...
 func TestGetContratosDependencia(t *testing.T) {
-	valor, err := helpers.GetContratosDependencia("DEP12", "2020-03")
+	valor, err := helpers.GetContratosDependenciaFiltro("DEP12", "2020-03", "2022-3")
 	if err != nil {
 		t.Error("No se pudo consultar las actas de recibido", err)
 		t.Fail()
@@ -58,7 +58,6 @@ func TestGetContratosOrdenadorDependencia(t *testing.T) {
 		t.Log("TestGetActasRecibidoTipo Finalizado Correctamente (OK)")
 	}
 }
-
 
 func TestEndPointCertificacion(t *testing.T) {
 	t.Log("Testing EndPoint UrlcrudWSO2")

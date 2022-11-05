@@ -25,8 +25,10 @@ type InformacionInforme struct {
 		Fecha       time.Time
 	}
 	Novedades struct {
-		Otrosi []Otrosi
-		Cesion []Cesion
+		Otrosi      []Otrosi
+		Cesion      []Cesion
+		Terminacion []Terminacion
+		Suspencion  []Suspencion
 	}
 	InformacionContratista struct {
 		Nombre             string
@@ -44,4 +46,13 @@ type Otrosi struct {
 
 type Cesion struct {
 	FechaInicio string
+}
+
+type Terminacion struct {
+	FechaFin string
+}
+
+type Suspencion struct {
+	FechaInicio string
+	FechaFin    string
 }

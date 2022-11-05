@@ -61,6 +61,11 @@ func init() {
 				&controllers.InformeController{},
 			),
 		),
+		beego.NSNamespace("/validacion_periodo_carga_cumplido",
+			beego.NSInclude(
+				&controllers.ValidacionFechaCargaCumplidoController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
