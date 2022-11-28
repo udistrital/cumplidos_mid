@@ -120,6 +120,7 @@ func CertificacionCumplidosContratistas(dependencia string, mes string, anio str
 							persona.Nombre = contratista.NomProveedor
 							persona.NumeroContrato = pago_mensual.NumeroContrato
 							persona.Vigencia = int(pago_mensual.VigenciaContrato) //strconv.Atoi(cd.Vigencia)
+							persona.NumeroCdp = pago_mensual.NumeroCDP            //RFC 50388
 							persona.Rubro = contrato.Contrato.Rubro
 							personas = append(personas, persona)
 						}
