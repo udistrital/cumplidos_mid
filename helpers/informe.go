@@ -303,7 +303,7 @@ func UltimoInformeContratista(contrato string, vigencia string, documento string
 
 	// var aux_informe models.Informe
 	var respuesta_peticion map[string]interface{}
-	query := "NumeroContrato:" + contrato + ",VigenciaContrato:" + vigencia + ",DocumentoPersonaId:" + documento
+	query := "NumeroContrato:" + contrato + ",VigenciaContrato:" + vigencia + ",DocumentoPersonaId:" + documento + ",EstadoPagoMensualId.CodigoAbreviacion.in:AP|PRC|PAD|AD|AS|RD|RP|RC|PRS|RS|RO"
 	order := "&order=desc,desc"
 	sortby := "&sortby=Ano,Mes"
 	limit := "&limit=1"
