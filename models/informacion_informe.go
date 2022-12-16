@@ -39,9 +39,12 @@ type InformacionInforme struct {
 }
 
 type Otrosi struct {
-	FechaInicio  string
-	FechaFin     string
-	ValorNovedad int
+	FechaInicio        string
+	FechaFin           string
+	ValorNovedad       int
+	ValorNovedadPagado int
+	NumeroCdp          int
+	VigenciaCdp        int
 }
 
 type Cesion struct {
