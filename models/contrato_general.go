@@ -9,4 +9,5 @@ type ContratoGeneral struct {
 	Supervisor struct {
 		DependenciaSupervisor string
 	}
+	UnidadEjecutora int
 }

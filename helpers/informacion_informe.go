@@ -163,9 +163,42 @@ func InformacionInforme(num_documento string, contrato string, vigencia string, 
 
 	// Consulta novedades OtroSi
 	var otrosi []models.Otrosi
+	var temp_giros_tercero map[string]interface{}
 	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:220,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
 	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual?query=TipoNovedad:220,NumeroContrato:"+contrato+",Vigencia:"+vigencia+"&sortby=FechaInicio&order=desc", &otrosi); (err == nil) && (response == 200) {
-		fmt.Println("Otro si:", otrosi)
+		for i, os := range otrosi {
+			var giros_tercero models.GirosTercero
+			fmt.Println(beego.AppConfig.String("UrlFinancieraJBPM") + "/" + "giros_tercero/" + strconv.Itoa(os.NumeroCdp) + "/" + strconv.Itoa(os.VigenciaCdp) + "/" + strconv.Itoa(contrato_general[0].UnidadEjecutora))
+			if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlFinancieraJBPM")+"/"+"giros_tercero/"+strconv.Itoa(os.NumeroCdp)+"/"+strconv.Itoa(os.VigenciaCdp)+"/"+strconv.Itoa(contrato_general[0].UnidadEjecutora), &temp_giros_tercero); (err == nil) && (response == 200) {
+				json_giros_tercero, error_json := json.Marshal(temp_giros_tercero)
+				if error_json == nil {
+					if err := json.Unmarshal(json_giros_tercero, &giros_tercero); err == nil {
+						for _, giro := range giros_tercero.Giros.Tercero {
+							total_girado, err := strconv.Atoi(giro.ValorBrutoGirado)
+							if err == nil {
+								otrosi[i].ValorNovedadPagado = otrosi[i].ValorNovedadPagado + total_girado
+							} else {
+								otrosi[i].ValorNovedadPagado = otrosi[i].ValorNovedadPagado + 0
+							}
+						}
+					} else {
+						logs.Error(err)
+						outputError = map[string]interface{}{"funcion": "/UnmarshalGirosTerceros", "err": err, "status": "502"}
+						panic(outputError)
+					}
+
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/MarshalGirosTerceros", "err": err, "status": "502"}
+					panic(outputError)
+				}
+
+			} else {
+				logs.Error(err)
+				outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/OtroSi/GirosTercero", "err": err, "status": "502"}
+				panic(outputError)
+			}
+		}
 		informacion_informe.Novedades.Otrosi = otrosi
 	} else {
 		logs.Error(err)
