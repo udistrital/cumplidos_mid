@@ -36,7 +36,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 			//fmt.Println("informacion_proveedor:", informacion_proveedores)
 			for _, persona := range informacion_proveedores {
 				fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual/?query=Contratista:" + strconv.Itoa(persona.Id) + "&sortby=FechaInicio&order=asc&limit=-1")
-				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=Contratista:"+strconv.Itoa(persona.Id)+",TipoNovedad:219&sortby=FechaInicio&order=asc&limit=-1", &novedades_postcontractuales); (err == nil) && (response == 200) {
+				if response, err := GetNovedadesPostcontratuales(models.TipoNovedadCesion, "Contratista:"+strconv.Itoa(persona.Id), "FechaInicio", "asc", "-1", "", "", &novedades_postcontractuales); (err == nil) && (response == 200) {
 					//fmt.Println("novedades", novedades_postcontractuales)
 					for _, novedad := range novedades_postcontractuales {
 						var contrato models.InformacionContrato
@@ -81,7 +81,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 										return nil, outputError
 									}
 									fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual/?query=NumeroContrato:" + novedad.NumeroContrato + ",Vigencia:" + strconv.Itoa(novedad.Vigencia) + "&sortby=FechaInicio&order=asc&limit=-1")
-									if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=NumeroContrato:"+novedad.NumeroContrato+",Vigencia:"+strconv.Itoa(novedad.Vigencia)+"&sortby=FechaInicio&order=asc&limit=-1", &novedades_novedad); (err == nil) && (response == 200) {
+									if response, err := GetNovedadesPostcontratuales(models.TipoNovedadTodas, "NumeroContrato:"+novedad.NumeroContrato+",Vigencia:"+strconv.Itoa(novedad.Vigencia), "FechaInicio", "asc", "-1", "", "", &novedades_novedad); (err == nil) && (response == 200) {
 										//fmt.Println("Novedades de nuevo", novedades_novedad)
 										for _, novedad_novedad := range novedades_novedad {
 											//Se recorren las novedades del contrato de la cesion
@@ -235,7 +235,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 				// Se actua respecto a las novedades encontradas
 				fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual/?query=NumeroContrato:" + contrato_persona.NumeroContrato + ",Vigencia:" + contrato_persona.Vigencia + "&sortby=FechaInicio&order=asc&limit=-1")
 				//var novedad_postcontractual models.NovedadPostcontractual
-				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/novedad_postcontractual/?query=NumeroContrato:"+contrato_persona.NumeroContrato+",Vigencia:"+contrato_persona.Vigencia+"&sortby=FechaInicio&order=asc&limit=-1", &novedades_postcontractuales); (err == nil) && (response == 200) {
+				if response, err := GetNovedadesPostcontratuales(models.TipoNovedadTodas, "NumeroContrato:"+contrato_persona.NumeroContrato+",Vigencia:"+contrato_persona.Vigencia, "FechaInicio", "asc", "-1", "", "", &novedades_postcontractuales); (err == nil) && (response == 200) {
 					//var	prueba []models.NovedadPostcontractual
 					//	json.NewDecoder(r.Body).Decode(prueba)
 					//fmt.Println("Novedades postcontractualese", novedades_postcontractuales)
