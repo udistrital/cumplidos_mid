@@ -165,7 +165,7 @@ func InformacionInforme(num_documento string, contrato string, vigencia string, 
 	var otrosi []models.Otrosi
 	var temp_giros_tercero map[string]interface{}
 	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:220,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
-	if response, err := GetNovedadesPostcontratuales(models.TipoNovedadOtrosi, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &otrosi); (err == nil) && (response == 200) {
+	if response, err := GetNovedadesPostcontractuales(models.TipoNovedadOtrosi, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &otrosi); (err == nil) && (response == 200) {
 		for i, os := range otrosi {
 			var giros_tercero models.GirosTercero
 			fmt.Println(beego.AppConfig.String("UrlFinancieraJBPM") + "/" + "giros_tercero/" + strconv.Itoa(os.NumeroCdp) + "/" + strconv.Itoa(os.VigenciaCdp) + "/" + strconv.Itoa(contrato_general[0].UnidadEjecutora))
@@ -195,7 +195,7 @@ func InformacionInforme(num_documento string, contrato string, vigencia string, 
 
 			} else {
 				logs.Error(err)
-				outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/OtroSi/GirosTercero", "err": err, "status": "502"}
+				outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/OtroSi", "err": err, "status": "502"}
 				panic(outputError)
 			}
 		}
@@ -208,18 +208,18 @@ func InformacionInforme(num_documento string, contrato string, vigencia string, 
 
 	var cesion []models.Cesion
 	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:219,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
-	if response, err := GetNovedadesPostcontratuales(models.TipoNovedadCesion, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &cesion); (err == nil) && (response == 200) {
+	if response, err := GetNovedadesPostcontractuales(models.TipoNovedadCesion, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &cesion); (err == nil) && (response == 200) {
 		fmt.Println("Cesion:", cesion)
 		informacion_informe.Novedades.Cesion = cesion
 	} else {
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/OtroSi", "err": err, "status": "502"}
+		outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/Cesion", "err": err, "status": "502"}
 		panic(outputError)
 	}
 
 	var terminacion []models.Terminacion
 	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:218,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
-	if response, err := GetNovedadesPostcontratuales(models.TipoNovedadTerminacion, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &terminacion); (err == nil) && (response == 200) {
+	if response, err := GetNovedadesPostcontractuales(models.TipoNovedadTerminacion, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &terminacion); (err == nil) && (response == 200) {
 		fmt.Println("terminacion:", terminacion)
 		informacion_informe.Novedades.Terminacion = terminacion
 	} else {
@@ -230,7 +230,7 @@ func InformacionInforme(num_documento string, contrato string, vigencia string, 
 
 	var suspencion []models.Suspencion
 	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:216,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
-	if response, err := GetNovedadesPostcontratuales(models.TipoNovedadSuspension, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &suspencion); (err == nil) && (response == 200) {
+	if response, err := GetNovedadesPostcontractuales(models.TipoNovedadSuspension, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &suspencion); (err == nil) && (response == 200) {
 		fmt.Println("Suspencion:", suspencion)
 		informacion_informe.Novedades.Suspencion = suspencion
 	} else {
