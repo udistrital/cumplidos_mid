@@ -119,8 +119,6 @@ func getJsonWSO2Test(urlp string, target interface{}) (status int, err error) {
 	req, err := http.NewRequest("GET", urlp, b)
 	req.Header.Set("Accept", "application/json")
 	r, err := client.Do(req)
-	fmt.Println("response:")
-	fmt.Println(r.Body)
 	if err != nil {
 		beego.Error("error", err)
 		return r.StatusCode, err
