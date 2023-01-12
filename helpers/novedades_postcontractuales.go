@@ -7,7 +7,7 @@ import (
 	"github.com/udistrital/cumplidos_mid/models"
 )
 
-func GetNovedadesPostcontratuales(tipo_novedad models.TipoNovedad, query string, sortby string, order string, limit string, offset string, fields string, target interface{}) (status int, err_nov error) {
+func GetNovedadesPostcontractuales(tipo_novedad models.TipoNovedad, query string, sortby string, order string, limit string, offset string, fields string, target interface{}) (status int, err_nov error) {
 	url_base := beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual/?"
 	var peticion string
 
