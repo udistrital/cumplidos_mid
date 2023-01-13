@@ -145,46 +145,47 @@
                 }
             }
         },
-        "/informacion_informe/{num_documento}/{contrato}/{vigencia}/{cdp}/{vigencia_cdp}": {
+        "/informacion_informe/preliquidacion/{pago_mensual_id}": {
             "get": {
                 "tags": [
                     "informacion_informe"
                 ],
-                "description": "get InformacionInforme by num_documento",
+                "description": "get preliquidacion correspondiente a una solicitud de pago mensual",
+                "operationId": "InformacionInformeController.GetPreliquidacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "pago_mensual_id",
+                        "description": "id del pago mensual",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.PreliquidacionTitan"
+                        }
+                    },
+                    "403": {
+                        "description": ":pago_mensual_id is empty"
+                    }
+                }
+            }
+        },
+        "/informacion_informe/{num_documento}/{pago_mensual_id[get]}": {
+            "get": {
+                "tags": [
+                    "informacion_informe"
+                ],
+                "description": "get InformacionInforme by pago_mensual_id",
                 "operationId": "InformacionInformeController.GetInformacionInforme",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "num_documento",
-                        "description": "numero documento contratista",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "contrato",
-                        "description": "numero de contrato",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "vigencia",
-                        "description": "vigencia del contrato",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "cdp",
-                        "description": "cdp del contrato",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "vigencia_cdp",
-                        "description": "vigencia del cdp del contrato",
+                        "name": "pago_mensual_id",
+                        "description": "id del pago mensual",
                         "required": true,
                         "type": "string"
                     }
@@ -197,7 +198,7 @@
                         }
                     },
                     "403": {
-                        "description": ":vigencia_cdp is empty"
+                        "description": ":pago_mensual_id is empty"
                     }
                 }
             }
@@ -719,27 +720,31 @@
         }
     },
     "definitions": {
-        "15944.0xc00065cc00.false": {
+        "18632.0xc000726a20.false": {
             "title": "false",
             "type": "object"
         },
-        "16113.0xc00065cc30.false": {
+        "18852.0xc000726a50.false": {
             "title": "false",
             "type": "object"
         },
-        "16174.0xc00065cc60.false": {
+        "18913.0xc000726a80.false": {
             "title": "false",
             "type": "object"
         },
-        "16242.0xc00065cd50.false": {
+        "18981.0xc000726b70.false": {
             "title": "false",
             "type": "object"
         },
-        "16379.0xc00065cd80.false": {
+        "19118.0xc000726ba0.false": {
             "title": "false",
             "type": "object"
         },
-        "28118.0xc00068f7d0.false": {
+        "19269.0xc000726bd0.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "34371.0xc00075dc80.false": {
             "title": "false",
             "type": "object"
         },
@@ -807,6 +812,121 @@
                 }
             }
         },
+        "models.ConceptoNomina": {
+            "title": "ConceptoNomina",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "AliasConcepto": {
+                    "type": "string"
+                },
+                "EstadoConceptoNominaId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NaturalezaConceptoNominaId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NombreConcepto": {
+                    "type": "string"
+                },
+                "TipoConceptoNominaId": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.Contrato": {
+            "title": "Contrato",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Cdp": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Completo": {
+                    "type": "boolean"
+                },
+                "DependenciaId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Documento": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaFin": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaInicio": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NombreCompleto": {
+                    "type": "string"
+                },
+                "NumeroContrato": {
+                    "type": "string"
+                },
+                "PersonaId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "ProyectoId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Rp": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "TipoNominaId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Unico": {
+                    "type": "boolean"
+                },
+                "Vacaciones": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "ValorContrato": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "Vigencia": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
         "models.ContratoDisponibilidadRp": {
             "title": "ContratoDisponibilidadRp",
             "type": "object",
@@ -845,6 +965,62 @@
                 }
             }
         },
+        "models.ContratoPreliquidacion": {
+            "title": "ContratoPreliquidacion",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Afc": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "ContratoId": {
+                    "$ref": "#/definitions/models.Contrato"
+                },
+                "Cumplido": {
+                    "type": "boolean"
+                },
+                "Dependientes": {
+                    "type": "boolean"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "InteresesVivienda": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "MedicinaPrepagadaUvt": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "PensionVoluntaria": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "Pensionado": {
+                    "type": "boolean"
+                },
+                "PreliquidacionId": {
+                    "$ref": "#/definitions/models.Preliquidacion"
+                },
+                "Preliquidado": {
+                    "type": "boolean"
+                },
+                "ResponsableIva": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.Dependencia": {
             "title": "Dependencia",
             "type": "object",
@@ -861,6 +1037,70 @@
                 },
                 "TelefonoDependencia": {
                     "type": "string"
+                }
+            }
+        },
+        "models.DetallePreliquidacion": {
+            "title": "DetallePreliquidacion",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "ConceptoNominaId": {
+                    "$ref": "#/definitions/models.ConceptoNomina"
+                },
+                "ContratoPreliquidacionId": {
+                    "$ref": "#/definitions/models.ContratoPreliquidacion"
+                },
+                "DiasEspecificos": {
+                    "type": "string"
+                },
+                "DiasLiquidados": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "Documento": {
+                    "type": "string"
+                },
+                "EstadoDisponibilidadId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NombreCompleto": {
+                    "type": "string"
+                },
+                "NumeroContrato": {
+                    "type": "string"
+                },
+                "Persona": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "TipoPreliquidacionId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "ValorCalculado": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "ValorCalculadoConFormato": {
+                    "type": "string"
+                },
+                "VigenciaContrato": {
+                    "type": "integer",
+                    "format": "int64"
                 }
             }
         },
@@ -898,34 +1138,42 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/16113.0xc00065cc30.false"
+                    "$ref": "#/definitions/18852.0xc000726a50.false"
                 },
                 "Dependencia": {
                     "type": "string"
+                },
+                "EjecutadoDinero": {
+                    "$ref": "#/definitions/19269.0xc000726bd0.false"
                 },
                 "FechaCPS": {
                     "type": "string"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/16379.0xc00065cd80.false"
+                    "$ref": "#/definitions/19118.0xc000726ba0.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/16242.0xc00065cd50.false"
+                    "$ref": "#/definitions/18981.0xc000726b70.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/16174.0xc00065cc60.false"
+                    "$ref": "#/definitions/18913.0xc000726a80.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/15944.0xc00065cc00.false"
+                    "$ref": "#/definitions/18632.0xc000726a20.false"
                 },
                 "ValorContrato": {
-                    "type": "string"
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "ValorTotalContrato": {
+                    "type": "integer",
+                    "format": "int64"
                 }
             }
         },
@@ -1115,6 +1363,84 @@
                 }
             }
         },
+        "models.Preliquidacion": {
+            "title": "Preliquidacion",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Ano": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Descripcion": {
+                    "type": "string"
+                },
+                "EstadoPreliquidacionId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Mes": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NominaId": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.PreliquidacionTitan": {
+            "title": "PreliquidacionTitan",
+            "type": "object",
+            "properties": {
+                "Contrato": {
+                    "type": "string"
+                },
+                "Detalle": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DetallePreliquidacion"
+                    }
+                },
+                "TotalDescuentos": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "TotalDescuentosConFormato": {
+                    "type": "string"
+                },
+                "TotalDevengado": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "TotalDevengadoConFormato": {
+                    "type": "string"
+                },
+                "TotalPago": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "TotalPagoConFormato": {
+                    "type": "string"
+                },
+                "Vigencia": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
         "models.ValidacionFechaCargaCumplido": {
             "title": "ValidacionFechaCargaCumplido",
             "type": "object",
@@ -1127,7 +1453,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/28118.0xc00068f7d0.false"
+                    "$ref": "#/definitions/34371.0xc00075dc80.false"
                 }
             }
         }

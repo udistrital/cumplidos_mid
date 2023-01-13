@@ -11,12 +11,13 @@ type InformacionInforme struct {
 		Cargo  string
 		Nombre string
 	}
-	ValorContrato string
-	FechaCPS      string
-	Dependencia   string
-	Sede          string
-	Objeto        string
-	CDP           struct {
+	ValorContrato      int
+	ValorTotalContrato int
+	FechaCPS           string
+	Dependencia        string
+	Sede               string
+	Objeto             string
+	CDP                struct {
 		Consecutivo string
 		Fecha       time.Time
 	}
@@ -36,6 +37,10 @@ type InformacionInforme struct {
 		CiudadExpedicion   string
 	}
 	ActividadesEspecificas string
+	EjecutadoDinero        struct {
+		Pagado   int
+		Faltante int
+	}
 }
 
 type Otrosi struct {
