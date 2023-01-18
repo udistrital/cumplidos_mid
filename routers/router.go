@@ -27,27 +27,9 @@ func init() {
 			),
 		),
 
-		beego.NSNamespace("/solicitudes_coordinador",
-			beego.NSInclude(
-				&controllers.SolicitudesCoordinadorController{},
-			),
-		),
-
 		beego.NSNamespace("/solicitudes_ordenador_contratistas",
 			beego.NSInclude(
 				&controllers.SolicitudesOrdenadorContratistasController{},
-			),
-		),
-
-		beego.NSNamespace("/solicitudes_ordenador",
-			beego.NSInclude(
-				&controllers.SolicitudesOrdenadorController{},
-			),
-		),
-
-		beego.NSNamespace("/certificacion",
-			beego.NSInclude(
-				&controllers.CertificacionController{},
 			),
 		),
 
