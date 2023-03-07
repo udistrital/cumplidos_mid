@@ -71,6 +71,15 @@ func init() {
 			Filters:          nil,
 			Params:           nil})
 
+	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesOrdenadorContratistasController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesOrdenadorContratistasController"],
+		beego.ControllerComments{
+			Method:           "GetInfoOrdanador",
+			Router:           `/informacion_ordenador/:numero_contrato/:vigencia`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams:     param.Make(),
+			Filters:          nil,
+			Params:           nil})
+
 	// Informacion Informe
 	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:InformacionInformeController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:InformacionInformeController"],
 		beego.ControllerComments{
