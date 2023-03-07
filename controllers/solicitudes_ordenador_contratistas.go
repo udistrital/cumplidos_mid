@@ -25,9 +25,10 @@ func (c *SolicitudesOrdenadorContratistasController) URLMapping() {
 	c.Mapping("GetSolicitudesOrdenadorContratistas", c.GetSolicitudesOrdenadorContratistas)
 	c.Mapping("AprobarMultiplesPagosContratistas", c.AprobarMultiplesPagosContratistas)
 	c.Mapping("CertificacionCumplidosContratistas", c.CertificacionCumplidosContratistas)
+	c.Mapping("GetInfoOrdanador", c.GetInfoOrdanador)
 }
 
-// AprobacionPagoController ...
+// SolicitudesOrdenadorContratistasController ...
 // @Title GetSolicitudesOrdenadorContratistas
 // @Description create GetSolicitudesOrdenadorContratistas
 // @Param docordenador path string true "Número del documento del supervisor"
@@ -72,7 +73,7 @@ func (c *SolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorCont
 
 }
 
-// AprobacionPagoController ...
+// SolicitudesOrdenadorContratistasController ...
 // @Title AprobarMultiplesPagosContratistas
 // @Description create AprobarMultiplesPagosContratistas
 // @Param	body		body 	[]models.PagoContratistaCdpRp	true		"body for SoportePagoMensual content"
@@ -111,7 +112,7 @@ func (c *SolicitudesOrdenadorContratistasController) AprobarMultiplesPagosContra
 	c.ServeJSON()
 }
 
-// AprobacionPagoController ...
+// SolicitudesOrdenadorContratistasController ...
 // @Title certificacion_cumplidos_contratistas
 // @Description get certificacion_cumplidos_contratistas
 // @Param dependencia path string true "Dependencia supervisor"
@@ -159,7 +160,7 @@ func (c *SolicitudesOrdenadorContratistasController) CertificacionCumplidosContr
 	c.ServeJSON()
 }
 
-// AprobacionPagoController ...
+// SolicitudesOrdenadorContratistasController ...
 // @Title GetSolicitudesOrdenadorContratistasDependencia
 // @Description create GetSolicitudesOrdenadorContratistasDependencia
 // @Param docordenador path string true "Número del documento del supervisor"
@@ -208,4 +209,46 @@ func (c *SolicitudesOrdenadorContratistasController) GetSolicitudesOrdenadorCont
 	}
 	c.ServeJSON()
 
+}
+
+// SolicitudesOrdenadorContratistasController ...
+// @Title GetInfoOrdanador
+// @Description ObtenerInfoOrdenador trae la informacion de un ordenador del gasto a partir de su numero de contrato y ano de vigencia
+// @Param numero_contrato path string true "Numero de contrato en la tabla contrato general"
+// @Param vigencia path int true "Vigencia del contrato en la tabla contrato general"
+// @Success 200 {object} models.InformacionOrdenador
+// @Failure 404 not found resource
+// @router /informacion_ordenador/:numero_contrato/:vigencia [get]
+func (c *SolicitudesOrdenadorContratistasController) GetInfoOrdanador() {
+
+	numero_contrato := c.GetString(":numero_contrato")
+	vigencia := c.GetString(":vigencia")
+
+	defer func() {
+		if err := recover(); err != nil {
+			logs.Error(err)
+			localError := err.(map[string]interface{})
+			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorController" + (localError["funcion"]).(string))
+			c.Data["data"] = (localError["err"])
+			if status, ok := localError["status"]; ok {
+				c.Abort(status.(string))
+			} else {
+				c.Abort("404")
+			}
+		}
+	}()
+
+	_, err1 := strconv.Atoi(vigencia)
+
+	if (err1 != nil) || (len(vigencia) != 4) {
+		panic(map[string]interface{}{"funcion": "ObtenerDependenciaOrdenador", "err": "Error en los parametros de ingreso", "status": "400"})
+	}
+
+	if informacion_ordenador, err := helpers.TraerInfoOrdenador(numero_contrato, vigencia); err == nil {
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": informacion_ordenador}
+	} else {
+		panic(err)
+	}
+	c.ServeJSON()
 }
