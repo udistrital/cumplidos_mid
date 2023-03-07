@@ -37,7 +37,7 @@ func TestMain(m *testing.M) {
 
 //InformacionInforme ...
 func TestInformacionInforme(t *testing.T) {
-	InformacionInforme, err := helpers.InformacionInforme("1014294957", "1265", "2021", "1668", "2021")
+	InformacionInforme, err := helpers.InformacionInforme("94158")
 	if err != nil {
 		t.Error("No se pudo consultar la informacion del informe", err)
 		t.Fail()
