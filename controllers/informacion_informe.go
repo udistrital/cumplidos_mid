@@ -25,7 +25,7 @@ func (c *InformacionInformeController) URLMapping() {
 // @Param	pago_mensual_id	path 	string	true		"id del pago mensual"
 // @Success 200 {object} models.InformacionInforme
 // @Failure 403 :pago_mensual_id is empty
-// @router /:num_documento/:pago_mensual_id[get]
+// @router /:pago_mensual_id [get]
 func (c *InformacionInformeController) GetInformacionInforme() {
 
 	defer func() {
