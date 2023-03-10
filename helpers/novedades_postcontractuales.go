@@ -43,9 +43,8 @@ func GetNovedadesPostcontractuales(tipo_novedad models.TipoNovedad, query string
 		peticion += "&fields" + fields
 	}
 
-	fmt.Println("peticion", peticion)
-
-	if response, err := getJsonTest(peticion, &target); (err == nil) && (response == 200) {
+	fmt.Println("Peticion", peticion)
+	if response, err := getJsonTest(peticion, target); (err == nil) && (response == 200) {
 		return 200, nil
 	} else {
 		err_nov = err

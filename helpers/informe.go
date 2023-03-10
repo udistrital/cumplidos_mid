@@ -77,7 +77,7 @@ func GetActividadesEspecificas(idInforme string) (actividades_especificas []mode
 	// var aux_informe models.Informe
 	var query string
 	var respuesta_peticion map[string]interface{}
-	query = "informeid:" + idInforme
+	query = "informeid:" + idInforme + ",Activo:true"
 	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/actividad_especifica/?query=" + query + "&limit=-1&sortby=FechaCreacion&order=asc")
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
 		fmt.Println("Actividades especificas:", respuesta_peticion)
@@ -118,7 +118,7 @@ func GetActividadesRealizadas(idActividadEspecifica string) (actividades_realiza
 	// var aux_informe models.Informe
 	var query string
 	var respuesta_peticion map[string]interface{}
-	query = "actividadespecificaid:" + idActividadEspecifica
+	query = "actividadespecificaid:" + idActividadEspecifica + ",Activo:true"
 	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/actividad_realizada/?query=" + query + "&limit=-1&sortby=FechaCreacion&order=asc")
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_realizada/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
 		fmt.Println("Actividad Realizada:", respuesta_peticion)
