@@ -139,6 +139,15 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 		panic(outputError)
 	}
 
+	//Fechas acta de inicio
+	if acta_inicio, err := GetActaDeInicio(contrato_general[0].Id, contrato_general[0].VigenciaContrato); err == nil {
+		informacion_informe.FechaInicio = acta_inicio.FechaInicio
+		informacion_informe.FechaFin = acta_inicio.FechaFin
+	} else {
+		outputError = map[string]interface{}{"funcion": "/Informacion_informe/Acta_inicio", "err": err, "status": "502"}
+		panic(outputError)
+	}
+
 	var temp map[string]interface{}
 	var cdp_rp models.InformacionCdpRp
 	fmt.Println(beego.AppConfig.String("UrlFinancieraJBPM") + "/" + "cdprp/" + cdp + "/" + vigencia_cdp + "/01")
