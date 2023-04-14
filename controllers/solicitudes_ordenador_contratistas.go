@@ -26,6 +26,7 @@ func (c *SolicitudesOrdenadorContratistasController) URLMapping() {
 	c.Mapping("AprobarMultiplesPagosContratistas", c.AprobarMultiplesPagosContratistas)
 	c.Mapping("CertificacionCumplidosContratistas", c.CertificacionCumplidosContratistas)
 	c.Mapping("GetInfoOrdanador", c.GetInfoOrdanador)
+	c.Mapping("GetCumplidosRevertiblesPorOrdenador", c.GetCumplidosRevertiblesPorOrdenador)
 }
 
 // SolicitudesOrdenadorContratistasController ...
@@ -251,4 +252,44 @@ func (c *SolicitudesOrdenadorContratistasController) GetInfoOrdanador() {
 		panic(err)
 	}
 	c.ServeJSON()
+}
+
+// SolicitudesOrdenadorContratistasController ...
+// @Title GetCumplidosRevertiblesPorOrdenador
+// @Description create GetCumplidosRevertiblesPorOrdenador
+// @Param docordenador path string true "Número del documento del ordenador"
+// @Success 200 {object} []models.PagoContratistaCdpRp
+// @Failure 404 not found resource
+// @router /cumplidos_revertibles/:docordenador [get]
+func (c *SolicitudesOrdenadorContratistasController) GetCumplidosRevertiblesPorOrdenador() {
+
+	//defer helpers.GestionError(c)
+	defer func() {
+		if err := recover(); err != nil {
+			logs.Error(err)
+			localError := err.(map[string]interface{})
+			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorContratistasController" + "/" + (localError["funcion"]).(string))
+			c.Data["data"] = (localError["err"])
+			if status, ok := localError["status"]; ok {
+				c.Abort(status.(string))
+			} else {
+				c.Abort("404")
+			}
+		}
+	}()
+
+	if len(c.GetString(":docordenador")) < 3 {
+		panic(map[string]interface{}{"funcion": "GetCumplidosRevertiblesPorOrdenador", "err": "Error en los parametros de ingreso", "status": "400"})
+	}
+
+	if cumplidos_revertibles, err := helpers.GetCumplidosRevertiblesPorOrdenador(c.GetString(":docordenador")); err != nil {
+		panic(err)
+
+	} else {
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": cumplidos_revertibles}
+	}
+
+	c.ServeJSON()
+
 }

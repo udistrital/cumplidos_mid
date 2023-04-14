@@ -229,3 +229,44 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 	}
 	return
 }
+
+func GetCumplidosRevertiblesPorOrdenador(NumDocumentoOrdenador string) (cumplidos_revertibles []models.PagoContratistaCdpRp, outputError map[string]interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			outputError = map[string]interface{}{"funcion": "/GetCumplidosRevertiblesPorOrdenador", "err": err, "status": "404"}
+			panic(outputError)
+		}
+	}()
+
+	var pagos_mensuales []models.PagoMensual
+	// var contratistas []models.InformacionProveedor
+
+	// var contratos_disponibilidad []models.ContratoDisponibilidad
+	var respuesta_peticion map[string]interface{}
+	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:" + NumDocumentoOrdenador)
+	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:"+NumDocumentoOrdenador, &respuesta_peticion); (err == nil) && (response == 200) {
+
+		pagos_mensuales = []models.PagoMensual{}
+		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
+		fmt.Println(pagos_mensuales)
+		for _, pago_mensual := range pagos_mensuales {
+
+			fmt.Println(pago_mensual)
+			var cumplidos_revertible models.PagoContratistaCdpRp
+			var outputError map[string]interface{}
+			cumplidos_revertible, outputError = getInfoPagoMensual(pago_mensual)
+			fmt.Println(cumplidos_revertible)
+			fmt.Println(outputError)
+			if outputError == nil {
+				cumplidos_revertibles = append(cumplidos_revertibles, cumplidos_revertible)
+			}
+		}
+
+	} else { //If pago_mensual get
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenadorContratistas", "err": err, "status": "502"}
+		return nil, outputError
+	}
+
+	return cumplidos_revertibles, nil
+}
