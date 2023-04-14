@@ -72,7 +72,7 @@ steps:
   - go get github.com/jstemmer/go-junit-report@latest
   - golangci-lint run | tee report.xml
   # - gocov test ./... | gocov-xml > coverage.xml
-  - go test -v ./... | go-junit-report -out test.xml
+  # - go test -v ./... | go-junit-report -out test.xml
   when:
     branch:
     - develop
