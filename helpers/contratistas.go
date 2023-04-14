@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/astaxie/beego"
 	_ "github.com/astaxie/beego/httplib"
@@ -133,30 +132,25 @@ func SolicitudesOrdenadorContratistas(doc_ordenador string, limit int, offset in
 
 	// var contratos_disponibilidad []models.ContratoDisponibilidad
 	var respuesta_peticion map[string]interface{}
-
-	var wg = &sync.WaitGroup{}
-
+	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?limit=" + strconv.Itoa(limit) + "&offset=" + strconv.Itoa(offset) + "&query=EstadoPagoMensualId.CodigoAbreviacion:AS,DocumentoResponsableId:" + doc_ordenador)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?limit="+strconv.Itoa(limit)+"&offset="+strconv.Itoa(offset)+"&query=EstadoPagoMensualId.CodigoAbreviacion:AS,DocumentoResponsableId:"+doc_ordenador, &respuesta_peticion); (err == nil) && (response == 200) {
 
 		pagos_mensuales = []models.PagoMensual{}
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
+		fmt.Println(pagos_mensuales)
 		for _, pago_mensual := range pagos_mensuales {
-			wg.Add(1)
-			go func(pago_mensual models.PagoMensual) {
-				fmt.Println(pago_mensual)
-				var pago_contratista_cdp_rp models.PagoContratistaCdpRp
-				var outputError map[string]interface{}
-				pago_contratista_cdp_rp, outputError = getInfoPagoMensual(pago_mensual)
-				fmt.Println(pago_contratista_cdp_rp)
-				fmt.Println(outputError)
-				if outputError == nil {
-					pagos_contratista_cdp_rp = append(pagos_contratista_cdp_rp, pago_contratista_cdp_rp)
-				}
-				wg.Done()
-			}(pago_mensual)
 
+			fmt.Println(pago_mensual)
+			var pago_contratista_cdp_rp models.PagoContratistaCdpRp
+			var outputError map[string]interface{}
+			pago_contratista_cdp_rp, outputError = getInfoPagoMensual(pago_mensual)
+			fmt.Println(pago_contratista_cdp_rp)
+			fmt.Println(outputError)
+			if outputError == nil {
+				pagos_contratista_cdp_rp = append(pagos_contratista_cdp_rp, pago_contratista_cdp_rp)
+			}
 		}
-		wg.Wait()
+
 	} else { //If pago_mensual get
 		logs.Error(err)
 		outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenadorContratistas", "err": err, "status": "502"}
@@ -234,4 +228,45 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 		return informacion_ordenador, outputError
 	}
 	return
+}
+
+func GetCumplidosRevertiblesPorOrdenador(NumDocumentoOrdenador string) (cumplidos_revertibles []models.PagoContratistaCdpRp, outputError map[string]interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			outputError = map[string]interface{}{"funcion": "/GetCumplidosRevertiblesPorOrdenador", "err": err, "status": "404"}
+			panic(outputError)
+		}
+	}()
+
+	var pagos_mensuales []models.PagoMensual
+	// var contratistas []models.InformacionProveedor
+
+	// var contratos_disponibilidad []models.ContratoDisponibilidad
+	var respuesta_peticion map[string]interface{}
+	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:" + NumDocumentoOrdenador)
+	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:"+NumDocumentoOrdenador, &respuesta_peticion); (err == nil) && (response == 200) {
+
+		pagos_mensuales = []models.PagoMensual{}
+		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
+		fmt.Println(pagos_mensuales)
+		for _, pago_mensual := range pagos_mensuales {
+
+			fmt.Println(pago_mensual)
+			var cumplidos_revertible models.PagoContratistaCdpRp
+			var outputError map[string]interface{}
+			cumplidos_revertible, outputError = getInfoPagoMensual(pago_mensual)
+			fmt.Println(cumplidos_revertible)
+			fmt.Println(outputError)
+			if outputError == nil {
+				cumplidos_revertibles = append(cumplidos_revertibles, cumplidos_revertible)
+			}
+		}
+
+	} else { //If pago_mensual get
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenadorContratistas", "err": err, "status": "502"}
+		return nil, outputError
+	}
+
+	return cumplidos_revertibles, nil
 }
