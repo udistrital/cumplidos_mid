@@ -14,6 +14,8 @@ type InformacionInforme struct {
 	ValorContrato      int
 	ValorTotalContrato int
 	FechaCPS           string
+	FechaInicio        time.Time
+	FechaFin           time.Time
 	Dependencia        string
 	Sede               string
 	Objeto             string
