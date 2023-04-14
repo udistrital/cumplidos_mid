@@ -4,7 +4,6 @@ import (
 	_ "encoding/json"
 	"fmt"
 	"strconv"
-	"sync"
 	"time"
 
 	"github.com/astaxie/beego"
@@ -141,28 +140,20 @@ func ContratosContratistaSupervisor(doc_supervisor string) (pagos_contratista_cd
 
 	var respuesta_peticion map[string]interface{}
 
-	var wg = &sync.WaitGroup{}
-
 	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:PRS,DocumentoResponsableId:" + doc_supervisor)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:PRS,DocumentoResponsableId:"+doc_supervisor, &respuesta_peticion); (err == nil) && (response == 200) {
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
 		for _, pago_mensual := range pagos_mensuales {
-			wg.Add(1)
-			go func(pago_mensual models.PagoMensual) {
-				fmt.Println(pago_mensual)
-				var pago_contratista_cdp_rp models.PagoContratistaCdpRp
-				var outputError map[string]interface{}
-				pago_contratista_cdp_rp, outputError = getInfoPagoMensual(pago_mensual)
-				fmt.Println(pago_contratista_cdp_rp)
-				fmt.Println(outputError)
-				if outputError == nil {
-					pagos_contratista_cdp_rp = append(pagos_contratista_cdp_rp, pago_contratista_cdp_rp)
-				}
-				wg.Done()
-			}(pago_mensual)
-
+			var pago_contratista_cdp_rp models.PagoContratistaCdpRp
+			var outputError map[string]interface{}
+			pago_contratista_cdp_rp, outputError = getInfoPagoMensual(pago_mensual)
+			fmt.Println(pago_contratista_cdp_rp)
+			fmt.Println(outputError)
+			if outputError == nil {
+				pagos_contratista_cdp_rp = append(pagos_contratista_cdp_rp, pago_contratista_cdp_rp)
+			}
 		}
-		wg.Wait()
+
 	} else { //If pago_mensual get
 		logs.Error(err)
 		outputError = map[string]interface{}{"funcion": "/ContratosContratistaSupervisor1", "err": err, "status": "502"}
