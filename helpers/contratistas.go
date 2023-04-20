@@ -243,8 +243,8 @@ func GetCumplidosRevertiblesPorOrdenador(NumDocumentoOrdenador string) (cumplido
 
 	// var contratos_disponibilidad []models.ContratoDisponibilidad
 	var respuesta_peticion map[string]interface{}
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:" + NumDocumentoOrdenador)
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:"+NumDocumentoOrdenador, &respuesta_peticion); (err == nil) && (response == 200) {
+	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?limit=10&query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:" + NumDocumentoOrdenador)
+	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?limit=10&query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:"+NumDocumentoOrdenador, &respuesta_peticion); (err == nil) && (response == 200) {
 
 		pagos_mensuales = []models.PagoMensual{}
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
@@ -269,4 +269,66 @@ func GetCumplidosRevertiblesPorOrdenador(NumDocumentoOrdenador string) (cumplido
 	}
 
 	return cumplidos_revertibles, nil
+}
+
+func TraerEnlacesDocumentosAsociadosPagoMensual(pago_mensual_id string) (documentos []models.DocumentosSoporte, outputError map[string]interface{}) {
+
+	defer func() {
+		if err := recover(); err != nil {
+			outputError = map[string]interface{}{"funcion": "/GetCumplidosRevertiblesPorOrdenador", "err": err, "status": "404"}
+			panic(outputError)
+		}
+	}()
+
+	var soportes_pagos_mensuales []models.SoportePagoMensual
+	var documentos_crud []models.Documento
+	var fileGestor models.FileGestorDocumental
+	var soporte models.DocumentosSoporte
+
+	var respuesta_peticion map[string]interface{}
+
+	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/soporte_pago_mensual/?limit=-1&query=PagoMensualId.Id:" + pago_mensual_id)
+	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/soporte_pago_mensual/?limit=-1&query=PagoMensualId.Id:"+pago_mensual_id, &respuesta_peticion); (err == nil) && (response == 200) {
+		LimpiezaRespuestaRefactor(respuesta_peticion, &soportes_pagos_mensuales)
+		var ids_documentos []string
+		for _, soporte_pago_mensual := range soportes_pagos_mensuales {
+			fmt.Println(soporte_pago_mensual)
+			ids_documentos = append(ids_documentos, strconv.Itoa(soporte_pago_mensual.Documento))
+		}
+
+		var ids_documentos_juntos = strings.Join(ids_documentos, "|")
+		fmt.Println(ids_documentos_juntos)
+		fmt.Println(beego.AppConfig.String("UrlDocumentosCrud") + "/documento/?limit=-1&query=Id.in:" + ids_documentos_juntos)
+		fmt.Println(respuesta_peticion)
+		if response, err := getJsonTest(beego.AppConfig.String("UrlDocumentosCrud")+"/documento/?limit=-1&query=Activo:True,Id.in:"+ids_documentos_juntos, &documentos_crud); (err == nil) && (response == 200) {
+			fmt.Println(documentos_crud)
+
+			for _, documento_crud := range documentos_crud {
+				fmt.Println(documento_crud.Id)
+				fmt.Println(&documento_crud)
+				soporte.Documento = documento_crud
+				fmt.Println(beego.AppConfig.String("UrlGestorDocumental") + "/document/" + documento_crud.Enlace)
+				if response, err := getJsonTest(beego.AppConfig.String("UrlGestorDocumental")+"/document/"+documento_crud.Enlace, &fileGestor); (err == nil) && (response == 200) {
+					soporte.Archivo = fileGestor
+					documentos = append(documentos, soporte)
+				} else { //If documento get
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/GetCumplidosRevertiblesPorOrdenador/GestorDocumental", "err": err, "status": "502"}
+					return nil, outputError
+				}
+			}
+
+		} else { //If documento get
+			logs.Error(err)
+			outputError = map[string]interface{}{"funcion": "/GetCumplidosRevertiblesPorOrdenador/documento", "err": err, "status": "502"}
+			return nil, outputError
+		}
+
+	} else { //If soporte pago_mensual get
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/GetCumplidosRevertiblesPorOrdenador/soporte_pago_mensual", "err": err, "status": "502"}
+		return nil, outputError
+	}
+
+	return
 }

@@ -15,6 +15,38 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/contratos_contratista/documentos_pago_mensual/{pago_mensual_id}": {
+            "get": {
+                "tags": [
+                    "contratos_contratista"
+                ],
+                "description": "create ContratosContratista",
+                "operationId": "ContratosContratistaController.GetDocumentosPagoMensual",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "pago_mensual_id",
+                        "description": "Id pago mensual",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ContratoDisponibilidadRp"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found resource"
+                    }
+                }
+            }
+        },
         "/contratos_contratista/{numero_documento}": {
             "get": {
                 "tags": [
@@ -564,31 +596,31 @@
         }
     },
     "definitions": {
-        "18632.0xc0006cc9c0.false": {
+        "23159.0xc0006fa090.false": {
             "title": "false",
             "type": "object"
         },
-        "18912.0xc0006cc9f0.false": {
+        "23439.0xc0006fa0c0.false": {
             "title": "false",
             "type": "object"
         },
-        "18973.0xc0006cca20.false": {
+        "23500.0xc0006fa0f0.false": {
             "title": "false",
             "type": "object"
         },
-        "19041.0xc0006ccb10.false": {
+        "23568.0xc0006fa1e0.false": {
             "title": "false",
             "type": "object"
         },
-        "19178.0xc0006ccb40.false": {
+        "23705.0xc0006fa210.false": {
             "title": "false",
             "type": "object"
         },
-        "19329.0xc0006ccb70.false": {
+        "23856.0xc0006fa240.false": {
             "title": "false",
             "type": "object"
         },
-        "34431.0xc000701c20.false": {
+        "38958.0xc0007312f0.false": {
             "title": "false",
             "type": "object"
         },
@@ -963,13 +995,13 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/18912.0xc0006cc9f0.false"
+                    "$ref": "#/definitions/23439.0xc0006fa0c0.false"
                 },
                 "Dependencia": {
                     "type": "string"
                 },
                 "EjecutadoDinero": {
-                    "$ref": "#/definitions/19329.0xc0006ccb70.false"
+                    "$ref": "#/definitions/23856.0xc0006fa240.false"
                 },
                 "FechaCPS": {
                     "type": "string"
@@ -983,22 +1015,22 @@
                     "format": "datetime"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/19178.0xc0006ccb40.false"
+                    "$ref": "#/definitions/23705.0xc0006fa210.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/19041.0xc0006ccb10.false"
+                    "$ref": "#/definitions/23568.0xc0006fa1e0.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/18973.0xc0006cca20.false"
+                    "$ref": "#/definitions/23500.0xc0006fa0f0.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/18632.0xc0006cc9c0.false"
+                    "$ref": "#/definitions/23159.0xc0006fa090.false"
                 },
                 "ValorContrato": {
                     "type": "integer",
@@ -1271,7 +1303,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/34431.0xc000701c20.false"
+                    "$ref": "#/definitions/38958.0xc0007312f0.false"
                 }
             }
         }
