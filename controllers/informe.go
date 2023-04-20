@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/astaxie/beego"
@@ -35,7 +34,6 @@ func (c *InformeController) PostInforme() {
 	var v models.Informe
 	//var v map[string]interface{}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	fmt.Println("Informe al llegar", v)
 	if response, err := helpers.AddInforme(v); err == nil {
 		c.Ctx.Output.SetStatus(201)
 		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "201", "Message": "Successful", "Data": response}

@@ -15,6 +15,38 @@
     },
     "basePath": "/v1",
     "paths": {
+        "/contratos_contratista/documentos_pago_mensual/{pago_mensual_id}": {
+            "get": {
+                "tags": [
+                    "contratos_contratista"
+                ],
+                "description": "create ContratosContratista",
+                "operationId": "ContratosContratistaController.GetDocumentosPagoMensual",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "pago_mensual_id",
+                        "description": "Id pago mensual",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DocumentosSoporte"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found resource"
+                    }
+                }
+            }
+        },
         "/contratos_contratista/{numero_documento}": {
             "get": {
                 "tags": [
@@ -564,31 +596,31 @@
         }
     },
     "definitions": {
-        "18632.0xc0006cc9c0.false": {
+        "23159.0xc00064def0.false": {
             "title": "false",
             "type": "object"
         },
-        "18912.0xc0006cc9f0.false": {
+        "23439.0xc00064df20.false": {
             "title": "false",
             "type": "object"
         },
-        "18973.0xc0006cca20.false": {
+        "23500.0xc00064df50.false": {
             "title": "false",
             "type": "object"
         },
-        "19041.0xc0006ccb10.false": {
+        "23568.0xc000692060.false": {
             "title": "false",
             "type": "object"
         },
-        "19178.0xc0006ccb40.false": {
+        "23705.0xc000692090.false": {
             "title": "false",
             "type": "object"
         },
-        "19329.0xc0006ccb70.false": {
+        "23856.0xc0006920c0.false": {
             "title": "false",
             "type": "object"
         },
-        "34431.0xc000701c20.false": {
+        "38958.0xc0006cb170.false": {
             "title": "false",
             "type": "object"
         },
@@ -929,6 +961,84 @@
                 }
             }
         },
+        "models.Documento": {
+            "title": "Documento",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Descripcion": {
+                    "type": "string"
+                },
+                "Enlace": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Metadatos": {
+                    "type": "string"
+                },
+                "Nombre": {
+                    "type": "string"
+                },
+                "TipoDocumento": {
+                    "$ref": "#/definitions/models.TipoDocumento"
+                }
+            }
+        },
+        "models.DocumentosSoporte": {
+            "title": "DocumentosSoporte",
+            "type": "object",
+            "properties": {
+                "Archivo": {
+                    "$ref": "#/definitions/models.FileGestorDocumental"
+                },
+                "Documento": {
+                    "$ref": "#/definitions/models.Documento"
+                }
+            }
+        },
+        "models.DominioTipoDocumento": {
+            "title": "DominioTipoDocumento",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "CodigoAbreviacion": {
+                    "type": "string"
+                },
+                "Descripcion": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Nombre": {
+                    "type": "string"
+                },
+                "NumeroOrden": {
+                    "type": "number",
+                    "format": "double"
+                }
+            }
+        },
         "models.EstadoPagoMensual": {
             "title": "EstadoPagoMensual",
             "type": "object",
@@ -955,6 +1065,15 @@
                 }
             }
         },
+        "models.FileGestorDocumental": {
+            "title": "FileGestorDocumental",
+            "type": "object",
+            "properties": {
+                "file": {
+                    "type": "string"
+                }
+            }
+        },
         "models.InformacionInforme": {
             "title": "InformacionInforme",
             "type": "object",
@@ -963,13 +1082,13 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/18912.0xc0006cc9f0.false"
+                    "$ref": "#/definitions/23439.0xc00064df20.false"
                 },
                 "Dependencia": {
                     "type": "string"
                 },
                 "EjecutadoDinero": {
-                    "$ref": "#/definitions/19329.0xc0006ccb70.false"
+                    "$ref": "#/definitions/23856.0xc0006920c0.false"
                 },
                 "FechaCPS": {
                     "type": "string"
@@ -983,22 +1102,22 @@
                     "format": "datetime"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/19178.0xc0006ccb40.false"
+                    "$ref": "#/definitions/23705.0xc000692090.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/19041.0xc0006ccb10.false"
+                    "$ref": "#/definitions/23568.0xc000692060.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/18973.0xc0006cca20.false"
+                    "$ref": "#/definitions/23500.0xc00064df50.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/18632.0xc0006cc9c0.false"
+                    "$ref": "#/definitions/23159.0xc00064def0.false"
                 },
                 "ValorContrato": {
                     "type": "integer",
@@ -1259,6 +1378,54 @@
                 }
             }
         },
+        "models.TipoDocumento": {
+            "title": "TipoDocumento",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "CodigoAbreviacion": {
+                    "type": "string"
+                },
+                "Descripcion": {
+                    "type": "string"
+                },
+                "DominioTipoDocumento": {
+                    "$ref": "#/definitions/models.DominioTipoDocumento"
+                },
+                "Extension": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Nombre": {
+                    "type": "string"
+                },
+                "NumeroOrden": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "Tamano": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "TipoDocumentoNuxeo": {
+                    "type": "string"
+                },
+                "Workspace": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ValidacionFechaCargaCumplido": {
             "title": "ValidacionFechaCargaCumplido",
             "type": "object",
@@ -1271,7 +1438,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/34431.0xc000701c20.false"
+                    "$ref": "#/definitions/38958.0xc0006cb170.false"
                 }
             }
         }
