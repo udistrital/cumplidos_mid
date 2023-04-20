@@ -147,8 +147,6 @@ func ContratosContratistaSupervisor(doc_supervisor string) (pagos_contratista_cd
 			var pago_contratista_cdp_rp models.PagoContratistaCdpRp
 			var outputError map[string]interface{}
 			pago_contratista_cdp_rp, outputError = getInfoPagoMensual(pago_mensual)
-			fmt.Println(pago_contratista_cdp_rp)
-			fmt.Println(outputError)
 			if outputError == nil {
 				pagos_contratista_cdp_rp = append(pagos_contratista_cdp_rp, pago_contratista_cdp_rp)
 			}

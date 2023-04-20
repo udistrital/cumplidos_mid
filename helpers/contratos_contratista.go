@@ -29,7 +29,6 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 	var informacion_proveedores []models.InformacionProveedor
 	contratos_persona, outputError := GetContratosPersona(numero_documento)
 
-	fmt.Println("direccion de memoria:", &novedades_postcontractuales)
 	//fmt.Println("Contratos persona:", contratos_persona)
 	if outputError == nil {
 		//fmt.Println("outputError==nil")
@@ -40,7 +39,6 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 			for _, persona := range informacion_proveedores {
 				fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual/?query=Contratista:" + strconv.Itoa(persona.Id) + "&sortby=FechaInicio&order=asc&limit=-1")
 				if response, err := GetNovedadesPostcontractuales(models.TipoNovedadCesion, "Contratista:"+strconv.Itoa(persona.Id), "FechaInicio", "asc", "-1", "", "", &novedades_postcontractuales); (err == nil) && (response == 200) {
-					fmt.Println("novedades", novedades_postcontractuales)
 					for _, novedad := range novedades_postcontractuales {
 						var contrato models.InformacionContrato
 						//fmt.Println("Novedad", novedad)
@@ -75,7 +73,6 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 														contrato_disponibilidad_rp.FechaInicio = novedad.FechaInicio
 														contrato_disponibilidad_rp.FechaFin = acta_inicio.FechaFin
 														contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
-														fmt.Println(contratos_disponibilidad_rp)
 													} else {
 														outputError = map[string]interface{}{"funcion": "/ContratosContratista/Acta_inicio", "err": err, "status": "502"}
 														panic(outputError)
@@ -204,7 +201,6 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 		//} else { // si tiene contrato
 		//fmt.Println("contratos disponibilidad", contratos_disponibilidad_rp)
 		//novedades_postcontractuales = []models.NovedadPostcontractual{}
-		fmt.Println("for contrato persona")
 		for _, contrato_persona := range contratos_persona.ContratosPersonas.ContratoPersona {
 			var contrato models.InformacionContrato
 			contrato, outputError = GetContrato(contrato_persona.NumeroContrato, contrato_persona.Vigencia)
@@ -235,8 +231,6 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 								contrato_disponibilidad_rp.FechaInicio = acta_inicio.FechaInicio
 								contrato_disponibilidad_rp.FechaFin = acta_inicio.FechaFin
 								contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
-								fmt.Println("despues de llenar el base", contratos_disponibilidad_rp)
-								fmt.Println(contratos_disponibilidad_rp)
 							} else {
 								outputError = map[string]interface{}{"funcion": "/ContratosContratista/Acta_inicio", "err": err, "status": "502"}
 								panic(outputError)
@@ -255,11 +249,9 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 				// Se actua respecto a las novedades encontradas
 				fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual/?query=NumeroContrato:" + contrato_persona.NumeroContrato + ",Vigencia:" + contrato_persona.Vigencia + "&sortby=FechaInicio&order=asc&limit=-1")
 				//var novedad_postcontractual models.NovedadPostcontractual
-				fmt.Println("antes de consultar", *&novedades_postcontractuales)
 				if response, err := GetNovedadesPostcontractuales(models.TipoNovedadTodas, "NumeroContrato:"+contrato_persona.NumeroContrato+",Vigencia:"+contrato_persona.Vigencia, "FechaInicio", "asc", "-1", "", "", &novedades_postcontractuales); (err == nil) && (response == 200) {
 					//var	prueba []models.NovedadPostcontractual
 					//	json.NewDecoder(r.Body).Decode(prueba)
-					fmt.Println("Novedades postcontractualese", *&novedades_postcontractuales)
 					//fmt.Println("Informacion contrato contratista", informacion_contrato_contratista)
 
 					if outputError == nil {
@@ -327,7 +319,6 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 					outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
 					return nil, outputError
 				}
-				fmt.Println("donde putas", contratos_disponibilidad_rp)
 			} else {
 				return nil, outputError
 			}

@@ -7,6 +7,7 @@ import (
 
 func init() {
 
+	// Contratista
 	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:ContratosContratistaController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:ContratosContratistaController"],
 		beego.ControllerComments{
 			Method:           "GetContratosContratista",
@@ -16,6 +17,16 @@ func init() {
 			Filters:          nil,
 			Params:           nil})
 
+	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:ContratosContratistaController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:ContratosContratistaController"],
+		beego.ControllerComments{
+			Method:           "GetDocumentosPagoMensual",
+			Router:           `/documentos_pago_mensual/:pago_mensual_id`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams:     param.Make(),
+			Filters:          nil,
+			Params:           nil})
+
+	// Supervisor contratistas
 	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesSupervisorContratistasController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:SolicitudesSupervisorContratistasController"],
 		beego.ControllerComments{
 			Method:           "GetSolicitudesSupervisorContratistas",
