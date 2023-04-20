@@ -67,7 +67,7 @@ func (c *ContratosContratistaController) GetContratosContratista() {
 // @Title GetDocumentosPagoMensual
 // @Description create ContratosContratista
 // @Param pago_mensual_id path string true "Id pago mensual"
-// @Success 200 {object} []models.ContratoDisponibilidadRp
+// @Success 200 {object} []models.DocumentosSoporte
 // @Failure 404 not found resource
 // @router /documentos_pago_mensual/:pago_mensual_id [get]
 func (c *ContratosContratistaController) GetDocumentosPagoMensual() {
@@ -93,9 +93,9 @@ func (c *ContratosContratistaController) GetDocumentosPagoMensual() {
 		panic(map[string]interface{}{"funcion": "GetDocumentosPagoMensual", "err": "Error en los parametros de ingreso", "status": "400"})
 	}
 
-	if contratos_disponibilidad_rp, err := helpers.TraerEnlacesDocumentosAsociadosPagoMensual(pago_mensual_id); (err == nil) || (len(contratos_disponibilidad_rp) != 0) {
+	if soportes_pago_mensual, err := helpers.TraerEnlacesDocumentosAsociadosPagoMensual(pago_mensual_id); (err == nil) || (len(soportes_pago_mensual) != 0) {
 		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": contratos_disponibilidad_rp}
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": soportes_pago_mensual}
 	} else {
 		panic(err)
 	}
