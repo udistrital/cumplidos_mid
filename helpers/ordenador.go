@@ -29,6 +29,7 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 	//var informacion_ordenador models.InformacionOrdenador
 	var ordenadores []models.Ordenador
 
+	fmt.Println(beego.AppConfig.String("UrlAdministrativaJBPM") + "/" + "contrato_elaborado/" + numero_contrato + "/" + vigencia)
 	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contrato_elaborado/"+numero_contrato+"/"+vigencia, &temp); err == nil && temp != nil && response == 200 {
 		json_contrato_elaborado, error_json := json.Marshal(temp)
 		if error_json == nil {
@@ -79,11 +80,13 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 					fecha = strings.Split(fecha[0], "-")
 
 					//RFC 45758 Se consulta el ordenador inmediatamente anterior a la fecha de registro del contrato
+					fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/ordenadores/?query=IdOrdenador:" + contrato_elaborado.Contrato.OrdenadorGasto + ",FechaInicio__lt:" + fecha[1] + "/" + fecha[2] + "/" + fecha[0] + "&sortby=FechaInicio&order=desc&limit=1")
 					if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=IdOrdenador:"+contrato_elaborado.Contrato.OrdenadorGasto+",FechaInicio__lt:"+fecha[1]+"/"+fecha[2]+"/"+fecha[0]+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
-
+						fmt.Println(ordenadores)
 						for _, ordenador := range ordenadores {
 
 							//RFC 45758 Se consulta el ordenador más reciente vinculado al rol obtenido con la consulta anterior
+							fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/ordenadores/?query=RolOrdenador:" + strings.Replace(ordenador.RolOrdenador, " ", "%20", -1) + "&sortby=FechaInicio&order=desc&limit=1")
 							if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=RolOrdenador:"+strings.Replace(ordenador.RolOrdenador, " ", "%20", -1)+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
 
 								for _, ordenador := range ordenadores {
