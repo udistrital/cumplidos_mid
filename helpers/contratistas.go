@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/astaxie/beego"
 	_ "github.com/astaxie/beego/httplib"
@@ -235,24 +236,57 @@ func GetCumplidosRevertiblesPorOrdenador(NumDocumentoOrdenador string) (cumplido
 
 	// var contratos_disponibilidad []models.ContratoDisponibilidad
 	var respuesta_peticion map[string]interface{}
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?limit=10&query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:" + NumDocumentoOrdenador)
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?limit=10&query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:"+NumDocumentoOrdenador, &respuesta_peticion); (err == nil) && (response == 200) {
+
+	var ordenes_pago models.OrdenesPago
+
+	//Separacion de fechas para validacion
+	fecha_act := time.Now().AddDate(0, 0, -15) // se miran los ultimos 15 dias
+	mes := strconv.Itoa(int(fecha_act.Month()))
+	dia := strconv.Itoa(fecha_act.Day())
+	año := strconv.Itoa(fecha_act.Year())
+	if len(mes) == 1 {
+		mes = "0" + mes
+	}
+
+	if len(dia) == 1 {
+		dia = "0" + dia
+	}
+
+	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:" + NumDocumentoOrdenador + ",FechaModificacion__gte:" + mes + "/" + dia + "/" + año)
+	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:"+NumDocumentoOrdenador+",FechaModificacion__gte:"+mes+"/"+dia+"/"+año, &respuesta_peticion); (err == nil) && (response == 200) {
 
 		pagos_mensuales = []models.PagoMensual{}
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
-		for _, pago_mensual := range pagos_mensuales {
-
-			var cumplidos_revertible models.PagoContratistaCdpRp
-			var outputError map[string]interface{}
-			cumplidos_revertible, outputError = getInfoPagoMensual(pago_mensual)
-			if outputError == nil {
-				cumplidos_revertibles = append(cumplidos_revertibles, cumplidos_revertible)
+		//Con pagos mensuales
+		if (models.PagoMensual{}) != pagos_mensuales[0] {
+			for _, pago_mensual := range pagos_mensuales {
+				var cumplidos_revertible models.PagoContratistaCdpRp
+				var outputError map[string]interface{}
+				cumplidos_revertible, outputError = getInfoPagoMensual(pago_mensual)
+				if outputError != nil {
+					logs.Error(err)
+					fmt.Println(err)
+					continue
+				}
+				fmt.Println(beego.AppConfig.String("UrlFinancieraJBPM") + "/" + "ordenes_pago_tercero/" + cumplidos_revertible.NumeroRp + "/" + cumplidos_revertible.VigenciaRp + "/" + pago_mensual.DocumentoPersonaId + "/" + strconv.Itoa(int(pago_mensual.Ano)) + "/" + strconv.Itoa(int(pago_mensual.Mes)))
+				if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlFinancieraJBPM")+"/"+"ordenes_pago_tercero/"+cumplidos_revertible.NumeroRp+"/"+cumplidos_revertible.VigenciaRp+"/"+pago_mensual.DocumentoPersonaId+"/"+strconv.Itoa(int(pago_mensual.Ano))+"/"+strconv.Itoa(int(pago_mensual.Mes)), &ordenes_pago); (err == nil) && (response == 200) {
+					if len(ordenes_pago.Tercero) == 0 {
+						cumplidos_revertibles = append(cumplidos_revertibles, cumplidos_revertible)
+					}
+				} else {
+					logs.Error(err)
+					fmt.Println(err)
+					continue
+				}
 			}
+		} else {
+			// Sin pagos mensuales
+			return nil, outputError
 		}
 
 	} else { //If pago_mensual get
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/SolicitudesOrdenadorContratistas", "err": err, "status": "502"}
+		outputError = map[string]interface{}{"funcion": "/GetCumplidosRevertiblesPorOrdenador/SolicitudesOrdenadorContratistas", "err": err, "status": "502"}
 		return nil, outputError
 	}
 
