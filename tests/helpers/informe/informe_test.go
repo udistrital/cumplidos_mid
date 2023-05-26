@@ -196,7 +196,7 @@ func TestUpdateInformeById(t *testing.T) {
 
 //UltimoInformeContratista ...
 func TestUltimoInformeContratista(t *testing.T) {
-	informe, err := helpers.UltimoInformeContratista("1265", "2021", "1014294957")
+	informe, err := helpers.UltimoInformeContratista("94162")
 	if err != nil {
 		t.Error("No se pudo consultar la informacion del ultimo informe", err)
 		t.Fail()
