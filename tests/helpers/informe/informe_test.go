@@ -1,4 +1,4 @@
-package InformacionInforme_test
+package Informe_test
 
 import (
 	"flag"
@@ -12,27 +12,42 @@ import (
 )
 
 var parameters struct {
-	UrlcrudWSO2          string
-	NscrudAdministrativa string
-	ProtocolAdmin        string
-	UrlcrudAgora         string
-	NscrudAgora          string
-	NscrudFinanciera     string
+	UrlCrudCumplidos      string
+	UrlcrudAgora          string
+	UrlFinancieraJBPM     string
+	UrlAdministrativaJBPM string
+	UrlcrudCore           string
+	UrlcrudOikos          string
+	UrlNovedadesMid       string
+	UrlTitanMid           string
+	UrlDocumentosCrud     string
+	UrlGestorDocumental   string
 }
 
 func TestMain(m *testing.M) {
-	parameters.UrlcrudWSO2 = os.Getenv("UrlcrudWSO2")
-	parameters.NscrudAdministrativa = os.Getenv("NscrudAdministrativa")
-	parameters.ProtocolAdmin = os.Getenv("ProtocolAdmin")
+
+	parameters.UrlCrudCumplidos = os.Getenv("UrlCrudCumplidos")
 	parameters.UrlcrudAgora = os.Getenv("UrlcrudAgora")
-	parameters.NscrudAgora = os.Getenv("NscrudAgora")
-	parameters.NscrudFinanciera = os.Getenv("NscrudFinanciera")
-	beego.AppConfig.Set("UrlcrudWSO2", parameters.UrlcrudWSO2)
-	beego.AppConfig.Set("NscrudAdministrativa", parameters.NscrudAdministrativa)
-	beego.AppConfig.Set("ProtocolAdmin", parameters.ProtocolAdmin)
+	parameters.UrlFinancieraJBPM = os.Getenv("UrlFinancieraJBPM")
+	parameters.UrlAdministrativaJBPM = os.Getenv("UrlAdministrativaJBPM")
+	parameters.UrlcrudCore = os.Getenv("UrlcrudCore")
+	parameters.UrlcrudOikos = os.Getenv("UrlcrudOikos")
+	parameters.UrlNovedadesMid = os.Getenv("UrlNovedadesMid")
+	parameters.UrlTitanMid = os.Getenv("UrlTitanMid")
+	parameters.UrlDocumentosCrud = os.Getenv("UrlDocumentosCrud")
+	parameters.UrlGestorDocumental = os.Getenv("UrlGestorDocumental")
+
+	beego.AppConfig.Set("UrlCrudCumplidos", parameters.UrlCrudCumplidos)
 	beego.AppConfig.Set("UrlcrudAgora", parameters.UrlcrudAgora)
-	beego.AppConfig.Set("NscrudAgora", parameters.NscrudAgora)
-	beego.AppConfig.Set("NscrudFinanciera", parameters.NscrudFinanciera)
+	beego.AppConfig.Set("UrlFinancieraJBPM", parameters.UrlFinancieraJBPM)
+	beego.AppConfig.Set("UrlAdministrativaJBPM", parameters.UrlAdministrativaJBPM)
+	beego.AppConfig.Set("UrlcrudCore", parameters.UrlcrudCore)
+	beego.AppConfig.Set("UrlcrudOikos", parameters.UrlcrudOikos)
+	beego.AppConfig.Set("UrlNovedadesMid", parameters.UrlNovedadesMid)
+	beego.AppConfig.Set("UrlTitanMid", parameters.UrlTitanMid)
+	beego.AppConfig.Set("UrlDocumentosCrud", parameters.UrlDocumentosCrud)
+	beego.AppConfig.Set("UrlGestorDocumental", parameters.UrlGestorDocumental)
+
 	flag.Parse()
 	os.Exit(m.Run())
 }
@@ -41,7 +56,7 @@ func TestMain(m *testing.M) {
 func TestInforme(t *testing.T) {
 	Informe, err := helpers.Informe("94162")
 	if err != nil {
-		t.Error("No se pudo consultar la informacion del informe", err)
+		t.Error("Error helper func TestInforme", err)
 		t.Fail()
 	} else {
 		t.Log(Informe)
@@ -53,7 +68,7 @@ func TestInforme(t *testing.T) {
 func TestGetActividadesEspecificas(t *testing.T) {
 	ActividadesEspecificas, err := helpers.GetActividadesEspecificas("96")
 	if err != nil {
-		t.Error("No se pudo consultar la informacion de las actividades especificas", err)
+		t.Error("Error helper func GetActividadesEspecificas", err)
 		t.Fail()
 	} else {
 		t.Log(ActividadesEspecificas)
@@ -65,7 +80,7 @@ func TestGetActividadesEspecificas(t *testing.T) {
 func TestGetActividadesRealizadas(t *testing.T) {
 	ActividadesRealizadas, err := helpers.GetActividadesRealizadas("94")
 	if err != nil {
-		t.Error("No se pudo consultar la informacion de las actividades realizadas", err)
+		t.Error("Error helper func GetActividadesRealizadas", err)
 		t.Fail()
 	} else {
 		t.Log(ActividadesRealizadas)
@@ -113,7 +128,7 @@ func TestAddInforme(t *testing.T) {
 	}
 	informeCreado, err := helpers.AddInforme(informePrueba)
 	if err != nil {
-		t.Error("No se pudo crear el informe", err)
+		t.Error("Error helper func AddInforme", err)
 		t.Fail()
 	} else {
 		t.Log(informeCreado)
@@ -126,7 +141,7 @@ func TestAddActividadEspecifica(t *testing.T) {
 	var actividad_esp = map[string]interface{}{"ActividadEspecifica": "prueba", "Avance": 20, "InformeId": map[string]interface{}{"Id": 46}}
 	actEsp, err := helpers.AddActividadEspecifica(actividad_esp)
 	if err != nil {
-		t.Error("No se pudo crear las actividades especificas", err)
+		t.Error("Error helper func AddActividadEspecifica", err)
 		t.Fail()
 	} else {
 		t.Log(actEsp)
@@ -139,7 +154,7 @@ func TestAddActividadRealizada(t *testing.T) {
 	var actividad_rea = map[string]interface{}{"Actividad": "prueba", "ProductoAsociado": "prueba", "Evidencia": "prueba", "ActividadEspecificaId": map[string]interface{}{"Id": 96}}
 	actRea, err := helpers.AddActividadRealizada(actividad_rea)
 	if err != nil {
-		t.Error("No se pudo crear las actividades realizadas", err)
+		t.Error("Error helper func AddActividadRealizada", err)
 		t.Fail()
 	} else {
 		t.Log(actRea)
@@ -187,7 +202,7 @@ func TestUpdateInformeById(t *testing.T) {
 	}
 	err := helpers.UpdateInformeById(informePrueba)
 	if err != nil {
-		t.Error("No se pudo actualizar el informe", err)
+		t.Error("Error helper func UpdateInformeById", err)
 		t.Fail()
 	} else {
 		t.Log("TestUpdateInformeById Finalizado Correctamente (OK)")
@@ -198,10 +213,35 @@ func TestUpdateInformeById(t *testing.T) {
 func TestUltimoInformeContratista(t *testing.T) {
 	informe, err := helpers.UltimoInformeContratista("94162")
 	if err != nil {
-		t.Error("No se pudo consultar la informacion del ultimo informe", err)
+		t.Error("Error helper func UltimoInformeContratista", err)
 		t.Fail()
 	} else {
 		t.Log(informe)
 		t.Log("TestUltimoInformeContratista Finalizado Correctamente (OK)")
 	}
+}
+
+func TestEndPointCumplidosCpsMid(t *testing.T) {
+	t.Log("-----------------------------------------------------")
+	t.Log("Testing EndPoint UrlCrudCumplidos ")
+	t.Log(parameters.UrlCrudCumplidos)
+	t.Log("Testing EndPoint UrlcrudAgora")
+	t.Log(parameters.UrlcrudAgora)
+	t.Log("Testing EndPoint UrlFinancieraJBPM")
+	t.Log(parameters.UrlFinancieraJBPM)
+	t.Log("Testing EndPoint UrlAdministrativaJBPM")
+	t.Log(parameters.UrlAdministrativaJBPM)
+	t.Log("Testing EndPoint UrlcrudCore")
+	t.Log(parameters.UrlcrudCore)
+	t.Log("Testing EndPoint UrlcrudOikos")
+	t.Log(parameters.UrlcrudOikos)
+	t.Log("Testing EndPoint UrlNovedadesMid")
+	t.Log(parameters.UrlNovedadesMid)
+	t.Log("Testing EndPoint UrlTitanMid")
+	t.Log(parameters.UrlTitanMid)
+	t.Log("Testing EndPoint UrlDocumentosCrud")
+	t.Log(parameters.UrlDocumentosCrud)
+	t.Log("Testing EndPoint UrlGestorDocumental")
+	t.Log(parameters.UrlGestorDocumental)
+	t.Log("-----------------------------------------------------")
 }

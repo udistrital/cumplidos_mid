@@ -14,27 +14,27 @@ import (
 func TestGetInforme(t *testing.T) {
 	if response, err := http.Get("http://localhost:8090/v1/informe/94162"); err == nil {
 		if response.StatusCode != 200 {
-			t.Error("Error TestEndPoint: Se esperaba 200 y se obtuvo", response.StatusCode)
+			t.Error("Error TestEndPoint(TestGetInforme): Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
 		} else {
-			t.Log("TestEndPoint Finalizado Correctamente (OK)")
+			t.Log("TestGetInforme Finalizado Correctamente (OK)")
 		}
 	} else {
-		t.Error("Error EndPoint:", err.Error())
+		t.Error("Error EndPoint TestGetInforme:", err.Error())
 		t.Fail()
 	}
 }
 
 func TestGetUltimoInformeContratista(t *testing.T) {
-	if response, err := http.Get("http://localhost:8090/v1/informe/1265/2021/1014294957"); err == nil {
+	if response, err := http.Get("http://localhost:8090/v1/informe/ultimo_informe/94162"); err == nil {
 		if response.StatusCode != 200 {
-			t.Error("Error TestEndPoint: Se esperaba 200 y se obtuvo", response.StatusCode)
+			t.Error("Error TestEndPoint(TestGetUltimoInformeContratista): Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
 		} else {
-			t.Log("TestEndPoint Finalizado Correctamente (OK)")
+			t.Log("TestGetUltimoInformeContratista Finalizado Correctamente (OK)")
 		}
 	} else {
-		t.Error("Error EndPoint:", err.Error())
+		t.Error("Error EndPoint TestGetUltimoInformeContratista:", err.Error())
 		t.Fail()
 	}
 }
@@ -86,9 +86,9 @@ func TestPostInforme(t *testing.T) {
 	req, err := http.NewRequest("POST", "http://localhost:8090/v1/informe", b)
 	r, err := client.Do(req)
 	if err == nil {
-		t.Log("TestEndPoint Finalizado Correctamente (OK)")
+		t.Log("TestPostInforme Finalizado Correctamente (OK)")
 	} else {
-		t.Error("Error TestEndPoint: Se esperaba 201 y se obtuvo", r.StatusCode)
+		t.Error("Error TestEndPoint(TestPostInforme): Se esperaba 201 y se obtuvo", r.StatusCode)
 		t.Fail()
 	}
 }
@@ -139,9 +139,9 @@ func TestPutInforme(t *testing.T) {
 	req, err := http.NewRequest("PUT", "http://localhost:8090/v1/informe", b)
 	r, err := client.Do(req)
 	if err == nil {
-		t.Log("TestEndPoint Finalizado Correctamente (OK)")
+		t.Log("TestPutInforme Finalizado Correctamente (OK)")
 	} else {
-		t.Error("Error TestEndPoint: Se esperaba 200 y se obtuvo", r.StatusCode)
+		t.Error("Error TestEndPoint(TestPutInforme): Se esperaba 200 y se obtuvo", r.StatusCode)
 		t.Fail()
 	}
 }

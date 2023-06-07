@@ -14,13 +14,13 @@ func TestGetSolicitudesOrdenadorContratistas(t *testing.T) {
 
 	if response, err := http.Get("http://localhost:8090/v1/solicitudes_ordenador_contratistas/solicitudes/52204982"); err == nil {
 		if response.StatusCode != 200 {
-			t.Error("Error TestEndPoint: Se esperaba 200 y se obtuvo", response.StatusCode)
+			t.Error("Error TestEndPoint(TestGetSolicitudesOrdenadorContratistas): Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
 		} else {
-			t.Log("TestEndPoint Finalizado Correctamente (OK)")
+			t.Log("TestGetSolicitudesOrdenadorContratistas Finalizado Correctamente (OK)")
 		}
 	} else {
-		t.Error("Error EndPoint:", err.Error())
+		t.Error("Error EndPoint TestGetSolicitudesOrdenadorContratistas:", err.Error())
 		t.Fail()
 	}
 
@@ -30,13 +30,13 @@ func TestGetSolicitudesOrdenadorContratistasError(t *testing.T) {
 
 	if response, err := http.Get("http://localhost:8090/v1/solicitudes_ordenador_contratistas/solicitudes/1"); err == nil {
 		if response.StatusCode != 400 {
-			t.Error("Error TestEndPoint: Se esperaba 400 y se obtuvo", response.StatusCode)
+			t.Error("Error TestEndPoint(TestGetSolicitudesOrdenadorContratistas): Se esperaba 400 y se obtuvo", response.StatusCode)
 			t.Fail()
 		} else {
-			t.Log("TestEndPoint Finalizado Correctamente (OK)")
+			t.Log("TestGetSolicitudesOrdenadorContratistas Finalizado Correctamente (OK)")
 		}
 	} else {
-		t.Error("Error EndPoint:", err.Error())
+		t.Error("Error EndPoint TestGetSolicitudesOrdenadorContratistas:", err.Error())
 		t.Fail()
 	}
 
@@ -100,9 +100,9 @@ func TestAprobarMultiplesPagosContratistas(t *testing.T) {
 	req, err := http.NewRequest("POST", "http://localhost:8090/v1/solicitudes_ordenador_contratistas/aprobar_pagos", b)
 	r, err := client.Do(req)
 	if err == nil {
-		t.Log("TestEndPoint Finalizado Correctamente (OK)")
+		t.Log("TestAprobarMultiplesPagosContratistas Finalizado Correctamente (OK)")
 	} else {
-		t.Error("Error TestEndPoint: Se esperaba 201 y se obtuvo", r.StatusCode)
+		t.Error("Error TestEndPoint(TestAprobarMultiplesPagosContratistas): Se esperaba 201 y se obtuvo", r.StatusCode)
 		t.Fail()
 	}
 }
@@ -111,13 +111,13 @@ func TestCertificacionCumplidosContratistas(t *testing.T) {
 
 	if response, err := http.Get("http://localhost:8090/v1/solicitudes_ordenador_contratistas/certificaciones/DEP14/10/2019"); err == nil {
 		if response.StatusCode != 200 {
-			t.Error("Error TestEndPoint: Se esperaba 200 y se obtuvo", response.StatusCode)
+			t.Error("Error TestEndPoint(TestCertificacionCumplidosContratistas): Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
 		} else {
-			t.Log("TestEndPoint Finalizado Correctamente (OK)")
+			t.Log("TestCertificacionCumplidosContratistas Finalizado Correctamente (OK)")
 		}
 	} else {
-		t.Error("Error EndPoint:", err.Error())
+		t.Error("Error EndPoint TestCertificacionCumplidosContratistas:", err.Error())
 		t.Fail()
 	}
 
@@ -127,13 +127,13 @@ func TestCertificacionCumplidosContratistasError(t *testing.T) {
 
 	if response, err := http.Get("http://localhost:8090/v1/solicitudes_ordenador_contratistas/certificaciones/DEP14/10/201"); err == nil {
 		if response.StatusCode != 400 {
-			t.Error("Error TestEndPoint: Se esperaba 400 y se obtuvo", response.StatusCode)
+			t.Error("Error TestEndPoint(TestCertificacionCumplidosContratistasError): Se esperaba 400 y se obtuvo", response.StatusCode)
 			t.Fail()
 		} else {
-			t.Log("TestEndPoint Finalizado Correctamente (OK)")
+			t.Log("TestCertificacionCumplidosContratistasError Finalizado Correctamente (OK)")
 		}
 	} else {
-		t.Error("Error EndPoint:", err.Error())
+		t.Error("Error EndPoint TestCertificacionCumplidosContratistasError:", err.Error())
 		t.Fail()
 	}
 
@@ -143,13 +143,13 @@ func TestGetSolicitudesOrdenadorContratistasDependencia(t *testing.T) {
 
 	if response, err := http.Get("http://localhost:8090/v1/solicitudes_ordenador_contratistas/solicitudes_dependencia/19483708/DEP12/?limit=10&offset=0"); err == nil {
 		if response.StatusCode != 200 {
-			t.Error("Error TestEndPoint: Se esperaba 200 y se obtuvo", response.StatusCode)
+			t.Error("Error TestEndPoint(TestGetSolicitudesOrdenadorContratistasDependencia): Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
 		} else {
-			t.Log("TestEndPoint Finalizado Correctamente (OK)")
+			t.Log("TestGetSolicitudesOrdenadorContratistasDependencia Finalizado Correctamente (OK)")
 		}
 	} else {
-		t.Error("Error EndPoint:", err.Error())
+		t.Error("Error EndPoint TestGetSolicitudesOrdenadorContratistasDependencia:", err.Error())
 		t.Fail()
 	}
 
@@ -159,13 +159,29 @@ func TestGetSolicitudesOrdenadorContratistasDependenciaError(t *testing.T) {
 
 	if response, err := http.Get("http://localhost:8090/v1/solicitudes_ordenador_contratistas/solicitudes_dependencia/1/DEP12/?limit=10&offset=0"); err == nil {
 		if response.StatusCode != 400 {
-			t.Error("Error TestEndPoint: Se esperaba 400 y se obtuvo", response.StatusCode)
+			t.Error("Error TestEndPoint(TestGetSolicitudesOrdenadorContratistasDependenciaError): Se esperaba 400 y se obtuvo", response.StatusCode)
 			t.Fail()
 		} else {
-			t.Log("TestEndPoint Finalizado Correctamente (OK)")
+			t.Log("TestGetSolicitudesOrdenadorContratistasDependenciaError Finalizado Correctamente (OK)")
 		}
 	} else {
-		t.Error("Error EndPoint:", err.Error())
+		t.Error("Error EndPoint TestGetSolicitudesOrdenadorContratistasDependenciaError:", err.Error())
+		t.Fail()
+	}
+
+}
+
+func TestGetCumplidosRevertiblesPorOrdenador(t *testing.T) {
+
+	if response, err := http.Get("http://localhost:8090/v1/solicitudes_ordenador_contratistas/cumplidos_revertibles/19483708"); err == nil {
+		if response.StatusCode != 200 {
+			t.Error("Error TestEndPoint(TestGetCumplidosRevertiblesPorOrdenador): Se esperaba 200 y se obtuvo", response.StatusCode)
+			t.Fail()
+		} else {
+			t.Log("TestGetCumplidosRevertiblesPorOrdenador Finalizado Correctamente (OK)")
+		}
+	} else {
+		t.Error("Error EndPoint TestGetCumplidosRevertiblesPorOrdenador:", err.Error())
 		t.Fail()
 	}
 
