@@ -176,7 +176,8 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 									return nil, outputError
 								}
 							} else {
-								return nil, outputError
+								continue
+								//return nil, outputError
 							}
 						} else {
 							//fmt.Println("fuera de rango")
@@ -308,13 +309,12 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 								}
 							}
 							//fmt.Println("contratos disponibilidad si tiene novedades", contratos_disponibilidad_rp)
-						} else { // si no tiene novedades
-							//fmt.Println("contratos disponibilidad no tiene novedades", contratos_disponibilidad_rp)
-						}
+						} // si no tiene novedades
 					} else {
 						return nil, outputError
 					}
 				} else { // If novedad_postcontractual get
+					fmt.Println(err)
 					logs.Error(err)
 					outputError = map[string]interface{}{"funcion": "/contratosContratista", "err": err, "status": "502"}
 					return nil, outputError
@@ -426,6 +426,12 @@ func GetContrato(num_contrato_suscrito string, vigencia string) (informacion_con
 			var contrato models.InformacionContrato
 			if err := json.Unmarshal(json_contrato, &contrato); err == nil {
 				informacion_contrato = contrato
+				//Se valida si esta vacio el objeto
+				if informacion_contrato == (models.InformacionContrato{}) {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/GetContrato/EmptyResponse", "err": err, "status": "502"}
+					return informacion_contrato, outputError
+				}
 				return informacion_contrato, nil
 			} else {
 				logs.Error(err)
