@@ -7,8 +7,6 @@ go.sum
 go.sumcd
 swagger.zip
 .scannerwork/
-swagger/
-swagger/*.json
 swagger/*.png
 swagger/*.html
 swagger/*.js

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/astaxie/beego"
@@ -35,7 +34,6 @@ func (c *InformeController) PostInforme() {
 	var v models.Informe
 	//var v map[string]interface{}
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
-	fmt.Println("Informe al llegar", v)
 	if response, err := helpers.AddInforme(v); err == nil {
 		c.Ctx.Output.SetStatus(201)
 		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "201", "Message": "Successful", "Data": response}
@@ -85,12 +83,10 @@ func (c *InformeController) GetInforme() {
 // GetUltimoInformeContratista ...
 // @Title Get UltimoInformeContratista
 // @Description get Ultimo Informe de un contratista by contrato,vigencia y documento
-// @Param	contrato		path 	string	true		"The key for staticblock"
-// @Param	vigencia		path 	string	true		"The key for staticblock"
-// @Param	documento		path 	string	true		"The key for staticblock"
+// @Param	pago_mensual_id		path 	string	true		"Id del pago mensual"
 // @Success 200 {object} models.Informe
 // @Failure 403 :id is empty
-// @router /:contrato/:vigencia/:documento [get]
+// @router /ultimo_informe/:pago_mensual_id [get]
 func (c *InformeController) GetUltimoInformeContratista() {
 	defer func() {
 		if err := recover(); err != nil {
@@ -106,15 +102,9 @@ func (c *InformeController) GetUltimoInformeContratista() {
 		}
 	}()
 
-	contrato := c.GetString(":contrato")
-	vigencia := c.GetString(":vigencia")
-	documento := c.GetString(":documento")
+	pago_mensual_id := c.GetString(":pago_mensual_id")
 
-	if len(vigencia) > 4 || len(documento) < 4 {
-		panic(map[string]interface{}{"funcion": "GetUltimoInformeContratista", "err": "Error en los parametros de ingreso", "status": "400"})
-	}
-
-	if informe, err := helpers.UltimoInformeContratista(contrato, vigencia, documento); (err == nil) || (len(informe) != 0) {
+	if informe, err := helpers.UltimoInformeContratista(pago_mensual_id); (err == nil) || (len(informe) != 0) {
 		c.Ctx.Output.SetStatus(200)
 		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": informe}
 	} else {

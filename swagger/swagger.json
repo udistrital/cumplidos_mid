@@ -15,37 +15,20 @@
     },
     "basePath": "/v1",
     "paths": {
-        "/certificacion/certificacion_visto_bueno/{dependencia}/{mes}/{ano}": {
+        "/contratos_contratista/documentos_pago_mensual/{pago_mensual_id}": {
             "get": {
                 "tags": [
-                    "certificacion"
+                    "contratos_contratista"
                 ],
-                "description": "create CertificacionVistoBueno",
-                "operationId": "CertificacionController.CertificacionVistoBueno",
+                "description": "create ContratosContratista",
+                "operationId": "ContratosContratistaController.GetDocumentosPagoMensual",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "dependencia",
-                        "description": "Dependencia del contrato en la tabla vinculacion",
+                        "name": "pago_mensual_id",
+                        "description": "Id pago mensual",
                         "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    {
-                        "in": "path",
-                        "name": "mes",
-                        "description": "Mes del pago mensual",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    {
-                        "in": "path",
-                        "name": "ano",
-                        "description": "Año del pago mensual",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string"
                     }
                 ],
                 "responses": {
@@ -54,56 +37,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Persona"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "not found source"
-                    }
-                }
-            }
-        },
-        "/certificacion/documentos_aprobados/{dependencia}/{mes}/{ano}": {
-            "get": {
-                "tags": [
-                    "certificacion"
-                ],
-                "description": "create CertificacionDocumentosAprobados  trae",
-                "operationId": "CertificacionController.CertificacionDocumentosAprobados",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "dependencia",
-                        "description": "Dependencia del contrato en la tabla ordenador_gasto",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    {
-                        "in": "path",
-                        "name": "mes",
-                        "description": "Mes del pago mensual",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    {
-                        "in": "path",
-                        "name": "ano",
-                        "description": "Año del pago mensual",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Persona"
+                                "$ref": "#/definitions/models.DocumentosSoporte"
                             }
                         }
                     },
@@ -145,46 +79,47 @@
                 }
             }
         },
-        "/informacion_informe/{num_documento}/{contrato}/{vigencia}/{cdp}/{vigencia_cdp}": {
+        "/informacion_informe/preliquidacion/{pago_mensual_id}": {
             "get": {
                 "tags": [
                     "informacion_informe"
                 ],
-                "description": "get InformacionInforme by num_documento",
+                "description": "get preliquidacion correspondiente a una solicitud de pago mensual",
+                "operationId": "InformacionInformeController.GetPreliquidacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "pago_mensual_id",
+                        "description": "id del pago mensual",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.PreliquidacionTitan"
+                        }
+                    },
+                    "403": {
+                        "description": ":pago_mensual_id is empty"
+                    }
+                }
+            }
+        },
+        "/informacion_informe/{pago_mensual_id}": {
+            "get": {
+                "tags": [
+                    "informacion_informe"
+                ],
+                "description": "get InformacionInforme by pago_mensual_id",
                 "operationId": "InformacionInformeController.GetInformacionInforme",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "num_documento",
-                        "description": "numero documento contratista",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "contrato",
-                        "description": "numero de contrato",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "vigencia",
-                        "description": "vigencia del contrato",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "cdp",
-                        "description": "cdp del contrato",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "vigencia_cdp",
-                        "description": "vigencia del cdp del contrato",
+                        "name": "pago_mensual_id",
+                        "description": "id del pago mensual",
                         "required": true,
                         "type": "string"
                     }
@@ -197,7 +132,7 @@
                         }
                     },
                     "403": {
-                        "description": ":vigencia_cdp is empty"
+                        "description": ":pago_mensual_id is empty"
                     }
                 }
             }
@@ -230,7 +165,7 @@
                 }
             }
         },
-        "/informe/{contrato}/{vigencia}/{documento}": {
+        "/informe/ultimo_informe/{pago_mensual_id}": {
             "get": {
                 "tags": [
                     "informe"
@@ -240,22 +175,8 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "contrato",
-                        "description": "The key for staticblock",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "vigencia",
-                        "description": "The key for staticblock",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "documento",
-                        "description": "The key for staticblock",
+                        "name": "pago_mensual_id",
+                        "description": "Id del pago mensual",
                         "required": true,
                         "type": "string"
                     }
@@ -340,133 +261,6 @@
                 }
             }
         },
-        "/solicitudes_coordinador/{doccoordinador}": {
-            "get": {
-                "tags": [
-                    "solicitudes_coordinador"
-                ],
-                "description": "create GetSolicitudesCoordinador",
-                "operationId": "SolicitudesCoordinadorController.GetSolicitudesCoordinador",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "doccoordinador",
-                        "description": "Número del documento del coordinador",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.PagoPersonaProyecto"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "not found resource"
-                    }
-                }
-            }
-        },
-        "/solicitudes_ordenador/dependencia_ordenador/{docordenador}": {
-            "get": {
-                "tags": [
-                    "solicitudes_ordenador"
-                ],
-                "description": "create ObtenerDependenciaOrdenador",
-                "operationId": "SolicitudesOrdenadorController.ObtenerDependenciaOrdenador",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "docordenador",
-                        "description": "Número del documento del ordenador",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "int"
-                    },
-                    "404": {
-                        "description": "not found resource"
-                    }
-                }
-            }
-        },
-        "/solicitudes_ordenador/informacion_ordenador/{numero_contrato}/{vigencia}": {
-            "get": {
-                "tags": [
-                    "solicitudes_ordenador"
-                ],
-                "description": "ObtenerInfoOrdenador trae la informacion de un ordenador del gasto a partir de su numero de contrato y ano de vigencia",
-                "operationId": "SolicitudesOrdenadorController.ObtenerInfoOrdenador",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "numero_contrato",
-                        "description": "Numero de contrato en la tabla contrato general",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "path",
-                        "name": "vigencia",
-                        "description": "Vigencia del contrato en la tabla contrato general",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/models.InformacionOrdenador"
-                        }
-                    },
-                    "404": {
-                        "description": "not found resource"
-                    }
-                }
-            }
-        },
-        "/solicitudes_ordenador/solicitudes/{docordenador}": {
-            "get": {
-                "tags": [
-                    "solicitudes_ordenador"
-                ],
-                "description": "Trae todas las solicitudes AD aprobadas por el decano que son responsabilidad de un ordenador (Aparentemente solo para docentes)",
-                "operationId": "SolicitudesOrdenadorController.GetSolicitudesOrdenador",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "docordenador",
-                        "description": "Número del documento del ordenador",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.PagoPersonaProyecto"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "not found resource"
-                    }
-                }
-            }
-        },
         "/solicitudes_ordenador_contratistas/aprobar_pagos": {
             "post": {
                 "tags": [
@@ -536,6 +330,75 @@
                             "items": {
                                 "$ref": "#/definitions/models.Persona"
                             }
+                        }
+                    },
+                    "404": {
+                        "description": "not found resource"
+                    }
+                }
+            }
+        },
+        "/solicitudes_ordenador_contratistas/cumplidos_revertibles/{docordenador}": {
+            "get": {
+                "tags": [
+                    "solicitudes_ordenador_contratistas"
+                ],
+                "description": "create GetCumplidosRevertiblesPorOrdenador",
+                "operationId": "SolicitudesOrdenadorContratistasController.GetCumplidosRevertiblesPorOrdenador",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "docordenador",
+                        "description": "Número del documento del ordenador",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.PagoContratistaCdpRp"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found resource"
+                    }
+                }
+            }
+        },
+        "/solicitudes_ordenador_contratistas/informacion_ordenador/{numero_contrato}/{vigencia}": {
+            "get": {
+                "tags": [
+                    "solicitudes_ordenador_contratistas"
+                ],
+                "description": "ObtenerInfoOrdenador trae la informacion de un ordenador del gasto a partir de su numero de contrato y ano de vigencia",
+                "operationId": "SolicitudesOrdenadorContratistasController.GetInfoOrdanador",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "numero_contrato",
+                        "description": "Numero de contrato en la tabla contrato general",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "vigencia",
+                        "description": "Vigencia del contrato en la tabla contrato general",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.InformacionOrdenador"
                         }
                     },
                     "404": {
@@ -719,27 +582,31 @@
         }
     },
     "definitions": {
-        "15944.0xc00065cc00.false": {
+        "23159.0xc0006d9da0.false": {
             "title": "false",
             "type": "object"
         },
-        "16113.0xc00065cc30.false": {
+        "23439.0xc0006d9dd0.false": {
             "title": "false",
             "type": "object"
         },
-        "16174.0xc00065cc60.false": {
+        "23500.0xc0006d9e00.false": {
             "title": "false",
             "type": "object"
         },
-        "16242.0xc00065cd50.false": {
+        "23568.0xc0006d9ef0.false": {
             "title": "false",
             "type": "object"
         },
-        "16379.0xc00065cd80.false": {
+        "23705.0xc0006d9f20.false": {
             "title": "false",
             "type": "object"
         },
-        "28118.0xc00068f7d0.false": {
+        "23856.0xc0006d9f50.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "38958.0xc00075b020.false": {
             "title": "false",
             "type": "object"
         },
@@ -807,6 +674,121 @@
                 }
             }
         },
+        "models.ConceptoNomina": {
+            "title": "ConceptoNomina",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "AliasConcepto": {
+                    "type": "string"
+                },
+                "EstadoConceptoNominaId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NaturalezaConceptoNominaId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NombreConcepto": {
+                    "type": "string"
+                },
+                "TipoConceptoNominaId": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.Contrato": {
+            "title": "Contrato",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Cdp": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Completo": {
+                    "type": "boolean"
+                },
+                "DependenciaId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Documento": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaFin": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaInicio": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NombreCompleto": {
+                    "type": "string"
+                },
+                "NumeroContrato": {
+                    "type": "string"
+                },
+                "PersonaId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "ProyectoId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Rp": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "TipoNominaId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Unico": {
+                    "type": "boolean"
+                },
+                "Vacaciones": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "ValorContrato": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "Vigencia": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
         "models.ContratoDisponibilidadRp": {
             "title": "ContratoDisponibilidadRp",
             "type": "object",
@@ -845,11 +827,189 @@
                 }
             }
         },
-        "models.Dependencia": {
-            "title": "Dependencia",
+        "models.ContratoPreliquidacion": {
+            "title": "ContratoPreliquidacion",
             "type": "object",
             "properties": {
-                "CorreoElectronico": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Afc": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "ContratoId": {
+                    "$ref": "#/definitions/models.Contrato"
+                },
+                "Cumplido": {
+                    "type": "boolean"
+                },
+                "Dependientes": {
+                    "type": "boolean"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "InteresesVivienda": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "MedicinaPrepagadaUvt": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "PensionVoluntaria": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "Pensionado": {
+                    "type": "boolean"
+                },
+                "PreliquidacionId": {
+                    "$ref": "#/definitions/models.Preliquidacion"
+                },
+                "Preliquidado": {
+                    "type": "boolean"
+                },
+                "ResponsableIva": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.DetallePreliquidacion": {
+            "title": "DetallePreliquidacion",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "ConceptoNominaId": {
+                    "$ref": "#/definitions/models.ConceptoNomina"
+                },
+                "ContratoPreliquidacionId": {
+                    "$ref": "#/definitions/models.ContratoPreliquidacion"
+                },
+                "DiasEspecificos": {
+                    "type": "string"
+                },
+                "DiasLiquidados": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "Documento": {
+                    "type": "string"
+                },
+                "EstadoDisponibilidadId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NombreCompleto": {
+                    "type": "string"
+                },
+                "NumeroContrato": {
+                    "type": "string"
+                },
+                "Persona": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "TipoPreliquidacionId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "ValorCalculado": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "ValorCalculadoConFormato": {
+                    "type": "string"
+                },
+                "VigenciaContrato": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.Documento": {
+            "title": "Documento",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Descripcion": {
+                    "type": "string"
+                },
+                "Enlace": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Metadatos": {
+                    "type": "string"
+                },
+                "Nombre": {
+                    "type": "string"
+                },
+                "TipoDocumento": {
+                    "$ref": "#/definitions/models.TipoDocumento"
+                }
+            }
+        },
+        "models.DocumentosSoporte": {
+            "title": "DocumentosSoporte",
+            "type": "object",
+            "properties": {
+                "Archivo": {
+                    "$ref": "#/definitions/models.FileGestorDocumental"
+                },
+                "Documento": {
+                    "$ref": "#/definitions/models.Documento"
+                }
+            }
+        },
+        "models.DominioTipoDocumento": {
+            "title": "DominioTipoDocumento",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "CodigoAbreviacion": {
+                    "type": "string"
+                },
+                "Descripcion": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
                     "type": "string"
                 },
                 "Id": {
@@ -859,8 +1019,9 @@
                 "Nombre": {
                     "type": "string"
                 },
-                "TelefonoDependencia": {
-                    "type": "string"
+                "NumeroOrden": {
+                    "type": "number",
+                    "format": "double"
                 }
             }
         },
@@ -890,6 +1051,15 @@
                 }
             }
         },
+        "models.FileGestorDocumental": {
+            "title": "FileGestorDocumental",
+            "type": "object",
+            "properties": {
+                "file": {
+                    "type": "string"
+                }
+            }
+        },
         "models.InformacionInforme": {
             "title": "InformacionInforme",
             "type": "object",
@@ -898,34 +1068,50 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/16113.0xc00065cc30.false"
+                    "$ref": "#/definitions/23439.0xc0006d9dd0.false"
                 },
                 "Dependencia": {
                     "type": "string"
                 },
+                "EjecutadoDinero": {
+                    "$ref": "#/definitions/23856.0xc0006d9f50.false"
+                },
                 "FechaCPS": {
                     "type": "string"
                 },
+                "FechaFin": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaInicio": {
+                    "type": "string",
+                    "format": "datetime"
+                },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/16379.0xc00065cd80.false"
+                    "$ref": "#/definitions/23705.0xc0006d9f20.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/16242.0xc00065cd50.false"
+                    "$ref": "#/definitions/23568.0xc0006d9ef0.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/16174.0xc00065cc60.false"
+                    "$ref": "#/definitions/23500.0xc0006d9e00.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/15944.0xc00065cc00.false"
+                    "$ref": "#/definitions/23159.0xc0006d9da0.false"
                 },
                 "ValorContrato": {
-                    "type": "string"
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "ValorTotalContrato": {
+                    "type": "integer",
+                    "format": "int64"
                 }
             }
         },
@@ -1075,21 +1261,6 @@
                 }
             }
         },
-        "models.PagoPersonaProyecto": {
-            "title": "PagoPersonaProyecto",
-            "type": "object",
-            "properties": {
-                "Dependencia": {
-                    "$ref": "#/definitions/models.Dependencia"
-                },
-                "NombrePersona": {
-                    "type": "string"
-                },
-                "PagoMensual": {
-                    "$ref": "#/definitions/models.PagoMensual"
-                }
-            }
-        },
         "models.Persona": {
             "title": "Persona",
             "type": "object",
@@ -1115,6 +1286,132 @@
                 }
             }
         },
+        "models.Preliquidacion": {
+            "title": "Preliquidacion",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "Ano": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Descripcion": {
+                    "type": "string"
+                },
+                "EstadoPreliquidacionId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Mes": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NominaId": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.PreliquidacionTitan": {
+            "title": "PreliquidacionTitan",
+            "type": "object",
+            "properties": {
+                "Contrato": {
+                    "type": "string"
+                },
+                "Detalle": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DetallePreliquidacion"
+                    }
+                },
+                "TotalDescuentos": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "TotalDescuentosConFormato": {
+                    "type": "string"
+                },
+                "TotalDevengado": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "TotalDevengadoConFormato": {
+                    "type": "string"
+                },
+                "TotalPago": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "TotalPagoConFormato": {
+                    "type": "string"
+                },
+                "Vigencia": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
+        "models.TipoDocumento": {
+            "title": "TipoDocumento",
+            "type": "object",
+            "properties": {
+                "Activo": {
+                    "type": "boolean"
+                },
+                "CodigoAbreviacion": {
+                    "type": "string"
+                },
+                "Descripcion": {
+                    "type": "string"
+                },
+                "DominioTipoDocumento": {
+                    "$ref": "#/definitions/models.DominioTipoDocumento"
+                },
+                "Extension": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaModificacion": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Nombre": {
+                    "type": "string"
+                },
+                "NumeroOrden": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "Tamano": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "TipoDocumentoNuxeo": {
+                    "type": "string"
+                },
+                "Workspace": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ValidacionFechaCargaCumplido": {
             "title": "ValidacionFechaCargaCumplido",
             "type": "object",
@@ -1127,7 +1424,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/28118.0xc00068f7d0.false"
+                    "$ref": "#/definitions/38958.0xc00075b020.false"
                 }
             }
         }
@@ -1142,20 +1439,8 @@
             "description": "SolicitudesSupervisorContratistasController operations for solicitudes_supervisor_contratistas\n"
         },
         {
-            "name": "solicitudes_coordinador",
-            "description": "AprobacionPagoController operations for AprobacionPago\n"
-        },
-        {
             "name": "solicitudes_ordenador_contratistas",
             "description": "SolicitudesOrdenadorContratistasController operations for SolicitudesOrdenadorContratistas\n"
-        },
-        {
-            "name": "solicitudes_ordenador",
-            "description": "SolicitudesOrdenadorContratistasController operations for SolicitudesOrdenadorContratistas\n"
-        },
-        {
-            "name": "certificacion",
-            "description": "AprobacionPagoController operations for AprobacionPago\n"
         },
         {
             "name": "informacion_informe",

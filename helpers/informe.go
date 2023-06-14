@@ -24,7 +24,6 @@ func Informe(pago_mensual_id string) (informe []models.Informe, outputError map[
 	query = "PagoMensualId.Id:" + pago_mensual_id
 	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/informe/?query=" + query)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/?query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
-		fmt.Println("informe:", respuesta_peticion)
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
 			LimpiezaRespuestaRefactor(respuesta_peticion, &informe)
@@ -46,11 +45,9 @@ func Informe(pago_mensual_id string) (informe []models.Informe, outputError map[
 			for i, inf := range informe {
 				idInforme := strconv.Itoa(inf.Id)
 				actividadesEsp, err := GetActividadesEspecificas(idInforme)
-				fmt.Println(actividadesEsp)
 				if err == nil {
 					informe[i].ActividadesEspecificas = actividadesEsp
 				}
-				fmt.Println(inf.ActividadesEspecificas)
 			}
 		}
 
@@ -77,16 +74,13 @@ func GetActividadesEspecificas(idInforme string) (actividades_especificas []mode
 	// var aux_informe models.Informe
 	var query string
 	var respuesta_peticion map[string]interface{}
-	query = "informeid:" + idInforme
+	query = "informeid:" + idInforme + ",Activo:true"
 	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/actividad_especifica/?query=" + query + "&limit=-1&sortby=FechaCreacion&order=asc")
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
-		fmt.Println("Actividades especificas:", respuesta_peticion)
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
 			LimpiezaRespuestaRefactor(respuesta_peticion, &actividades_especificas)
-			fmt.Println("tamaño actividades especificas:", len(actividades_especificas))
 			for i, actEsp := range actividades_especificas {
-				fmt.Println(i, actEsp)
 				idactEsp := strconv.Itoa(actEsp.Id)
 				actividadesRea, err := GetActividadesRealizadas(idactEsp)
 				if err == nil {
@@ -118,10 +112,9 @@ func GetActividadesRealizadas(idActividadEspecifica string) (actividades_realiza
 	// var aux_informe models.Informe
 	var query string
 	var respuesta_peticion map[string]interface{}
-	query = "actividadespecificaid:" + idActividadEspecifica
+	query = "actividadespecificaid:" + idActividadEspecifica + ",Activo:true"
 	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/actividad_realizada/?query=" + query + "&limit=-1&sortby=FechaCreacion&order=asc")
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_realizada/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
-		fmt.Println("Actividad Realizada:", respuesta_peticion)
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
 			LimpiezaRespuestaRefactor(respuesta_peticion, &actividades_realizadas)
@@ -148,29 +141,21 @@ func AddInforme(informe models.Informe) (response map[string]interface{}, output
 	}()
 
 	var informe_creado models.Informe
-	fmt.Println("informe", informe)
 	informe_creado.PeriodoInformeFin = informe.PeriodoInformeFin
 	informe_creado.PeriodoInformeInicio = informe.PeriodoInformeInicio
 	informe_creado.Proceso = informe.Proceso
 	informe_creado.PagoMensualId = informe.PagoMensualId
 	actividades_especificas := informe.ActividadesEspecificas
-	fmt.Println("tamaño arreglo act_esp: ", len(actividades_especificas))
 	var res map[string]interface{}
 	if err := sendJson(beego.AppConfig.String("UrlCrudCumplidos")+"/informe", "POST", &res, informe_creado); err == nil {
-		fmt.Println("respuesta del post al crud", res)
 		LimpiezaRespuestaRefactor(res, &informe_creado)
-		for i_actEsp, actEsp := range actividades_especificas {
-			fmt.Println("index actividad especifica: ", i_actEsp)
+		for _, actEsp := range actividades_especificas {
 			var actividad_esp = map[string]interface{}{"ActividadEspecifica": actEsp.ActividadEspecifica, "Avance": actEsp.Avance, "InformeId": map[string]interface{}{"Id": informe_creado.Id}}
-			fmt.Println("Actividad a crear: ", actividad_esp)
 			if res, err := AddActividadEspecifica(actividad_esp); err == nil {
-				fmt.Println("respuesta de crear la actividad especifica:", res)
-				for i_actRea, actRea := range actEsp.ActividadesRealizadas {
-					fmt.Println("index actividad especifica: ", i_actRea)
+				for _, actRea := range actEsp.ActividadesRealizadas {
 					var actividad_rea = map[string]interface{}{"Actividad": actRea.Actividad, "ProductoAsociado": actRea.ProductoAsociado, "Evidencia": actRea.Evidencia, "ActividadEspecificaId": map[string]interface{}{"Id": res.Id}}
 					if err == nil {
-						if res, err := AddActividadRealizada(actividad_rea); err == nil {
-							fmt.Println(res)
+						if _, err := AddActividadRealizada(actividad_rea); err == nil {
 							response = map[string]interface{}{"result": "succesfully created"}
 						}
 					}
@@ -196,7 +181,6 @@ func AddActividadEspecifica(actividad_especifica map[string]interface{}) (activi
 	}()
 	var response map[string]interface{}
 	if err := sendJson(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica", "POST", &response, actividad_especifica); err == nil {
-		fmt.Println("respuesta del post al crud actividad especifica:", response)
 		LimpiezaRespuestaRefactor(response, &actividad_especifica_creada)
 	} else {
 		logs.Error(err)
@@ -218,7 +202,6 @@ func AddActividadRealizada(actividad_realizada map[string]interface{}) (activida
 	}()
 	var response map[string]interface{}
 	if err := sendJson(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_realizada", "POST", &response, actividad_realizada); err == nil {
-		fmt.Println("respuesta del post al crud actividad realizada: ", response)
 		LimpiezaRespuestaRefactor(response, &actividad_realizada_creada)
 	} else {
 		logs.Error(err)
@@ -251,37 +234,28 @@ func UpdateInformeById(informe models.Informe) (outputError map[string]interface
 	var res map[string]interface{}
 	//Actualiza el informe
 	if err := sendJson(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/"+id, "PUT", &res, informe_Actualizado); err == nil {
-		fmt.Println(res)
-		fmt.Println(actividades_especificas_update)
 		query := "informeid:" + id
 		var actividades_especificas []models.ActividadEspecifica
 		var respuesta_peticion map[string]interface{}
 		//consulta todas las antiguas actividades especificas
 		if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
-			fmt.Println("Actividades especificas:", respuesta_peticion)
 			if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 				LimpiezaRespuestaRefactor(respuesta_peticion, &actividades_especificas)
 				for _, actEsp := range actividades_especificas {
 					idactEsp := strconv.Itoa(actEsp.Id)
 					if err := sendJson(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica/"+idactEsp, "DELETE", &res, informe_Actualizado); err == nil {
-						fmt.Println("Actividad Especifica " + idactEsp + " eliminida ")
 					}
 				}
 			}
 		}
 		//Crea nuevamente las actividades especificas y realizadas
-		for i_actEsp, actEsp := range actividades_especificas_update {
-			fmt.Println("index actividad especifica: ", i_actEsp)
+		for _, actEsp := range actividades_especificas_update {
 			var actividad_esp = map[string]interface{}{"ActividadEspecifica": actEsp.ActividadEspecifica, "FechaCreacion": actEsp.FechaCreacion, "Avance": actEsp.Avance, "InformeId": map[string]interface{}{"Id": informe.Id}}
-			fmt.Println("Actividad a crear: ", actividad_esp)
 			if res, err := AddActividadEspecifica(actividad_esp); err == nil {
-				fmt.Println("respuesta de crear la actividad especifica:", res)
-				for i_actRea, actRea := range actEsp.ActividadesRealizadas {
-					fmt.Println("index actividad especifica: ", i_actRea)
+				for _, actRea := range actEsp.ActividadesRealizadas {
 					var actividad_rea = map[string]interface{}{"Actividad": actRea.Actividad, "ProductoAsociado": actRea.ProductoAsociado, "FechaCreacion": actRea.FechaCreacion, "Evidencia": actRea.Evidencia, "ActividadEspecificaId": map[string]interface{}{"Id": res.Id}}
 					if err == nil {
-						if res, err := AddActividadRealizada(actividad_rea); err == nil {
-							fmt.Println(res)
+						if _, err := AddActividadRealizada(actividad_rea); err == nil {
 						}
 					}
 				}
@@ -292,7 +266,7 @@ func UpdateInformeById(informe models.Informe) (outputError map[string]interface
 	return
 }
 
-func UltimoInformeContratista(contrato string, vigencia string, documento string) (informe []models.Informe, outputError map[string]interface{}) {
+func UltimoInformeContratista(pago_mensual_id string) (informe []models.Informe, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			//fmt.Println("error", err)
@@ -301,30 +275,41 @@ func UltimoInformeContratista(contrato string, vigencia string, documento string
 		}
 	}()
 
-	// var aux_informe models.Informe
 	var respuesta_peticion map[string]interface{}
-	query := "NumeroContrato:" + contrato + ",VigenciaContrato:" + vigencia + ",DocumentoPersonaId:" + documento + ",EstadoPagoMensualId.CodigoAbreviacion.in:AP|PRC|PAD|AD|AS|RD|RP|RC|PRS|RS|RO"
-	order := "&order=desc,desc"
-	sortby := "&sortby=Ano,Mes"
-	limit := "&limit=1"
 	var pagos_mensuales []models.PagoMensual
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?query=" + query + sortby + order + limit)
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query="+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
-		fmt.Println("UltimoInformeContratista:", respuesta_peticion)
-		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
+	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=Id:"+pago_mensual_id, &respuesta_peticion); (err == nil) && (response == 200) {
+		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
+		if len(pagos_mensuales) > 0 {
+			query := "PagoMensualId.NumeroContrato:" + pagos_mensuales[0].NumeroContrato + ",PagoMensualId.VigenciaContrato:" + strconv.Itoa(int(pagos_mensuales[0].VigenciaContrato)) + ",PagoMensualId.DocumentoPersonaId:" + pagos_mensuales[0].DocumentoPersonaId
+			order := "&order=desc,desc"
+			sortby := "&sortby=PagoMensualId.Ano,PagoMensualId.Mes"
+			limit := "&limit=1"
 
-			LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
-			pago_mensual_id := strconv.Itoa(pagos_mensuales[0].Id)
-			return Informe(pago_mensual_id)
+			fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/informe/?query=" + query + sortby + order + limit)
+			if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/?query="+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
+				if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
+
+					LimpiezaRespuestaRefactor(respuesta_peticion, &informe)
+					pago_mensual_id := strconv.Itoa(informe[0].PagoMensualId.Id)
+					return Informe(pago_mensual_id)
+				}
+
+				// aux_informe.Id= respuesta_peticion.Id
+				// informe = append(informe, aux_informe)
+			} else {
+				logs.Error(err)
+				outputError = map[string]interface{}{"funcion": "/UltimoInformeContratista", "err": err, "status": "502"}
+				return nil, outputError
+			}
 		}
-
-		// aux_informe.Id= respuesta_peticion.Id
-		// informe = append(informe, aux_informe)
+		return nil, nil
 	} else {
 		logs.Error(err)
 		outputError = map[string]interface{}{"funcion": "/UltimoInformeContratista", "err": err, "status": "502"}
 		return nil, outputError
 	}
+
+	// var aux_informe models.Informe
 
 	return
 }
