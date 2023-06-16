@@ -6,15 +6,29 @@ import (
 )
 
 func TestGetInformacionInforme(t *testing.T) {
-	if response, err := http.Get("http://localhost:8090/v1/informacion_informe/1014294957/1265/2021/1668/2021"); err == nil {
+	if response, err := http.Get("http://localhost:8090/v1/informacion_informe/94158"); err == nil {
 		if response.StatusCode != 200 {
-			t.Error("Error TestEndPoint: Se esperaba 200 y se obtuvo", response.StatusCode)
+			t.Error("Error TestEndPoint(TestGetInformacionInforme): Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
 		} else {
-			t.Log("TestEndPoint Finalizado Correctamente (OK)")
+			t.Log("TestGetInformacionInforme Finalizado Correctamente (OK)")
 		}
 	} else {
-		t.Error("Error EndPoint:", err.Error())
+		t.Error("Error EndPoint TestGetInformacionInforme:", err.Error())
+		t.Fail()
+	}
+}
+
+func TestGetPreliquidacion(t *testing.T) {
+	if response, err := http.Get("http://localhost:8090/v1/informacion_informe/preliquidacion/94181"); err == nil {
+		if response.StatusCode != 200 {
+			t.Error("Error TestEndPoint(TestGetPreliquidacion): Se esperaba 200 y se obtuvo", response.StatusCode)
+			t.Fail()
+		} else {
+			t.Log("TestGetPreliquidacion Finalizado Correctamente (OK)")
+		}
+	} else {
+		t.Error("Error EndPoint TestGetPreliquidacion:", err.Error())
 		t.Fail()
 	}
 }
