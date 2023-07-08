@@ -12,49 +12,41 @@ import (
 )
 
 var parameters struct {
-	UrlcrudWSO2           string
-	NscrudAdministrativa  string
-	ProtocolCrudCumplidos string
 	UrlCrudCumplidos      string
-	NsCrudCumplidos       string
 	UrlcrudAgora          string
-	NscrudAgora           string
-	ProtocolAdmin         string
-	NscrudFinanciera      string
-	//UrlcrudAdmin          string
-	//NscrudAdmin           string
-	//UrlcrudOikos          string
-	//NscrudOikos           string
+	UrlFinancieraJBPM     string
+	UrlAdministrativaJBPM string
+	UrlcrudCore           string
+	UrlcrudOikos          string
+	UrlNovedadesMid       string
+	UrlTitanMid           string
+	UrlDocumentosCrud     string
+	UrlGestorDocumental   string
 }
 
 func TestMain(m *testing.M) {
 
-	parameters.UrlcrudWSO2 = os.Getenv("UrlcrudWSO2")
-	parameters.NscrudAdministrativa = os.Getenv("NscrudAdministrativa")
-	parameters.ProtocolCrudCumplidos = os.Getenv("ProtocolCrudCumplidos")
 	parameters.UrlCrudCumplidos = os.Getenv("UrlCrudCumplidos")
-	parameters.NsCrudCumplidos = os.Getenv("NsCrudCumplidos")
 	parameters.UrlcrudAgora = os.Getenv("UrlcrudAgora")
-	parameters.NscrudAgora = os.Getenv("NscrudAgora")
-	parameters.ProtocolAdmin = os.Getenv("ProtocolAdmin")
-	parameters.NscrudFinanciera = os.Getenv("NscrudFinanciera")
-	//parameters.UrlcrudAdmin = os.Getenv("UrlcrudAdmin")
-	//parameters.NscrudAdmin = os.Getenv("NscrudAdmin")
-	//parameters.UrlcrudOikos = os.Getenv("UrlcrudOikos")
-	//parameters.NscrudOikos = os.Getenv("NscrudOikos")
+	parameters.UrlFinancieraJBPM = os.Getenv("UrlFinancieraJBPM")
+	parameters.UrlAdministrativaJBPM = os.Getenv("UrlAdministrativaJBPM")
+	parameters.UrlcrudCore = os.Getenv("UrlcrudCore")
+	parameters.UrlcrudOikos = os.Getenv("UrlcrudOikos")
+	parameters.UrlNovedadesMid = os.Getenv("UrlNovedadesMid")
+	parameters.UrlTitanMid = os.Getenv("UrlTitanMid")
+	parameters.UrlDocumentosCrud = os.Getenv("UrlDocumentosCrud")
+	parameters.UrlGestorDocumental = os.Getenv("UrlGestorDocumental")
 
-	beego.AppConfig.Set("UrlcrudWSO2", parameters.UrlcrudWSO2)
-	beego.AppConfig.Set("NscrudAdministrativa", parameters.NscrudAdministrativa)
-	beego.AppConfig.Set("ProtocolCrudCumplidos", parameters.ProtocolCrudCumplidos)
 	beego.AppConfig.Set("UrlCrudCumplidos", parameters.UrlCrudCumplidos)
-	beego.AppConfig.Set("NsCrudCumplidos", parameters.NsCrudCumplidos)
-	beego.AppConfig.Set("UrlCrudAgora", parameters.UrlcrudAgora)
-	beego.AppConfig.Set("NsCrudAgora", parameters.NscrudAgora)
-	beego.AppConfig.Set("ProtocolAdmin", parameters.ProtocolAdmin)
-	beego.AppConfig.Set("NscrudFinanciera", parameters.NscrudFinanciera)
-	//beego.AppConfig.Set("NscrudAdmin", parameters.NscrudAdmin)
-	//beego.AppConfig.Set("UrlcrudOikos", parameters.UrlcrudOikos)
-	//beego.AppConfig.Set("NscrudOikos", parameters.NscrudOikos)
+	beego.AppConfig.Set("UrlcrudAgora", parameters.UrlcrudAgora)
+	beego.AppConfig.Set("UrlFinancieraJBPM", parameters.UrlFinancieraJBPM)
+	beego.AppConfig.Set("UrlAdministrativaJBPM", parameters.UrlAdministrativaJBPM)
+	beego.AppConfig.Set("UrlcrudCore", parameters.UrlcrudCore)
+	beego.AppConfig.Set("UrlcrudOikos", parameters.UrlcrudOikos)
+	beego.AppConfig.Set("UrlNovedadesMid", parameters.UrlNovedadesMid)
+	beego.AppConfig.Set("UrlTitanMid", parameters.UrlTitanMid)
+	beego.AppConfig.Set("UrlDocumentosCrud", parameters.UrlDocumentosCrud)
+	beego.AppConfig.Set("UrlGestorDocumental", parameters.UrlGestorDocumental)
 
 	flag.Parse()
 	os.Exit(m.Run())
@@ -65,7 +57,7 @@ func TestCertificacionCumplidosContratistas(t *testing.T) {
 	valor, err := helpers.CertificacionCumplidosContratistas("DEP14", "10", "2019")
 	t.Log("-----------------------------------------------------")
 	if err != nil {
-		t.Error("No se pudo consultar los certifiados de cumplidos de los contratistas por: ", err)
+		t.Error("Error helper func CertificacionCumplidosContratistas", err)
 		t.Fail()
 	} else {
 		t.Log(valor)
@@ -126,7 +118,7 @@ func TestAprobacionPagosContratistas(t *testing.T) {
 	}
 	err := helpers.AprobacionPagosContratistas(arregloPrueba)
 	if err != nil {
-		t.Error("No se pudo generar la aprobación de pagos", err)
+		t.Error("Error helper func AprobacionPagosContratistas", err)
 		t.Fail()
 	} else {
 		t.Log("TestAprobacionPagosContratistas Finalizado Correctamente (OK)")
@@ -138,32 +130,78 @@ func TestSolicitudesOrdenadorContratistas(t *testing.T) {
 	t.Log("-----------------------------------------------------")
 	valor, err := helpers.SolicitudesOrdenadorContratistas("52204982", 5, 0)
 	if err != nil {
-		t.Error("No se pudo consultar las solicitudes de contratistas correspondientes a un ordenador por: ", err)
+		t.Error("Error helper func SolicitudesOrdenadorContratistas", err)
 		t.Fail()
 	} else {
 		t.Log(valor)
-		t.Log("TestGetActasRecibidoTipo Finalizado Correctamente (OK)")
+		t.Log("TestSolicitudesOrdenadorContratistas Finalizado Correctamente (OK)")
 	}
 	t.Log("-----------------------------------------------------")
 }
 
-func TestEndPointCertificacion(t *testing.T) {
+// TraerInfoOrdenador ...
+func TestTraerInfoOrdenador(t *testing.T) {
 	t.Log("-----------------------------------------------------")
-	t.Log("Testing EndPoint UrlcrudWSO2 ")
-	t.Log(parameters.UrlcrudWSO2)
-	t.Log("Testing EndPoint NscrudAdministrativa")
-	t.Log(parameters.NscrudAdministrativa)
-	t.Log("Testing EndPoint ProtocolCrudCumplidos")
-	t.Log(parameters.ProtocolCrudCumplidos)
-	t.Log("Testing EndPoint UrlCrudCumplidos")
+	valor, err := helpers.TraerInfoOrdenador("11824", "2023")
+	if err != nil {
+		t.Error("Error helper func TraerInfoOrdenador", err)
+		t.Fail()
+	} else {
+		t.Log(valor)
+		t.Log("TestTraerInfoOrdenador Finalizado Correctamente (OK)")
+	}
+	t.Log("-----------------------------------------------------")
+}
+
+// GetCumplidosRevertiblesPorOrdenador ...
+func TestGetCumplidosRevertiblesPorOrdenador(t *testing.T) {
+	t.Log("-----------------------------------------------------")
+	valor, err := helpers.GetCumplidosRevertiblesPorOrdenador("19483708")
+	if err != nil {
+		t.Error("Error helper func GetCumplidosRevertiblesPorOrdenador", err)
+		t.Fail()
+	} else {
+		t.Log(valor)
+		t.Log("TestGetCumplidosRevertiblesPorOrdenador Finalizado Correctamente (OK)")
+	}
+	t.Log("-----------------------------------------------------")
+}
+
+// TraerEnlacesDocumentosAsociadosPagoMensual ...
+func TestTraerEnlacesDocumentosAsociadosPagoMensual(t *testing.T) {
+	t.Log("-----------------------------------------------------")
+	valor, err := helpers.TraerEnlacesDocumentosAsociadosPagoMensual("94190")
+	if err != nil {
+		t.Error("Error helper func TraerEnlacesDocumentosAsociadosPagoMensual", err)
+		t.Fail()
+	} else {
+		t.Log(valor)
+		t.Log("TestTraerEnlacesDocumentosAsociadosPagoMensual Finalizado Correctamente (OK)")
+	}
+	t.Log("-----------------------------------------------------")
+}
+
+func TestEndPointCumplidosCpsMid(t *testing.T) {
+	t.Log("-----------------------------------------------------")
+	t.Log("Testing EndPoint UrlCrudCumplidos ")
 	t.Log(parameters.UrlCrudCumplidos)
-	t.Log("Testing EndPoint NsCrudCumplidos")
-	t.Log(parameters.NsCrudCumplidos)
 	t.Log("Testing EndPoint UrlcrudAgora")
 	t.Log(parameters.UrlcrudAgora)
-	t.Log("Testing EndPoint NscrudAgora")
-	t.Log(parameters.NscrudAgora)
-	t.Log("Testing EndPoint ProtocolAdmin")
-	t.Log(parameters.ProtocolAdmin)
+	t.Log("Testing EndPoint UrlFinancieraJBPM")
+	t.Log(parameters.UrlFinancieraJBPM)
+	t.Log("Testing EndPoint UrlAdministrativaJBPM")
+	t.Log(parameters.UrlAdministrativaJBPM)
+	t.Log("Testing EndPoint UrlcrudCore")
+	t.Log(parameters.UrlcrudCore)
+	t.Log("Testing EndPoint UrlcrudOikos")
+	t.Log(parameters.UrlcrudOikos)
+	t.Log("Testing EndPoint UrlNovedadesMid")
+	t.Log(parameters.UrlNovedadesMid)
+	t.Log("Testing EndPoint UrlTitanMid")
+	t.Log(parameters.UrlTitanMid)
+	t.Log("Testing EndPoint UrlDocumentosCrud")
+	t.Log(parameters.UrlDocumentosCrud)
+	t.Log("Testing EndPoint UrlGestorDocumental")
+	t.Log(parameters.UrlGestorDocumental)
 	t.Log("-----------------------------------------------------")
 }

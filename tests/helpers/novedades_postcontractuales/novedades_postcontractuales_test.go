@@ -1,4 +1,4 @@
-package contratos_contratistaHelper
+package NoveadesPostcontractuales_test
 
 import (
 	"flag"
@@ -7,6 +7,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/helpers"
+	"github.com/udistrital/cumplidos_mid/models"
 )
 
 var parameters struct {
@@ -50,75 +51,16 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-// CertificacionDocumentosAprobados ...
-func TestContratosContratista(t *testing.T) {
-	valor, err := helpers.ContratosContratista("1032490151")
+//GetNovedadesPostcontractuales ...
+func TestGetNovedadesPostcontractuales(t *testing.T) {
+	var novedades []models.NovedadPostcontractual
+	_, err := helpers.GetNovedadesPostcontractuales(models.TipoNovedadTodas, "Vigencia:2023", "FechaInicio", "asc", "10", "", "", &novedades)
 	if err != nil {
-		t.Error("Error helper func ContratosContratista", err)
+		t.Error("Error helper func TestGetNovedadesPostcontractuales", err)
 		t.Fail()
 	} else {
-		t.Log(valor)
-		t.Log("TestContratosContratista Finalizado Correctamente (OK)")
-	}
-}
-
-//GetRP
-func TestGetRP(t *testing.T) {
-	valor, err := helpers.GetRP("2400", "2020")
-	if err != nil {
-		t.Error("Error helper func GetRP", err)
-		t.Fail()
-	} else {
-		t.Log(valor)
-		t.Log("TestGetRP Finalizado Correctamente (OK)")
-	}
-}
-
-// GetContratosPersona ...
-func TestGetContratosPersona(t *testing.T) {
-	valor, err := helpers.GetContratosPersona("1032490151")
-	if err != nil {
-		t.Error("Error helper func GetContratosPersona", err)
-		t.Fail()
-	} else {
-		t.Log(valor)
-		t.Log("TestGetContratosPersona Finalizado Correctamente (OK)")
-	}
-}
-
-// GetContrato ...
-func TestGetContrato(t *testing.T) {
-	valor, err := helpers.GetContrato("1406", "2020")
-	if err != nil {
-		t.Error("Error helper func GetContrato", err)
-		t.Fail()
-	} else {
-		t.Log(valor)
-		t.Log("TestGetContrato Finalizado Correctamente (OK)")
-	}
-}
-
-// GetInformacionContratoContratista ...
-func TestGetInformacionContratoContratista(t *testing.T) {
-	valor, err := helpers.GetInformacionContratoContratista("1406", "2020")
-	if err != nil {
-		t.Error("Error helper func GetInformacionContratoContratista", err)
-		t.Fail()
-	} else {
-		t.Log(valor)
-		t.Log("TestGetInformacionContratoContratista Finalizado Correctamente (OK)")
-	}
-}
-
-// GetActaDeInicio ...
-func TestGetActaDeInicio(t *testing.T) {
-	valor, err := helpers.GetActaDeInicio("1406", 2020)
-	if err != nil {
-		t.Error("Error helper func GetActaDeInicio", err)
-		t.Fail()
-	} else {
-		t.Log(valor)
-		t.Log("TestGetActaDeInicio Finalizado Correctamente (OK)")
+		t.Log(novedades)
+		t.Log("TestGetNovedadesPostcontractuales Finalizado Correctamente (OK)")
 	}
 }
 

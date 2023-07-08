@@ -9,13 +9,13 @@ func TestGetSolicitudesSupervisorContratistas(t *testing.T) {
 
 	if response, err := http.Get("http://localhost:8090/v1/solicitudes_supervisor_contratistas/52204982"); err == nil {
 		if response.StatusCode != 200 {
-			t.Error("Error TestEndPoint: Se esperaba 200 y se obtuvo", response.StatusCode)
+			t.Error("Error TestEndPoint(TestGetSolicitudesSupervisorContratistas): Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
 		} else {
-			t.Log("TestEndPoint Finalizado Correctamente (OK)")
+			t.Log("TestGetSolicitudesSupervisorContratistas Finalizado Correctamente (OK)")
 		}
 	} else {
-		t.Error("Error EndPoint:", err.Error())
+		t.Error("Error EndPoint TestGetSolicitudesSupervisorContratistas:", err.Error())
 		t.Fail()
 	}
 
