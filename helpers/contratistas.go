@@ -328,7 +328,7 @@ func TraerEnlacesDocumentosAsociadosPagoMensual(pago_mensual_id string) (documen
 
 	defer func() {
 		if err := recover(); err != nil {
-			outputError = map[string]interface{}{"funcion": "/GetCumplidosRevertiblesPorOrdenador", "err": err, "status": "404"}
+			outputError = map[string]interface{}{"funcion": "/GetDocumentosPagoMensual", "err": err, "status": "404"}
 			panic(outputError)
 		}
 	}()
@@ -343,36 +343,38 @@ func TraerEnlacesDocumentosAsociadosPagoMensual(pago_mensual_id string) (documen
 	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/soporte_pago_mensual/?limit=-1&query=PagoMensualId.Id:" + pago_mensual_id)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/soporte_pago_mensual/?limit=-1&query=PagoMensualId.Id:"+pago_mensual_id, &respuesta_peticion); (err == nil) && (response == 200) {
 		LimpiezaRespuestaRefactor(respuesta_peticion, &soportes_pagos_mensuales)
-		var ids_documentos []string
-		for _, soporte_pago_mensual := range soportes_pagos_mensuales {
-			ids_documentos = append(ids_documentos, strconv.Itoa(soporte_pago_mensual.Documento))
-		}
-
-		var ids_documentos_juntos = strings.Join(ids_documentos, "|")
-		fmt.Println(beego.AppConfig.String("UrlDocumentosCrud") + "/documento/?limit=-1&query=Id.in:" + ids_documentos_juntos)
-		if response, err := getJsonTest(beego.AppConfig.String("UrlDocumentosCrud")+"/documento/?limit=-1&query=Activo:True,Id.in:"+ids_documentos_juntos, &documentos_crud); (err == nil) && (response == 200) {
-			for _, documento_crud := range documentos_crud {
-				soporte.Documento = documento_crud
-				fmt.Println(beego.AppConfig.String("UrlGestorDocumental") + "/document/" + documento_crud.Enlace)
-				if response, err := getJsonTest(beego.AppConfig.String("UrlGestorDocumental")+"/document/"+documento_crud.Enlace, &fileGestor); (err == nil) && (response == 200) {
-					soporte.Archivo = fileGestor
-					documentos = append(documentos, soporte)
-				} else { //If gestor documento get
-					logs.Error(err)
-					outputError = map[string]interface{}{"funcion": "/GetCumplidosRevertiblesPorOrdenador/GestorDocumental", "err": err, "status": "502"}
-					return nil, outputError
-				}
+		if len(soportes_pagos_mensuales) != 0 {
+			var ids_documentos []string
+			for _, soporte_pago_mensual := range soportes_pagos_mensuales {
+				ids_documentos = append(ids_documentos, strconv.Itoa(soporte_pago_mensual.Documento))
 			}
 
-		} else { //If documento get
-			logs.Error(err)
-			outputError = map[string]interface{}{"funcion": "/GetCumplidosRevertiblesPorOrdenador/documento", "err": err, "status": "502"}
+			var ids_documentos_juntos = strings.Join(ids_documentos, "|")
+			fmt.Println(beego.AppConfig.String("UrlDocumentosCrud") + "/documento/?limit=-1&query=Id.in:" + ids_documentos_juntos)
+			if response, err := getJsonTest(beego.AppConfig.String("UrlDocumentosCrud")+"/documento/?limit=-1&query=Activo:True,Id.in:"+ids_documentos_juntos, &documentos_crud); (err == nil) && (response == 200) {
+				for _, documento_crud := range documentos_crud {
+					soporte.Documento = documento_crud
+					fmt.Println(beego.AppConfig.String("UrlGestorDocumental") + "/document/" + documento_crud.Enlace)
+					if response, err := getJsonTest(beego.AppConfig.String("UrlGestorDocumental")+"/document/"+documento_crud.Enlace, &fileGestor); (err == nil) && (response == 200) {
+						soporte.Archivo = fileGestor
+						documentos = append(documentos, soporte)
+					} else { //If gestor documento get
+						logs.Error(err)
+						continue
+					}
+				}
+			} else { //If documento get
+				logs.Error(err)
+				outputError = map[string]interface{}{"funcion": "/GetDocumentosPagoMensual/documento", "err": err, "status": "502"}
+				return nil, outputError
+			}
+		} else {
 			return nil, outputError
 		}
 
 	} else { //If soporte pago_mensual get
 		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/GetCumplidosRevertiblesPorOrdenador/soporte_pago_mensual", "err": err, "status": "502"}
+		outputError = map[string]interface{}{"funcion": "/GetDocumentosPagoMensual/soporte_pago_mensual", "err": err, "status": "502"}
 		return nil, outputError
 	}
 
