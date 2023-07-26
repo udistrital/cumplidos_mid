@@ -43,6 +43,7 @@ type InformacionInforme struct {
 		Pagado   int
 		Faltante int
 	}
+	FechasConNovedades FechasConNovedades
 }
 
 type Otrosi struct {
@@ -63,6 +64,12 @@ type Terminacion struct {
 }
 
 type Suspencion struct {
-	FechaInicio string
-	FechaFin    string
+	FechaInicio    string
+	FechaFin       string
+	PlazoEjecucion int
+}
+
+type FechasConNovedades struct {
+	FechaInicio time.Time
+	FechaFin    time.Time
 }

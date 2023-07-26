@@ -263,6 +263,12 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 		return informacion_informe, outputError
 	}
 
+	//fechasConNovedades
+	if vig, err := strconv.Atoi(vigencia); err == nil {
+		if fechasConNov, err := FechasContratoConNovedades(contrato, vig, contrato_general[0].Id); err == nil {
+			informacion_informe.FechasConNovedades = fechasConNov
+		}
+	}
 	return
 }
 

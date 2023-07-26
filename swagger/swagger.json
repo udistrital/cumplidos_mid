@@ -582,31 +582,31 @@
         }
     },
     "definitions": {
-        "23159.0xc0007def60.false": {
+        "23159.0xc000766120.false": {
             "title": "false",
             "type": "object"
         },
-        "23439.0xc0007def90.false": {
+        "23439.0xc000766150.false": {
             "title": "false",
             "type": "object"
         },
-        "23500.0xc0007defc0.false": {
+        "23500.0xc000766180.false": {
             "title": "false",
             "type": "object"
         },
-        "23568.0xc0007df0b0.false": {
+        "23568.0xc000766270.false": {
             "title": "false",
             "type": "object"
         },
-        "23705.0xc0007df0e0.false": {
+        "23705.0xc0007662a0.false": {
             "title": "false",
             "type": "object"
         },
-        "23856.0xc0007df110.false": {
+        "23856.0xc0007662d0.false": {
             "title": "false",
             "type": "object"
         },
-        "39626.0xc00083e5a0.false": {
+        "39773.0xc00079b7a0.false": {
             "title": "false",
             "type": "object"
         },
@@ -1051,6 +1051,20 @@
                 }
             }
         },
+        "models.FechasConNovedades": {
+            "title": "FechasConNovedades",
+            "type": "object",
+            "properties": {
+                "FechaFin": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "FechaInicio": {
+                    "type": "string",
+                    "format": "datetime"
+                }
+            }
+        },
         "models.FileGestorDocumental": {
             "title": "FileGestorDocumental",
             "type": "object",
@@ -1068,13 +1082,13 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/23439.0xc0007def90.false"
+                    "$ref": "#/definitions/23439.0xc000766150.false"
                 },
                 "Dependencia": {
                     "type": "string"
                 },
                 "EjecutadoDinero": {
-                    "$ref": "#/definitions/23856.0xc0007df110.false"
+                    "$ref": "#/definitions/23856.0xc0007662d0.false"
                 },
                 "FechaCPS": {
                     "type": "string"
@@ -1087,23 +1101,26 @@
                     "type": "string",
                     "format": "datetime"
                 },
+                "FechasConNovedades": {
+                    "$ref": "#/definitions/models.FechasConNovedades"
+                },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/23705.0xc0007df0e0.false"
+                    "$ref": "#/definitions/23705.0xc0007662a0.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/23568.0xc0007df0b0.false"
+                    "$ref": "#/definitions/23568.0xc000766270.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/23500.0xc0007defc0.false"
+                    "$ref": "#/definitions/23500.0xc000766180.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/23159.0xc0007def60.false"
+                    "$ref": "#/definitions/23159.0xc000766120.false"
                 },
                 "ValorContrato": {
                     "type": "integer",
@@ -1424,7 +1441,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/39626.0xc00083e5a0.false"
+                    "$ref": "#/definitions/39773.0xc00079b7a0.false"
                 }
             }
         }
