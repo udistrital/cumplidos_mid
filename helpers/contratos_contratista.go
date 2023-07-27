@@ -512,7 +512,7 @@ func FechasContratoConNovedades(numero_contrato string, vigencia_contrato int, n
 		fechas.FechaInicio = acta_inicio.FechaInicio
 		fechas.FechaFin = acta_inicio.FechaFin
 		var novedades []models.NovedadPostcontractual
-		if response, err := GetNovedadesPostcontractuales(models.TipoNovedadTodas, "NumeroContrato:"+numero_contrato+",Vigencia:"+strconv.Itoa(vigencia_contrato), "Id", "asc", "1", "", "", &novedades); (err == nil) && (response == 200) {
+		if response, err := GetNovedadesPostcontractuales(models.TipoNovedadTodas, "NumeroContrato:"+numero_contrato+",Vigencia:"+strconv.Itoa(vigencia_contrato), "Id", "desc", "1", "", "", &novedades); (err == nil) && (response == 200) {
 			if len(novedades) != 0 {
 				ultimaNovedad := novedades[0]
 				switch int(ultimaNovedad.TipoNovedad) {
