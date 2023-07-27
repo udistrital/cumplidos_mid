@@ -505,3 +505,41 @@ func GetActaDeInicio(numero_contrato string, vigencia_contrato int) (acta_inicio
 		return acta_inicio, outputError
 	}
 }
+
+func FechasContratoConNovedades(numero_contrato string, vigencia_contrato int, num_contrato_general string) (fechas models.FechasConNovedades, outputError map[string]interface{}) {
+
+	if acta_inicio, err := GetActaDeInicio(num_contrato_general, vigencia_contrato); err == nil {
+		fechas.FechaInicio = acta_inicio.FechaInicio
+		fechas.FechaFin = acta_inicio.FechaFin
+		var novedades []models.NovedadPostcontractual
+		if response, err := GetNovedadesPostcontractuales(models.TipoNovedadTodas, "NumeroContrato:"+numero_contrato+",Vigencia:"+strconv.Itoa(vigencia_contrato), "Id", "desc", "1", "", "", &novedades); (err == nil) && (response == 200) {
+			if len(novedades) != 0 {
+				ultimaNovedad := novedades[0]
+				switch int(ultimaNovedad.TipoNovedad) {
+				//otro si
+				case 220:
+					fechas.FechaFin = ultimaNovedad.FechaFin
+				//Terminacion
+				case 218:
+					fechas.FechaFin = ultimaNovedad.FechaFin
+				//Suspension
+				case 216:
+					fechas.FechaFin = fechas.FechaFin.AddDate(0, 0, ultimaNovedad.PlazoEjecucion)
+				//cesion
+				case 219:
+					fechas.FechaFin = ultimaNovedad.FechaFin
+				}
+
+			}
+		} else { // If novedad_postcontractual get
+			logs.Error(err)
+			outputError = map[string]interface{}{"funcion": "/FechasContratoConNovedades/GetNovedadesPostcontractuales", "err": err, "status": "502"}
+			return fechas, outputError
+		}
+	} else {
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/FechasContratoConNovedades/Acta_inicio", "err": err, "status": "502"}
+		return fechas, outputError
+	}
+	return fechas, nil
+}
