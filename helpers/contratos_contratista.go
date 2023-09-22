@@ -69,14 +69,17 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 													contrato_disponibilidad_rp.VigenciaRp = rp.RpVigencia
 													contrato_disponibilidad_rp.NombreDependencia = informacion_contrato_contratista.InformacionContratista.Dependencia
 													contrato_disponibilidad_rp.NumDocumentoSupervisor = contrato.Contrato.Supervisor.DocumentoIdentificacion
-													if acta_inicio, err := GetActaDeInicio(contrato_disponibilidad.NumeroContrato, contrato_disponibilidad.Vigencia); err == nil {
-														contrato_disponibilidad_rp.FechaInicio = novedad.FechaInicio
-														contrato_disponibilidad_rp.FechaFin = acta_inicio.FechaFin
-														contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
-													} else {
-														outputError = map[string]interface{}{"funcion": "/ContratosContratista/Acta_inicio", "err": err, "status": "502"}
-														panic(outputError)
-													}
+													contrato_disponibilidad_rp.FechaInicio = novedad.FechaInicio
+													contrato_disponibilidad_rp.FechaFin = novedad.FechaFin
+													// if acta_inicio, err := GetActaDeInicio(contrato_disponibilidad.NumeroContrato, contrato_disponibilidad.Vigencia); err == nil {
+													// 	contrato_disponibilidad_rp.FechaInicio = novedad.FechaInicio
+													// 	contrato_disponibilidad_rp.FechaFin = novedad.FechaFin
+													// 	contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
+													// } else {
+													// 	outputError = map[string]interface{}{"funcion": "/ContratosContratista/Acta_inicio", "err": err, "status": "502"}
+													// 	panic(outputError)
+													// }
+													contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
 												}
 											} else {
 												//fmt.Println(outputError)
