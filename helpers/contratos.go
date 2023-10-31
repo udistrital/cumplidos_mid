@@ -48,29 +48,53 @@ import (
 
 //practicamente es el mismo metodo anterior
 func GetContratosDependenciaFiltro(dependencia string, fecha_inicio string, fecha_fin string) (contratos_dependencia models.ContratoDependencia, outputError map[string]interface{}) {
-
 	var temp map[string]interface{}
-	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contratos_dependencia/"+dependencia+"/"+fecha_fin+"/"+fecha_inicio, &temp); (err == nil) && (response == 200) {
-		json_contrato, error_json := json.Marshal(temp)
+	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlHomologacionDepsJBPM")+"/oikos_argo/"+dependencia, &temp); (err == nil) && (response == 200) {
+		json_dep_oikos, error_json := json.Marshal(temp)
 		if error_json == nil {
-			if err := json.Unmarshal(json_contrato, &contratos_dependencia); err == nil {
-				return contratos_dependencia, nil
+			var depOikos models.HomologacionDepOikos
+			if err := json.Unmarshal(json_dep_oikos, &depOikos); err == nil {
+
+				if len(depOikos.Dependencias.Dependencia) != 0 {
+					if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/contratos_dependencia_oikos/"+depOikos.Dependencias.Dependencia[0].IDMaster+"/"+fecha_inicio+"/"+fecha_fin, &temp); (err == nil) && (response == 200) {
+						json_contrato, error_json := json.Marshal(temp)
+						if error_json == nil {
+							if err := json.Unmarshal(json_contrato, &contratos_dependencia); err == nil {
+								return contratos_dependencia, nil
+							} else {
+								logs.Error(err)
+								outputError = map[string]interface{}{"funcion": "/GetContratosDependenciaFiltro/contratos_dependencia_oikos", "err": err.Error(), "status": "502"}
+								return contratos_dependencia, outputError
+
+							}
+						} else {
+							logs.Error(error_json)
+							outputError = map[string]interface{}{"funcion": "/GetContratosDependenciaFiltro/contratos_dependencia_oikos", "err": error_json.Error(), "status": "502"}
+							return contratos_dependencia, outputError
+						}
+
+					} else {
+						logs.Error(err)
+						outputError = map[string]interface{}{"funcion": "/GetContratosDependenciaFiltro/contratos_dependencia_oikos", "err": err.Error(), "status": "502"}
+						return contratos_dependencia, outputError
+					}
+				} else {
+					outputError = map[string]interface{}{"funcion": "/GetContratosDependenciaFiltro/oikos_argo", "err": "no hay dependencia homologada en oikos", "status": "502"}
+					return contratos_dependencia, outputError
+
+				}
+
 			} else {
 				logs.Error(err)
-				outputError = map[string]interface{}{"funcion": "/GetContratosDependenciaFiltro", "err": err.Error(), "status": "502"}
+				outputError = map[string]interface{}{"funcion": "/GetContratosDependenciaFiltro/oikos_argo", "err": err.Error(), "status": "502"}
 				return contratos_dependencia, outputError
 
 			}
 		} else {
 			logs.Error(error_json)
-			outputError = map[string]interface{}{"funcion": "/GetContratosDependenciaFiltro", "err": error_json.Error(), "status": "502"}
+			outputError = map[string]interface{}{"funcion": "/GetContratosDependenciaFiltro/oikos_argo", "err": error_json.Error(), "status": "502"}
 			return contratos_dependencia, outputError
 		}
-
-	} else {
-		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/GetContratosDependenciaFiltro", "err": err.Error(), "status": "502"}
-		return contratos_dependencia, outputError
 	}
 	return
 }
