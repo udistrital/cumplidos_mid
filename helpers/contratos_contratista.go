@@ -262,8 +262,10 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 						if novedades_postcontractuales != nil { // Si tiene novedades
 							for _, novedad := range novedades_postcontractuales {
 								if novedad.TipoNovedad == 219 { // si es una cesión
-									contratos_disponibilidad_rp[len(contratos_disponibilidad_rp)-1].FechaFin = novedad.FechaInicio.AddDate(0, 0, -1)
-									break
+									if novedad.Contratista != float64(informacion_proveedores[0].Id) { //Evita que las cesiones donde sea cesionario se dupliquen
+										contratos_disponibilidad_rp[len(contratos_disponibilidad_rp)-1].FechaFin = novedad.FechaInicio.AddDate(0, 0, -1)
+										break
+									}
 								} else { // si no es una cesión
 									var cdprp models.InformacionCdpRp
 									if novedad.TipoNovedad == 220 { //Novedad de otro si
@@ -299,13 +301,16 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 											if novedad.TipoNovedad == 216 { //Novedad de suspencion
 												//Registro
 												var days int
-												days = int(novedad.FechaFin.Sub(novedad.FechaInicio).Hours() / 24)
+												days = novedad.PlazoEjecucion
 												//fmt.Println("dias de diferencia en suspencion " + strconv.Itoa(days))
 												for i, contrato := range contratos_disponibilidad_rp {
-													if contrato.FechaInicio.Before(novedad.FechaInicio) && contrato.FechaFin.After(novedad.FechaInicio) && contrato.NumeroContratoSuscrito == novedad.NumeroContrato {
-														contratos_disponibilidad_rp[i].FechaFin = contratos_disponibilidad_rp[i].FechaFin.AddDate(0, 0, days)
+													if contrato.NumeroContratoSuscrito == novedad.NumeroContrato && ((contrato.FechaInicio.Before(novedad.FechaInicio) || contrato.FechaInicio.Equal(novedad.FechaInicio)) && (contrato.FechaFin.After(novedad.FechaInicio) || contrato.FechaFin.Equal(novedad.FechaInicio))) {
+														fecha_fin_sin31 := contratos_disponibilidad_rp[i].FechaFin.AddDate(0, 0, days)
+														//fmt.Println(fecha_fin_sin31)
+														contratos_disponibilidad_rp[i].FechaFin = fecha_fin_sin31.AddDate(0, 0, dias31(contratos_disponibilidad_rp[i].FechaFin, fecha_fin_sin31))
 													}
 												}
+
 											}
 										}
 									}
@@ -381,8 +386,8 @@ func GetContratosPersona(num_documento string) (contratos_persona models.Informa
 
 	var temp map[string]interface{}
 	var contratos models.InformacionContratosPersona
-	fmt.Println(beego.AppConfig.String("UrlAdministrativaJBPM") + "/" + "contratos_persona/" + num_documento)
-	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contratos_persona/"+num_documento, &temp); (err == nil) && (response == 200) {
+	fmt.Println(beego.AppConfig.String("UrlAdministrativaJBPM") + "/contratos_contratista/" + num_documento)
+	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/contratos_contratista/"+num_documento, &temp); (err == nil) && (response == 200) {
 		json_contratos, error_json := json.Marshal(temp)
 		if error_json == nil {
 			err := json.Unmarshal(json_contratos, &contratos)
@@ -509,40 +514,20 @@ func GetActaDeInicio(numero_contrato string, vigencia_contrato int) (acta_inicio
 	}
 }
 
-func FechasContratoConNovedades(numero_contrato string, vigencia_contrato int, num_contrato_general string) (fechas models.FechasConNovedades, outputError map[string]interface{}) {
+func FechasContratoConNovedades(numero_contrato string, vigencia_contrato string, num_doc string) (fechas models.FechasConNovedades, outputError map[string]interface{}) {
 
-	if acta_inicio, err := GetActaDeInicio(num_contrato_general, vigencia_contrato); err == nil {
-		fechas.FechaInicio = acta_inicio.FechaInicio
-		fechas.FechaFin = acta_inicio.FechaFin
-		var novedades []models.NovedadPostcontractual
-		if response, err := GetNovedadesPostcontractuales(models.TipoNovedadTodas, "NumeroContrato:"+numero_contrato+",Vigencia:"+strconv.Itoa(vigencia_contrato), "Id", "desc", "1", "", "", &novedades); (err == nil) && (response == 200) {
-			if len(novedades) != 0 {
-				ultimaNovedad := novedades[0]
-				switch int(ultimaNovedad.TipoNovedad) {
-				//otro si
-				case 220:
-					fechas.FechaFin = ultimaNovedad.FechaFin
-				//Terminacion
-				case 218:
-					fechas.FechaFin = ultimaNovedad.FechaFin
-				//Suspension
-				case 216:
-					fechas.FechaFin = fechas.FechaFin.AddDate(0, 0, ultimaNovedad.PlazoEjecucion)
-				//cesion
-				case 219:
-					fechas.FechaFin = ultimaNovedad.FechaFin
-				}
-
+	if contratos_persona, err := GetContratosPersona(num_doc); err == nil {
+		for _, contrato := range contratos_persona.ContratosPersonas.ContratoPersona {
+			if contrato.NumeroContrato == numero_contrato && contrato.Vigencia == vigencia_contrato {
+				fechas.FechaInicio = contrato.FechaInicio
+				fechas.FechaFin = contrato.FechaFin
+				return fechas, nil
 			}
-		} else { // If novedad_postcontractual get
-			logs.Error(err)
-			outputError = map[string]interface{}{"funcion": "/FechasContratoConNovedades/GetNovedadesPostcontractuales", "err": err, "status": "502"}
-			return fechas, outputError
 		}
+		outputError = map[string]interface{}{"funcion": "/FechasContratoConNovedades", "err": "No se encontro el contrato", "status": "502"}
 	} else {
-		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/FechasContratoConNovedades/Acta_inicio", "err": err, "status": "502"}
-		return fechas, outputError
+		outputError = map[string]interface{}{"funcion": "/FechasContratoConNovedades/GetContratoPersona", "err": err, "status": "502"}
 	}
-	return fechas, nil
+
+	return fechas, outputError
 }
