@@ -281,3 +281,17 @@ func formatNumberString(x string, precision int, thousand string, decimal string
 
 	return result + extra
 }
+
+func dias31(fecha_inicio time.Time, fecha_fin time.Time) (dias31 int) {
+	count := int(fecha_fin.Sub(fecha_inicio).Hours()/24) + 1
+	fmt.Println(count)
+
+	for i := 0; i < count; i++ {
+		day := fecha_inicio.AddDate(0, 0, i).Day()
+		//fmt.Println(day)
+		if day == 31 {
+			dias31++
+		}
+	}
+	return
+}

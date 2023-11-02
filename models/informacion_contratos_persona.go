@@ -1,18 +1,14 @@
 package models
 
+import "time"
+
 type InformacionContratosPersona struct {
 	ContratosPersonas struct {
 		ContratoPersona []struct {
-			EstadoContrato struct {
-				Id     string `json:"id"`
-				Nombre string `json:"nombre"`
-			} `json:"estado_contrato"`
-			NumeroContrato string `json:"numero_contrato"`
-			TipoContrato   struct {
-				Id     string `json:"id"`
-				Nombre string `json:"nombre"`
-			} `json:"tipo_contrato"`
-			Vigencia string `json:"vigencia"`
+			NumeroContrato string    `json:"numero_contrato"`
+			Vigencia       string    `json:"vigencia"`
+			FechaInicio    time.Time `json:"fecha_inicio"`
+			FechaFin       time.Time `json:"fecha_fin"`
 		} `json:"contrato_persona"`
 	} `json:"contratos_personas"`
 }
