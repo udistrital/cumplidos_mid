@@ -582,31 +582,31 @@
         }
     },
     "definitions": {
-        "23362.0xc0007635c0.false": {
+        "23362.0xc000786c90.false": {
             "title": "false",
             "type": "object"
         },
-        "23642.0xc0007635f0.false": {
+        "23642.0xc000786cc0.false": {
             "title": "false",
             "type": "object"
         },
-        "23703.0xc000763620.false": {
+        "23703.0xc000786cf0.false": {
             "title": "false",
             "type": "object"
         },
-        "23771.0xc000763710.false": {
+        "23771.0xc000786de0.false": {
             "title": "false",
             "type": "object"
         },
-        "23908.0xc000763740.false": {
+        "23908.0xc000786e10.false": {
             "title": "false",
             "type": "object"
         },
-        "24059.0xc000763770.false": {
+        "24059.0xc000786e40.false": {
             "title": "false",
             "type": "object"
         },
-        "39976.0xc0007d0c60.false": {
+        "39976.0xc0007d2330.false": {
             "title": "false",
             "type": "object"
         },
@@ -1082,13 +1082,13 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/23642.0xc0007635f0.false"
+                    "$ref": "#/definitions/23642.0xc000786cc0.false"
                 },
                 "Dependencia": {
                     "type": "string"
                 },
                 "EjecutadoDinero": {
-                    "$ref": "#/definitions/24059.0xc000763770.false"
+                    "$ref": "#/definitions/24059.0xc000786e40.false"
                 },
                 "FechaCPS": {
                     "type": "string"
@@ -1105,22 +1105,22 @@
                     "$ref": "#/definitions/models.FechasConNovedades"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/23908.0xc000763740.false"
+                    "$ref": "#/definitions/23908.0xc000786e10.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/23771.0xc000763710.false"
+                    "$ref": "#/definitions/23771.0xc000786de0.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/23703.0xc000763620.false"
+                    "$ref": "#/definitions/23703.0xc000786cf0.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/23362.0xc0007635c0.false"
+                    "$ref": "#/definitions/23362.0xc000786c90.false"
                 },
                 "ValorContrato": {
                     "type": "integer",
@@ -1441,7 +1441,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/39976.0xc0007d0c60.false"
+                    "$ref": "#/definitions/39976.0xc0007d2330.false"
                 }
             }
         }
