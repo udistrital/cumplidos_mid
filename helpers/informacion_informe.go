@@ -264,7 +264,7 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 	}
 
 	//fechasConNovedades
-	if fechasConNov, err := FechasContratoConNovedades(contrato, vigencia, num_documento); err == nil {
+	if fechasConNov, err := FechasContratoConNovedades(contrato, vigencia, cdp, num_documento); err == nil {
 		informacion_informe.FechasConNovedades = fechasConNov
 	}
 	return
