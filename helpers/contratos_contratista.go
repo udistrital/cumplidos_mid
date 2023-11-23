@@ -23,6 +23,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 		}
 	}()
 
+
 	if contratos_persona, outputError := GetContratosPersona(numero_documento); outputError == nil {
 		for _, contrato_persona := range contratos_persona.ContratosPersonas.ContratoPersona {
 			contrato_persona.FechaInicio = time.Date(contrato_persona.FechaInicio.Year(), contrato_persona.FechaInicio.Month(), contrato_persona.FechaInicio.Day(), 0, 0, 0, 0, contrato_persona.FechaInicio.Location())
@@ -34,7 +35,6 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 				if (contrato == models.InformacionContrato{} || outputError != nil) {
 					continue
 				}
-
 				var informacion_contrato_contratista models.InformacionContratoContratista
 				informacion_contrato_contratista, outputError = GetInformacionContratoContratista(contrato_persona.NumeroContrato, contrato_persona.Vigencia)
 				// se llena el contrato original en el indice 0
@@ -167,6 +167,12 @@ func GetContrato(num_contrato_suscrito string, vigencia string) (informacion_con
 			var contrato models.InformacionContrato
 			if err := json.Unmarshal(json_contrato, &contrato); err == nil {
 				informacion_contrato = contrato
+				//Se valida si esta vacio el objeto
+				if informacion_contrato == (models.InformacionContrato{}) {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/GetContrato/EmptyResponse", "err": err, "status": "502"}
+					return informacion_contrato, outputError
+				}
 				return informacion_contrato, nil
 			} else {
 				logs.Error(err)
