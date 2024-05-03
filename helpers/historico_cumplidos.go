@@ -5,7 +5,7 @@ import (
 	"github.com/astaxie/beego/logs"
 )
 
-func GetEstadosPago(idPagoMensual string) (cambios_estado map[string]interface{}, outputError map[string]interface{}) {
+func GetEstadosPago(idPagoMensual string) (cambios_estado interface{}, outputError interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError := map[string]interface{}{"funcion": "/getEstadosPago", "err": err, "status": "502"}
@@ -20,7 +20,7 @@ func GetEstadosPago(idPagoMensual string) (cambios_estado map[string]interface{}
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/cambio_estado_pago/?query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
 		//Ejecuta si no hay error y estado = 200
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
-			LimpiezaRespuestaRefactor(respuesta_peticion, &cambios_estado)
+			LimpiezaEstadoPago(respuesta_peticion, &cambios_estado)
 		}
 	} else {
 		//Ejecutar si hay un error o status !=200
@@ -32,5 +32,5 @@ func GetEstadosPago(idPagoMensual string) (cambios_estado map[string]interface{}
 			"Error":   err}
 		return nil, outputError
 	}
-	return respuesta_peticion, nil
+	return cambios_estado, nil
 }
