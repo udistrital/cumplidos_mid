@@ -26,6 +26,20 @@ func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPa
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 			LimpiezaRespuestaRefactor(respuesta_peticion, &cambiosEstado)
 
+			for i, _ := range cambiosEstado {
+
+				estado, err := GetEstado("12")
+				if err != nil {
+					panic(outputError)
+				} else {
+					cambiosEstado[i].NombreEstado = estado.Nombre
+					cambiosEstado[i].DescripcionEstado = estado.Descripcion
+					cambiosEstado[i].PagoMensualId = idPagoMensual
+
+				}
+
+			}
+
 		}
 	} else {
 		//Ejecutar si hay un error o status !=200
