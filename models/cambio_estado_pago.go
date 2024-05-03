@@ -7,8 +7,8 @@ type CambioEstadoPago struct {
 	EstadoPagoMensualId    int
 	DocumentoResponsableId string
 	CargoResponsable       string
-	PagoMensual            *PagoMensual
-	Activo                 bool
+	PagoMensualId          string
 	FechaCreacion          time.Time
-	FechaModificacion      time.Time
+	NombreEstado           string
+	DescripcionEstado      string
 }
