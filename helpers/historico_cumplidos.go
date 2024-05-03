@@ -21,7 +21,7 @@ func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPa
 	var respuesta_peticion map[string]interface{}
 	println(beego.AppConfig.String("UrlCrudCumplidos") + "/cambio_estado_pago/?query=" + query)
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/cambio_estado_pago/?query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/cambio_estado_pago/?query="+query+"&sort=+FechaCreacion", &respuesta_peticion); (err == nil) && (response == 200) {
 		//Ejecuta si no hay error y estado = 200
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 			LimpiezaRespuestaRefactor(respuesta_peticion, &cambiosEstado)
