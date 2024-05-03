@@ -35,8 +35,9 @@ func (c *HistoricoCumplidos) GetCambioEstado() {
 	estadospago, err := helpers.GetEstadosPago(idPagoMensual)
 
 	if err != nil {
-		c.Data["json"] = map[string]interface{}{"Succes": false, "Status:": 501, "Message": "Error al obtener estados de pago", "Error": err}
 		panic(c.Data)
+	} else if len(estadospago) < 1 {
+		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 201, "Message": "No hay datos", "Data": estadospago}
 	} else {
 		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 201, "Message": "Consulta completa", "Data": estadospago}
 	}

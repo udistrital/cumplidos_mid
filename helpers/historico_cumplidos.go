@@ -2,13 +2,17 @@ package helpers
 
 import (
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
+	"github.com/udistrital/cumplidos_mid/models"
 )
 
-func GetEstadosPago(idPagoMensual string) (cambios_estado interface{}, outputError interface{}) {
+func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPago, outputError interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
-			outputError := map[string]interface{}{"funcion": "/getEstadosPago", "err": err, "status": "502"}
+			outputError := map[string]interface{}{
+				"Succes":  true,
+				"Status":  502,
+				"Message": "Error al consultar cambios de estados del pago :" + idPagoMensual,
+				"Error":   err}
 			panic(outputError)
 		}
 	}()
@@ -20,17 +24,12 @@ func GetEstadosPago(idPagoMensual string) (cambios_estado interface{}, outputErr
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/cambio_estado_pago/?query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
 		//Ejecuta si no hay error y estado = 200
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
-			LimpiezaEstadoPago(respuesta_peticion, &cambios_estado)
+			LimpiezaRespuestaRefactor(respuesta_peticion, &cambiosEstado)
+
 		}
 	} else {
 		//Ejecutar si hay un error o status !=200
-		logs.Error(err)
-		outputError = map[string]interface{}{
-			"Succes":  true,
-			"Status":  502,
-			"Message": "Error al consultar cambios de estados del pago :" + idPagoMensual,
-			"Error":   err}
 		return nil, outputError
 	}
-	return cambios_estado, nil
+	return cambiosEstado, nil
 }
