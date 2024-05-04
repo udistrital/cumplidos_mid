@@ -11,4 +11,5 @@ type CambioEstadoPago struct {
 	FechaCreacion          time.Time
 	NombreEstado           string
 	DescripcionEstado      string
+	NombreResponsable      string
 }
