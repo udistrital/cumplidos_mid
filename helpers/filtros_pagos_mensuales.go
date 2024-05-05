@@ -52,12 +52,9 @@ func GetPagosFiltrados(numeros_contratos []string, numeros_documentos []string, 
 
 	query := strings.TrimSuffix(("?query=" + build_query(numeros_contratos, "NumeroContrato") + build_query(numeros_documentos, "DocumentoPersonaId") +
 		build_query(anios, "Ano") + build_query(meses, "Mes") + build_query(estados_pagos, "EstadoPagoMensualId__Id")), ",")
-
-	fmt.Println(query)
 	order := "&order=desc"
 	sortby := "&sortby=Ano"
 	limit := "&limit=0"
-	fmt.Println(getJsonTest("http://pruebasapi.intranetoas.udistrital.edu.co:8511/v1/pago_mensual/"+query+sortby+order+limit, &respuesta_peticion))
 
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/"+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
 

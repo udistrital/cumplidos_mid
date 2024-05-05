@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -64,18 +63,11 @@ func (c *FiltrosPagosMensualesController) GetPagos() {
 	numeros_contratos := stringToSlice(NumeroContrato)
 	convertInt(numeros_contratos)
 
-	fmt.Println("DocumentoPersonaId:", documentos)
-	fmt.Println("Ano:", anios)
-	fmt.Println("Mes:", meses)
-	fmt.Println("EstadoPagoMensualId:", estados_pagos)
-	fmt.Println(len((estados_pagos)))
-	fmt.Println("NumeroContrato:", numeros_contratos)
-
 	filtrospago, err := helpers.GetPagosFiltrados(numeros_contratos, documentos, anios, meses, estados_pagos)
 
 	if err != nil {
 		panic(c.Data)
-	} else if len(filtrospago) < 1 {
+	} else if filtrospago == nil {
 		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 201, "Message": "No hay datos que coincidan con los filtros", "Data": filtrospago}
 	} else {
 		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 201, "Message": "Consulta exitosa", "Data": filtrospago}
