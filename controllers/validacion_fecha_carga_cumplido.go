@@ -4,7 +4,6 @@ import (
 
 	//"net/http"
 
-	_ "fmt"
 	"strconv"
 
 	"github.com/astaxie/beego"

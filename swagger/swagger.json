@@ -79,6 +79,67 @@
                 }
             }
         },
+        "/filtros/": {
+            "get": {
+                "tags": [
+                    "filtros"
+                ],
+                "description": "get PagoMensual",
+                "operationId": "FiltrosPagosMensualesController.GetPagos",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "query",
+                        "description": "Filter. e.g. col1:v1,col2:v2 ...",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "fields",
+                        "description": "Fields returned. e.g. col1,col2 ...",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sortby",
+                        "description": "Sorted-by fields. e.g. col1,col2 ...",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "order",
+                        "description": "Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ...",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "Limit the size of result set. Must be an integer",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "description": "Start position of result set. Must be an integer",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.PagoMensual"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "not found resource"
+                    }
+                }
+            }
+        },
         "/informacion_informe/preliquidacion/{pago_mensual_id}": {
             "get": {
                 "tags": [
@@ -582,31 +643,31 @@
         }
     },
     "definitions": {
-        "23362.0xc000786c90.false": {
+        "23403.0xc0004fb410.false": {
             "title": "false",
             "type": "object"
         },
-        "23642.0xc000786cc0.false": {
+        "23683.0xc0004fb440.false": {
             "title": "false",
             "type": "object"
         },
-        "23703.0xc000786cf0.false": {
+        "23744.0xc0004fb470.false": {
             "title": "false",
             "type": "object"
         },
-        "23771.0xc000786de0.false": {
+        "23812.0xc0004fb560.false": {
             "title": "false",
             "type": "object"
         },
-        "23908.0xc000786e10.false": {
+        "23949.0xc0004fb590.false": {
             "title": "false",
             "type": "object"
         },
-        "24059.0xc000786e40.false": {
+        "24100.0xc0004fb5c0.false": {
             "title": "false",
             "type": "object"
         },
-        "39976.0xc0007d2330.false": {
+        "40017.0xc00055ed80.false": {
             "title": "false",
             "type": "object"
         },
@@ -1082,13 +1143,13 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/23642.0xc000786cc0.false"
+                    "$ref": "#/definitions/23683.0xc0004fb440.false"
                 },
                 "Dependencia": {
                     "type": "string"
                 },
                 "EjecutadoDinero": {
-                    "$ref": "#/definitions/24059.0xc000786e40.false"
+                    "$ref": "#/definitions/24100.0xc0004fb5c0.false"
                 },
                 "FechaCPS": {
                     "type": "string"
@@ -1105,22 +1166,22 @@
                     "$ref": "#/definitions/models.FechasConNovedades"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/23908.0xc000786e10.false"
+                    "$ref": "#/definitions/23949.0xc0004fb590.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/23771.0xc000786de0.false"
+                    "$ref": "#/definitions/23812.0xc0004fb560.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/23703.0xc000786cf0.false"
+                    "$ref": "#/definitions/23744.0xc0004fb470.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/23362.0xc000786c90.false"
+                    "$ref": "#/definitions/23403.0xc0004fb410.false"
                 },
                 "ValorContrato": {
                     "type": "integer",
@@ -1441,7 +1502,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/39976.0xc0007d2330.false"
+                    "$ref": "#/definitions/40017.0xc00055ed80.false"
                 }
             }
         }

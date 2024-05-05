@@ -48,6 +48,11 @@ func init() {
 				&controllers.ValidacionFechaCargaCumplidoController{},
 			),
 		),
+		beego.NSNamespace("/filtros",
+			beego.NSInclude(
+				&controllers.FiltrosPagosMensualesController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
