@@ -28,7 +28,7 @@ func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPa
 			LimpiezaRespuestaRefactor(respuesta_peticion, &cambiosEstado)
 
 			for i, cambioEstado := range cambiosEstado {
-				persona, _ := GetInformacionPersona(cambioEstado.DocumentoResponsableId)
+				nombreResponsable, _ := GetNombreResponable(cambioEstado.DocumentoResponsableId)
 				estado, err := GetEstado(strconv.Itoa(cambioEstado.EstadoPagoMensualId))
 				if err != nil {
 					panic(outputError)
@@ -36,7 +36,7 @@ func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPa
 					cambiosEstado[i].NombreEstado = estado.Nombre
 					cambiosEstado[i].DescripcionEstado = estado.Descripcion
 					cambiosEstado[i].PagoMensualId = idPagoMensual
-					cambiosEstado[i].NombreResponsable = persona.PrimerNombre
+					cambiosEstado[i].NombreResponsable = nombreResponsable
 
 				}
 

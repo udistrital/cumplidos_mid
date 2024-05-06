@@ -163,7 +163,7 @@ func init() {
 	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"],
 		beego.ControllerComments{
 			Method:           "GetCambioEstado",
-			Router:           "/cambio-estado/:idPagoMensual",
+			Router:           "/cambio_estado_pago/:idPagoMensual",
 			AllowHTTPMethods: []string{"get"},
 			MethodParams:     param.Make(),
 			Filters:          nil,

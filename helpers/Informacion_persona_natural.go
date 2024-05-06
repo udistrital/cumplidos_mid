@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func GetInformacionPersona(id string) (infoPersona *models.InformacionPersonaNatural, outputError interface{}) {
+func GetNombreResponable(id string) (nombreCompleto string, outputError interface{}) {
 
 	defer func() {
 		if err := recover(); err != nil {
@@ -18,7 +18,7 @@ func GetInformacionPersona(id string) (infoPersona *models.InformacionPersonaNat
 			panic(outputError)
 		}
 	}()
-	infoPersona = &models.InformacionPersonaNatural{}
+
 	var respuesta_peticion []*models.InformacionPersonaNatural
 	//println(beego.AppConfig.String("UrlcrudAgora") + "/informacion_persona_natural/" + id)
 	query := "Id:" + id
@@ -26,15 +26,16 @@ func GetInformacionPersona(id string) (infoPersona *models.InformacionPersonaNat
 	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_persona_natural?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
 
 		if respuesta_peticion != nil {
-			infoPersona.PrimerNombre = strings.TrimSpace(respuesta_peticion[0].PrimerNombre) +
+			nombreCompleto = strings.TrimSpace(respuesta_peticion[0].PrimerNombre) +
 				" " + strings.TrimSpace(respuesta_peticion[0].SegundoNombre) +
 				" " + strings.TrimSpace(respuesta_peticion[0].PrimerApellido) +
 				" " + strings.TrimSpace(respuesta_peticion[0].SegundoApellido)
 
 		}
 	} else {
-		return nil, outputError
+
+		return "", outputError
 	}
 
-	return infoPersona, nil
+	return nombreCompleto, nil
 }
