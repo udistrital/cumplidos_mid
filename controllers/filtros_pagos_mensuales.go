@@ -48,10 +48,11 @@ func (c *FiltrosPagosMensualesController) GetPagos() {
 	//Capturar de la URL los datos filtros
 
 	DocumentoPersonaId := c.GetString("DocumentoPersonaId")
+	NumeroContrato := c.GetString("NumeroContrato")
 	Ano := c.GetString("Ano")
 	Mes := c.GetString("Mes")
 	EstadoPagoMensualId := c.GetString("EstadoPagoMensualId")
-	NumeroContrato := c.GetString("NumeroContrato")
+	VigenciaContrato := c.GetString("VigenciaContrato")
 
 	documentos := stringToSlice(DocumentoPersonaId)
 	anios := stringToSlice(Ano)
@@ -62,8 +63,10 @@ func (c *FiltrosPagosMensualesController) GetPagos() {
 	convertInt(estados_pagos)
 	numeros_contratos := stringToSlice(NumeroContrato)
 	convertInt(numeros_contratos)
+	vigencias_contratos := stringToSlice(VigenciaContrato)
+	convertInt(vigencias_contratos)
 
-	filtrospago, err := helpers.GetPagosFiltrados(numeros_contratos, documentos, anios, meses, estados_pagos)
+	filtrospago, err := helpers.GetPagosFiltrados(numeros_contratos, documentos, anios, meses, estados_pagos, vigencias_contratos)
 
 	if err != nil {
 		panic(c.Data)
