@@ -79,7 +79,7 @@ func GetDependencias(dependencias []string) (contratos []models.ContratoDependen
 }
 
 
-// Funcion para filtrar pagos por lista, de codigos dependencias, listas de vigencias, lista de numeros documentos contratistas,
+// Funcion para filtrar pagos por lista de codigos dependencias, listas de vigencias, lista de numeros documentos contratistas,
 //lista de numeros de contratos, lista de meses, lista de años o listas de id de estados
 
 func GetFiltros(codigos_dependencias []string, vigencias []string, documentos_contratistas []string, numeros_contratos []string, meses []string, anios []string, estados []string ) (pagos []models.PagosFiltrados, outputError map[string]interface{}){
