@@ -35,9 +35,9 @@ func (c *FiltrosPagosMensualesController) GetPagos() {
 		if err := recover(); err != nil {
 			logs.Error(err)
 			localError := err.(map[string]interface{})
-			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "ValidacionFechaCargaCumplidoController" + "/" + (localError["funcion"]).(string))
+			c.Data["message"] = (beego.AppConfig.String("appname") + "/" + "ValidacionFechaCargaCumplidoController" + "/" + (localError["funcion"]).(string))
 			c.Data["data"] = (localError["err"])
-			if status, ok := localError["status"]; ok {
+			if status, ok := localError["statuss"]; ok {
 				c.Abort(status.(string))
 			} else {
 				c.Abort("404")
@@ -45,14 +45,13 @@ func (c *FiltrosPagosMensualesController) GetPagos() {
 		}
 	}()
 
-	//Capturar de la URL los datos filtros
+	//Capturar de la URL los datos de los filtros
 
 	DocumentoPersonaId := c.GetString("DocumentoPersonaId")
 	NumeroContrato := c.GetString("NumeroContrato")
 	Ano := c.GetString("Ano")
 	Mes := c.GetString("Mes")
 	EstadoPagoMensualId := c.GetString("EstadoPagoMensualId")
-	VigenciaContrato := c.GetString("VigenciaContrato")
 
 	documentos := stringToSlice(DocumentoPersonaId)
 	anios := stringToSlice(Ano)
@@ -63,17 +62,15 @@ func (c *FiltrosPagosMensualesController) GetPagos() {
 	convertInt(estados_pagos)
 	numeros_contratos := stringToSlice(NumeroContrato)
 	convertInt(numeros_contratos)
-	vigencias_contratos := stringToSlice(VigenciaContrato)
-	convertInt(vigencias_contratos)
 
-	filtrospago, err := helpers.GetPagosFiltrados(numeros_contratos, documentos, anios, meses, estados_pagos, vigencias_contratos)
+	filtros_pago, err := helpers.GetPagosFiltrados(numeros_contratos, documentos, anios, meses, estados_pagos)
 
 	if err != nil {
 		panic(c.Data)
-	} else if filtrospago == nil {
-		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 201, "Message": "No hay datos que coincidan con los filtros", "Data": filtrospago}
+	} else if filtros_pago == nil {
+		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 201, "Message": "No hay datos que coincidan con los filtros", "Data": filtros_pago}
 	} else {
-		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 201, "Message": "Consulta exitosa", "Data": filtrospago}
+		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 201, "Message": "Consulta exitosa", "Data": filtros_pago}
 	}
 
 	c.ServeJSON()

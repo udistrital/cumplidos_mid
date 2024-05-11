@@ -140,6 +140,34 @@
                 }
             }
         },
+        "/filtros_dependencia/": {
+            "post": {
+                "tags": [
+                    "filtros_dependencia"
+                ],
+                "description": "filter contracts and periods of validity by units and periods of validity",
+                "operationId": "FiltrosDependenciasController.FiltrarPorDependencias",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for units content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/BodyParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "{int} models.ContratoDependencia"
+                    },
+                    "403": {
+                        "description": "body is empty"
+                    }
+                }
+            }
+        },
         "/informacion_informe/preliquidacion/{pago_mensual_id}": {
             "get": {
                 "tags": [
@@ -643,32 +671,36 @@
         }
     },
     "definitions": {
-        "23403.0xc000518150.false": {
+        "23572.0xc00051afc0.false": {
             "title": "false",
             "type": "object"
         },
-        "23683.0xc000518180.false": {
+        "23852.0xc00051aff0.false": {
             "title": "false",
             "type": "object"
         },
-        "23744.0xc0005181b0.false": {
+        "23913.0xc00051b020.false": {
             "title": "false",
             "type": "object"
         },
-        "23812.0xc0005182a0.false": {
+        "23981.0xc00051b110.false": {
             "title": "false",
             "type": "object"
         },
-        "23949.0xc0005182d0.false": {
+        "24118.0xc00051b140.false": {
             "title": "false",
             "type": "object"
         },
-        "24100.0xc000518300.false": {
+        "24269.0xc00051b170.false": {
             "title": "false",
             "type": "object"
         },
-        "40017.0xc000545aa0.false": {
+        "40465.0xc0005789c0.false": {
             "title": "false",
+            "type": "object"
+        },
+        "BodyParams": {
+            "title": "BodyParams",
             "type": "object"
         },
         "models.ActividadEspecifica": {
@@ -1143,13 +1175,13 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/23683.0xc000518180.false"
+                    "$ref": "#/definitions/23852.0xc00051aff0.false"
                 },
                 "Dependencia": {
                     "type": "string"
                 },
                 "EjecutadoDinero": {
-                    "$ref": "#/definitions/24100.0xc000518300.false"
+                    "$ref": "#/definitions/24269.0xc00051b170.false"
                 },
                 "FechaCPS": {
                     "type": "string"
@@ -1166,22 +1198,22 @@
                     "$ref": "#/definitions/models.FechasConNovedades"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/23949.0xc0005182d0.false"
+                    "$ref": "#/definitions/24118.0xc00051b140.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/23812.0xc0005182a0.false"
+                    "$ref": "#/definitions/23981.0xc00051b110.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/23744.0xc0005181b0.false"
+                    "$ref": "#/definitions/23913.0xc00051b020.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/23403.0xc000518150.false"
+                    "$ref": "#/definitions/23572.0xc00051afc0.false"
                 },
                 "ValorContrato": {
                     "type": "integer",
@@ -1502,7 +1534,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/40017.0xc000545aa0.false"
+                    "$ref": "#/definitions/40465.0xc0005789c0.false"
                 }
             }
         }

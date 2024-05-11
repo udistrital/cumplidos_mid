@@ -25,6 +25,15 @@ func init() {
             Filters: nil,
             Params: nil})
 
+    beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:FiltrosDependenciasController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:FiltrosDependenciasController"],
+        beego.ControllerComments{
+            Method: "FiltrarPorDependencias",
+            Router: "/",
+            AllowHTTPMethods: []string{"post"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
     beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:FiltrosPagosMensualesController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:FiltrosPagosMensualesController"],
         beego.ControllerComments{
             Method: "GetPagos",

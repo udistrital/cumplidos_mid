@@ -53,6 +53,11 @@ func init() {
 				&controllers.FiltrosPagosMensualesController{},
 			),
 		),
+		beego.NSNamespace("/filtros_dependencia",
+			beego.NSInclude(
+				&controllers.FiltrosDependenciasController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
