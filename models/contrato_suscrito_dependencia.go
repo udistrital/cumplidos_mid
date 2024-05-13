@@ -1,6 +1,6 @@
 package models
 
 type ContratoSuscritoDependencia struct {
-	Vigencia               int `json:"vigencia"`
-	NumeroContratoSuscrito int `json:"numero_contrato_suscrito"`
+	Vigencia               string `json:"vigencia"`
+	NumeroContratoSuscrito string `json:"numero_contrato_suscrito"`
 }

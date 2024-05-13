@@ -79,10 +79,38 @@
                 }
             }
         },
-        "/filtros/": {
+        "/filtros_dependencia/": {
+            "post": {
+                "tags": [
+                    "filtros_dependencia"
+                ],
+                "description": "filter contracts and periods of validity by units and periods of validity",
+                "operationId": "FiltrosDependenciasController.FiltrarPorDependencias",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for units content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/BodyParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "{int} models.ContratoDependencia"
+                    },
+                    "403": {
+                        "description": "body is empty"
+                    }
+                }
+            }
+        },
+        "/filtros_pagos/": {
             "get": {
                 "tags": [
-                    "filtros"
+                    "filtros_pagos"
                 ],
                 "description": "get PagoMensual",
                 "operationId": "FiltrosPagosMensualesController.GetPagos",
@@ -136,34 +164,6 @@
                     },
                     "400": {
                         "description": "not found resource"
-                    }
-                }
-            }
-        },
-        "/filtros_dependencia/": {
-            "post": {
-                "tags": [
-                    "filtros_dependencia"
-                ],
-                "description": "filter contracts and periods of validity by units and periods of validity",
-                "operationId": "FiltrosDependenciasController.FiltrarPorDependencias",
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "body for units content",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/BodyParams"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "{int} models.ContratoDependencia"
-                    },
-                    "403": {
-                        "description": "body is empty"
                     }
                 }
             }
@@ -591,6 +591,101 @@
                 }
             }
         },
+        "/solicitudes_pagos/": {
+            "post": {
+                "tags": [
+                    "solicitudes_pagos"
+                ],
+                "description": "filter payment requests by various parameters",
+                "operationId": "SolicitudesPagoMensualController.GetSolicitudesPagoMensual",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "codigos_dependencias",
+                        "description": "List of dependency codes",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "vigencias",
+                        "description": "List of years",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "documentos_contratistas",
+                        "description": "List of contractor IDs",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "numeros_contratos",
+                        "description": "List of contract numbers",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "meses",
+                        "description": "List of months",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "anios",
+                        "description": "List of years",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "estados",
+                        "description": "List of payment states",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SolicitudPago"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
         "/solicitudes_supervisor_contratistas/{docsupervisor}": {
             "get": {
                 "tags": [
@@ -671,31 +766,31 @@
         }
     },
     "definitions": {
-        "23572.0xc00051afc0.false": {
+        "23578.0xc0004ef590.false": {
             "title": "false",
             "type": "object"
         },
-        "23852.0xc00051aff0.false": {
+        "23858.0xc0004ef5c0.false": {
             "title": "false",
             "type": "object"
         },
-        "23913.0xc00051b020.false": {
+        "23919.0xc0004ef5f0.false": {
             "title": "false",
             "type": "object"
         },
-        "23981.0xc00051b110.false": {
+        "23987.0xc0004ef6e0.false": {
             "title": "false",
             "type": "object"
         },
-        "24118.0xc00051b140.false": {
+        "24124.0xc0004ef710.false": {
             "title": "false",
             "type": "object"
         },
-        "24269.0xc00051b170.false": {
+        "24275.0xc0004ef740.false": {
             "title": "false",
             "type": "object"
         },
-        "40465.0xc0005789c0.false": {
+        "40471.0xc000558f90.false": {
             "title": "false",
             "type": "object"
         },
@@ -1175,13 +1270,13 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/23852.0xc00051aff0.false"
+                    "$ref": "#/definitions/23858.0xc0004ef5c0.false"
                 },
                 "Dependencia": {
                     "type": "string"
                 },
                 "EjecutadoDinero": {
-                    "$ref": "#/definitions/24269.0xc00051b170.false"
+                    "$ref": "#/definitions/24275.0xc0004ef740.false"
                 },
                 "FechaCPS": {
                     "type": "string"
@@ -1198,22 +1293,22 @@
                     "$ref": "#/definitions/models.FechasConNovedades"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/24118.0xc00051b140.false"
+                    "$ref": "#/definitions/24124.0xc0004ef710.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/23981.0xc00051b110.false"
+                    "$ref": "#/definitions/23987.0xc0004ef6e0.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/23913.0xc00051b020.false"
+                    "$ref": "#/definitions/23919.0xc0004ef5f0.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/23572.0xc00051afc0.false"
+                    "$ref": "#/definitions/23578.0xc0004ef590.false"
                 },
                 "ValorContrato": {
                     "type": "integer",
@@ -1474,6 +1569,36 @@
                 }
             }
         },
+        "models.SolicitudPago": {
+            "title": "SolicitudPago",
+            "type": "object",
+            "properties": {
+                "Ano": {
+                    "type": "string"
+                },
+                "DocumentoContratista": {
+                    "type": "string"
+                },
+                "Estado": {
+                    "type": "string"
+                },
+                "Mes": {
+                    "type": "string"
+                },
+                "NombreContratista": {
+                    "type": "string"
+                },
+                "NombreDependencia": {
+                    "type": "string"
+                },
+                "Rubro": {
+                    "type": "string"
+                },
+                "Vigencia": {
+                    "type": "string"
+                }
+            }
+        },
         "models.TipoDocumento": {
             "title": "TipoDocumento",
             "type": "object",
@@ -1534,7 +1659,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/40465.0xc0005789c0.false"
+                    "$ref": "#/definitions/40471.0xc000558f90.false"
                 }
             }
         }
