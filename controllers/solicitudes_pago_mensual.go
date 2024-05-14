@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"encoding/json"
+	"strconv"
+	"strings"
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/helpers"
@@ -31,36 +33,14 @@ func (c *SolicitudesPagoMensualController) URLMapping() {
 // @router / [post]
 func (c *SolicitudesPagoMensualController) GetSolicitudesPagoMensual() {
 
-	//Capturar de la URL los datos de los filtros
-
-	DocumentoPersonaId := c.GetString("DocumentoPersonaId")
-	NumeroContrato := c.GetString("NumeroContrato")
-	Ano := c.GetString("Ano")
-	Mes := c.GetString("Mes")
-	EstadoPagoMensualId := c.GetString("EstadoPagoMensualId")
-	/*
-		dependencia := c.GetString("dependencias")
-		vigencia := c.GetString("vigencias")
-	*/
-
-	documentos := stringToSlice(DocumentoPersonaId)
-	anios := stringToSlice(Ano)
-	convertInt(anios)
-	meses := stringToSlice(Mes)
-	convertInt(meses)
-	estados_pagos := stringToSlice(EstadoPagoMensualId)
-	convertInt(estados_pagos)
-	numeros_contratos := stringToSlice(NumeroContrato)
-	convertInt(numeros_contratos)
-	/*
-		dependencias := stringToSlice(dependencia)
-		vigencias := stringToSlice(vigencia)
-	*/
-
-	//Obtener dependencias y vigencias
 	type BodyParams struct {
-		Dependencias string `json:"dependencias"`
-		Vigencias    string `json:"vigencias"`
+		Dependencias        string `json:"dependencias"`
+		Vigencias           string `json:"vigencias"`
+		DocumentosPersonaId string `json:"documentos_persona_id"`
+		NumerosContratos    string `json:"numeros_contratos"`
+		Meses               string `json:"meses"`
+		Anios               string `json:"anios"`
+		EstadosPagos        string `json:"estados_pagos"`
 	}
 	var v BodyParams
 
@@ -68,8 +48,18 @@ func (c *SolicitudesPagoMensualController) GetSolicitudesPagoMensual() {
 
 	dependencias := stringToSlice(v.Dependencias)
 	vigencias := stringToSlice(v.Vigencias)
+	convertInt(vigencias)
+	documentos_persona_id := stringToSlice(v.DocumentosPersonaId)
+	convertInt(documentos_persona_id)
+	numeros_contratos := stringToSlice(v.NumerosContratos)
+	convertInt(numeros_contratos)
+	meses := stringToSlice(v.Meses)
+	convertInt(numeros_contratos)
+	anios := stringToSlice(v.Anios)
+	convertInt(anios)
+	estados_pagos := stringToSlice(v.EstadosPagos)
 
-	filtros_pago, err := helpers.SolicitudesPagoMensual(dependencias, vigencias, documentos, numeros_contratos, meses, anios, estados_pagos)
+	filtros_pago, err := helpers.SolicitudesPagoMensual(dependencias, vigencias, documentos_persona_id, numeros_contratos, meses, anios, estados_pagos)
 
 	if err != nil {
 		panic(c.Data)
@@ -80,4 +70,27 @@ func (c *SolicitudesPagoMensualController) GetSolicitudesPagoMensual() {
 	}
 
 	c.ServeJSON()
+}
+
+// Funcion para agregar los datos a un slice
+func stringToSlice(cadena string) (slice []string) {
+	parts := strings.Split(cadena, ",")
+
+	if cadena != "" {
+		for _, part := range parts {
+			slice = append(slice, part)
+		}
+	}
+	return slice
+}
+
+//Funcion para Verificar que se ingresen datos correctos cuando el parametro sean números
+
+func convertInt(data []string) {
+	for _, str := range data {
+		_, err := strconv.Atoi(str)
+		if err != nil && len(data) > 0 {
+			panic(map[string]interface{}{"funcion: ": "convertInt", "err": "El valor " + str + "no es un número"})
+		}
+	}
 }
