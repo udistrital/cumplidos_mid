@@ -159,8 +159,8 @@ func GetContrato(num_contrato_suscrito string, vigencia string) (informacion_con
 	}()
 
 	var temp map[string]interface{}
-	//fmt.Println(beego.AppConfig.String("UrlAdministrativaJBPM") + "/" + "informacion_contrato/" + num_contrato_suscrito + "/" + vigencia)
-	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"informacion_contrato/"+num_contrato_suscrito+"/"+vigencia, &temp); (err == nil) && (response == 200) {
+	//fmt.Println(beego.AppConfig.String("UrlAdministrativaJBPM") + "/" + "contrato/" + num_contrato_suscrito + "/" + vigencia)
+	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contrato/"+num_contrato_suscrito+"/"+vigencia, &temp); (err == nil) && (response == 200) {
 		json_contrato, error_json := json.Marshal(temp)
 		if error_json == nil {
 			var contrato models.InformacionContrato

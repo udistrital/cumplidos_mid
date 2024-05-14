@@ -1,11 +1,15 @@
 package helpers
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
 
+	"time"
+
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/models"
 )
 
@@ -90,9 +94,14 @@ func FiltrosDependencia(dependencias []string, vigencias []string) (contratos []
 		Vigencias    string `json:"vigencias"`
 	}
 
-	//Se agregan los años actuales de vigencias de la OATI, en un futuro cuando hayan más solo se debe agregar el año al slice
+	//Vigencias de la oficina, esta lista se crea para retornar por defecto todas las
+	//vigencias de la oficina en caso de que no se le asigne un valor al filtro
 
-	var vigencias_oficina = []string{"2017", "2018", "2019", "2020", "2021", "2022", "2023"}
+	vigencias_oficina := []string{}
+
+	for vigencia := 2017; vigencia <= time.Now().Year(); vigencia++ {
+		vigencias_oficina = append(vigencias_oficina, strconv.Itoa(vigencia))
+	}
 
 	var parametro_dependencia string
 	var parametro_vigencia string
@@ -142,7 +151,7 @@ func FiltrosDependencia(dependencias []string, vigencias []string) (contratos []
 
 	var respuesta_peticion map[string]interface{}
 
-	err := sendJson3(beego.AppConfig.String("UrlPruebasAdministrativaJBPM")+"/contratos_dependencias", "POST", &respuesta_peticion, parametro)
+	err := sendJson3(beego.AppConfig.String("UrlAdministrativaJBPMContratosDependencia")+"/contratos_dependencias", "POST", &respuesta_peticion, parametro)
 
 	if err == nil {
 
@@ -209,7 +218,7 @@ func SolicitudesPagoMensual(codigos_dependencias []string, vigencias []string, d
 			var filtro_pago_dependencia models.SolicitudPago
 			if filtro_dependencia.NumeroContratoSuscrito == pago_filtrado.NumeroContrato && filtro_dependencia.Vigencia == strconv.Itoa(int(pago_filtrado.VigenciaContrato)) {
 				var contrato models.InformacionContrato
-				contrato, outputError = GetContrato(pago_filtrado.NumeroContrato, strconv.FormatFloat(pago_filtrado.VigenciaContrato, 'f', 0, 64))
+				contrato, outputError = GetInformacionContrato(pago_filtrado.NumeroContrato, strconv.FormatFloat(pago_filtrado.VigenciaContrato, 'f', 0, 64))
 				var informacion_contrato_contratista models.InformacionContratoContratista
 				informacion_contrato_contratista, outputError = GetInformacionContratoContratista(pago_filtrado.NumeroContrato, strconv.FormatFloat(pago_filtrado.VigenciaContrato, 'f', 0, 64))
 				if outputError == nil {
@@ -230,4 +239,47 @@ func SolicitudesPagoMensual(codigos_dependencias []string, vigencias []string, d
 	}
 
 	return pagos, nil
+}
+
+func GetInformacionContrato(num_contrato_suscrito string, vigencia string) (informacion_contrato models.InformacionContrato, outputError map[string]interface{}) {
+
+	defer func() {
+		if err := recover(); err != nil {
+			outputError = map[string]interface{}{"funcion": "/GetContrato", "err": err, "status": "502"}
+			panic(outputError)
+		}
+	}()
+
+	var temp map[string]interface{}
+	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"informacion_contrato/"+num_contrato_suscrito+"/"+vigencia, &temp); (err == nil) && (response == 200) {
+		json_contrato, error_json := json.Marshal(temp)
+		if error_json == nil {
+			var contrato models.InformacionContrato
+			if err := json.Unmarshal(json_contrato, &contrato); err == nil {
+				informacion_contrato = contrato
+				//Se valida si esta vacio el objeto
+				if informacion_contrato == (models.InformacionContrato{}) {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/GetContrato/EmptyResponse", "err": err, "status": "502"}
+					return informacion_contrato, outputError
+				}
+				return informacion_contrato, nil
+			} else {
+				logs.Error(err)
+				outputError = map[string]interface{}{"funcion": "/GetContrato", "err": err, "status": "502"}
+				return informacion_contrato, outputError
+			}
+		} else {
+			logs.Error(error_json.Error())
+			outputError = map[string]interface{}{"funcion": "/GetContrato", "err": error_json.Error(), "status": "502"}
+			return informacion_contrato, outputError
+		}
+
+	} else {
+		logs.Error(err)
+		outputError = map[string]interface{}{"funcion": "/GetContrato", "err": err, "status": "502"}
+		return informacion_contrato, outputError
+	}
+
+	return informacion_contrato, nil
 }
