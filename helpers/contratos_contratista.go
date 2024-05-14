@@ -23,7 +23,6 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 		}
 	}()
 
-
 	if contratos_persona, outputError := GetContratosPersona(numero_documento); outputError == nil {
 		for _, contrato_persona := range contratos_persona.ContratosPersonas.ContratoPersona {
 			contrato_persona.FechaInicio = time.Date(contrato_persona.FechaInicio.Year(), contrato_persona.FechaInicio.Month(), contrato_persona.FechaInicio.Day(), 0, 0, 0, 0, contrato_persona.FechaInicio.Location())
@@ -160,7 +159,7 @@ func GetContrato(num_contrato_suscrito string, vigencia string) (informacion_con
 	}()
 
 	var temp map[string]interface{}
-	fmt.Println(beego.AppConfig.String("UrlAdministrativaJBPM") + "/" + "contrato/" + num_contrato_suscrito + "/" + vigencia)
+	//fmt.Println(beego.AppConfig.String("UrlAdministrativaJBPM") + "/" + "contrato/" + num_contrato_suscrito + "/" + vigencia)
 	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contrato/"+num_contrato_suscrito+"/"+vigencia, &temp); (err == nil) && (response == 200) {
 		json_contrato, error_json := json.Marshal(temp)
 		if error_json == nil {
