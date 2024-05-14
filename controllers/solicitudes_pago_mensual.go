@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"strconv"
-	"strings"
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/helpers"
@@ -46,18 +44,18 @@ func (c *SolicitudesPagoMensualController) GetSolicitudesPagoMensual() {
 
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 
-	dependencias := stringToSlice(v.Dependencias)
-	vigencias := stringToSlice(v.Vigencias)
-	convertInt(vigencias)
-	documentos_persona_id := stringToSlice(v.DocumentosPersonaId)
-	convertInt(documentos_persona_id)
-	numeros_contratos := stringToSlice(v.NumerosContratos)
-	convertInt(numeros_contratos)
-	meses := stringToSlice(v.Meses)
-	convertInt(numeros_contratos)
-	anios := stringToSlice(v.Anios)
-	convertInt(anios)
-	estados_pagos := stringToSlice(v.EstadosPagos)
+	dependencias := helpers.StringToSlice(v.Dependencias)
+	vigencias := helpers.StringToSlice(v.Vigencias)
+	helpers.ConvertInt(vigencias)
+	documentos_persona_id := helpers.StringToSlice(v.DocumentosPersonaId)
+	helpers.ConvertInt(documentos_persona_id)
+	numeros_contratos := helpers.StringToSlice(v.NumerosContratos)
+	helpers.ConvertInt(numeros_contratos)
+	meses := helpers.StringToSlice(v.Meses)
+	helpers.ConvertInt(numeros_contratos)
+	anios := helpers.StringToSlice(v.Anios)
+	helpers.ConvertInt(anios)
+	estados_pagos := helpers.StringToSlice(v.EstadosPagos)
 
 	filtros_pago, err := helpers.SolicitudesPagoMensual(dependencias, vigencias, documentos_persona_id, numeros_contratos, meses, anios, estados_pagos)
 
@@ -70,27 +68,4 @@ func (c *SolicitudesPagoMensualController) GetSolicitudesPagoMensual() {
 	}
 
 	c.ServeJSON()
-}
-
-// Funcion para agregar los datos a un slice
-func stringToSlice(cadena string) (slice []string) {
-	parts := strings.Split(cadena, ",")
-
-	if cadena != "" {
-		for _, part := range parts {
-			slice = append(slice, part)
-		}
-	}
-	return slice
-}
-
-//Funcion para Verificar que se ingresen datos correctos cuando el parametro sean números
-
-func convertInt(data []string) {
-	for _, str := range data {
-		_, err := strconv.Atoi(str)
-		if err != nil && len(data) > 0 {
-			panic(map[string]interface{}{"funcion: ": "convertInt", "err": "El valor " + str + "no es un número"})
-		}
-	}
 }

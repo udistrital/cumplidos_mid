@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -14,28 +13,6 @@ import (
 )
 
 //Funcion para construir el query dinamico
-
-func build_query(slices []string, columna string) string {
-
-	query := ""
-
-	if len(slices) == 1 {
-		query += fmt.Sprintf("%s.in:%v,", columna, slices[0])
-	}
-	if len(slices) > 1 {
-		for i, dato := range slices {
-			if i == 0 {
-				query += fmt.Sprintf("%s.in:%v|", columna, dato)
-			} else if i < len(slices)-1 {
-				query += fmt.Sprintf("%s|", dato)
-			} else {
-				query += fmt.Sprintf("%s,", dato)
-			}
-		}
-		return query
-	}
-	return query
-}
 
 func GetPagosFiltrados(numeros_contratos []string, numeros_documentos []string, anios []string, meses []string, estados_pagos []string) (PagoMensual []models.PagoMensual, outputError interface{}) {
 	defer func() {
@@ -55,8 +32,8 @@ func GetPagosFiltrados(numeros_contratos []string, numeros_documentos []string, 
 
 	//Se contruye dinamicamente el query
 
-	query := strings.TrimSuffix(("?query=" + build_query(numeros_contratos, "NumeroContrato") + build_query(numeros_documentos, "DocumentoPersonaId") +
-		build_query(anios, "Ano") + build_query(meses, "Mes") + build_query(estados_pagos, "EstadoPagoMensualId__Id")), ",")
+	query := strings.TrimSuffix(("?query=" + buildQuery(numeros_contratos, "NumeroContrato") + buildQuery(numeros_documentos, "DocumentoPersonaId") +
+		buildQuery(anios, "Ano") + buildQuery(meses, "Mes") + buildQuery(estados_pagos, "EstadoPagoMensualId__Id")), ",")
 	order := "&order=desc"
 	sortby := "&sortby=Ano,Mes,DocumentoPersonaId"
 	limit := "&limit=0"

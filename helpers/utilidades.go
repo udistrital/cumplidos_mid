@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"net/http"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
@@ -342,4 +343,49 @@ func dias31(fecha_inicio time.Time, fecha_fin time.Time) (dias31 int) {
 		}
 	}
 	return
+}
+
+func buildQuery(slices []string, columna string) string {
+
+	query := ""
+
+	if len(slices) == 1 {
+		query += fmt.Sprintf("%s.in:%v,", columna, slices[0])
+	}
+	if len(slices) > 1 {
+		for i, dato := range slices {
+			if i == 0 {
+				query += fmt.Sprintf("%s.in:%v|", columna, dato)
+			} else if i < len(slices)-1 {
+				query += fmt.Sprintf("%s|", dato)
+			} else {
+				query += fmt.Sprintf("%s,", dato)
+			}
+		}
+		return query
+	}
+	return query
+}
+
+// Funcion para agregar los datos a un slice
+func StringToSlice(cadena string) (slice []string) {
+	parts := strings.Split(cadena, ",")
+
+	if cadena != "" {
+		for _, part := range parts {
+			slice = append(slice, part)
+		}
+	}
+	return slice
+}
+
+//Funcion para Verificar que se ingresen datos correctos cuando el parametro sean números
+
+func ConvertInt(data []string) {
+	for _, str := range data {
+		_, err := strconv.Atoi(str)
+		if err != nil && len(data) > 0 {
+			panic(map[string]interface{}{"funcion: ": "convertInt", "err": "El valor " + str + "no es un número"})
+		}
+	}
 }
