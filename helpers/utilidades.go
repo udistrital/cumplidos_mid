@@ -52,22 +52,6 @@ func getJsonTest(url string, target interface{}) (status int, err error) {
 
 	return r.StatusCode, json.NewDecoder(r.Body).Decode(target)
 }
-func getXMLTest(url string, target interface{}) (status int, err error) {
-
-	r, err := http.Get(url)
-	if err != nil {
-		return r.StatusCode, err
-	}
-	defer func() {
-		if err := r.Body.Close(); err != nil {
-			if err := r.Body.Close(); err != nil {
-				beego.Error(err)
-			}
-		}
-	}()
-	fmt.Println("Response:", r)
-	return r.StatusCode, xml.NewDecoder(r.Body).Decode(target)
-}
 
 func getJson(url string, target interface{}) error {
 	r, err := http.Get(url)
