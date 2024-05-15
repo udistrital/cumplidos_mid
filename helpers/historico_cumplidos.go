@@ -1,36 +1,35 @@
 package helpers
 
 import (
+	"fmt"
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
+	"github.com/udistrital/cumplidos_mid/models"
 )
 
-func GetEstadosPago(idPagoMensual string) (cambios_estado map[string]interface{}, outputError map[string]interface{}) {
+func GetEstadosPago(documento string) (depenendicas interface{}, outputError interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
-			outputError := map[string]interface{}{"funcion": "/getEstadosPago", "err": err, "status": "502"}
+			outputError := map[string]interface{}{
+				"Succes":  true,
+				"Status":  502,
+				"Message": "Error al consultar cambios de estados del pago :" + documento,
+				"Error":   err}
 			panic(outputError)
 		}
 	}()
-	//Query de solicitud
-	query := "PagoMensualId.Id:" + idPagoMensual
-	var respuesta_peticion map[string]interface{}
-	println(beego.AppConfig.String("UrlCrudCumplidos") + "/cambio_estado_pago/?query=" + query)
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/cambio_estado_pago/?query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
-		//Ejecuta si no hay error y estado = 200
-		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
-			LimpiezaRespuestaRefactor(respuesta_peticion, &cambios_estado)
+	var respuesta_peticion models.DependenciasXmln
+	if response, err := getXMLTest(beego.AppConfig.String("UrlAdministrativaJBPM")+"/dependencias_sic/"+documento, &respuesta_peticion); err == nil && response == 200 {
+
+		for _, dep := range respuesta_peticion.Dependencias {
+			// Aquí puedes hacer lo que necesites con cada dependencia
+
+			fmt.Println(dep.EsfCodigoDep)
 		}
+
 	} else {
 		//Ejecutar si hay un error o status !=200
-		logs.Error(err)
-		outputError = map[string]interface{}{
-			"Succes":  true,
-			"Status":  502,
-			"Message": "Error al consultar cambios de estados del pago :" + idPagoMensual,
-			"Error":   err}
 		return nil, outputError
 	}
-	return respuesta_peticion, nil
+	return depenendicas, nil
 }
