@@ -32,14 +32,14 @@ func (c *HistoricoCumplidos) GetDependencias() {
 
 	documento := c.GetString(":documento")
 
-	estadospago, err := helpers.GetEstadosPago(documento)
+	dependencias, err := helpers.ObtenerDependencias(documento)
 
 	if err != nil {
 		panic(c.Data)
-	} else if estadospago == nil {
-		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 201, "Message": "No hay datos", "Data": estadospago}
+	} else if dependencias == nil {
+		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 204, "Message": "No hay datos", "Data": dependencias}
 	} else {
-		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 201, "Message": "Consulta completa", "Data": estadospago}
+		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 200, "Message": "Consulta completa", "Data": dependencias}
 	}
 	c.ServeJSON()
 
