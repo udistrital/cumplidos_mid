@@ -1,11 +1,5 @@
 package helpers
 
-import (
-	"fmt"
-	"github.com/astaxie/beego"
-	"github.com/udistrital/cumplidos_mid/models"
-)
-
 func ObtenerDependencias(documento string) (dependencias map[string]interface{}, errorOutput interface{}) {
 
 	defer func() {
@@ -20,39 +14,10 @@ func ObtenerDependencias(documento string) (dependencias map[string]interface{},
 			panic(errorOutput)
 		}
 	}()
-	dependenciasList := make([]models.DependenciaSimple, 0)
-	var respuesta map[string]interface{}
-	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/dependencias_supervisor/"+documento, &respuesta); (err == nil) && (response == 200) {
 
-		if respuesta != nil {
-
-			if dependenciasMap, ok := respuesta["dependencias"].(map[string]interface{}); ok {
-
-				for _, depList := range dependenciasMap {
-
-					if list, ok := depList.([]interface{}); ok {
-
-						for _, dep := range list {
-
-							depMap := dep.(map[string]interface{})
-							dependencia := models.DependenciaSimple{
-
-								Codigo: depMap["codigo"].(string),
-								Nombre: depMap["nombre"].(string),
-							}
-
-							dependenciasList = append(dependenciasList, dependencia)
-							fmt.Println(dependenciasList)
-						}
-
-					}
-				}
-			}
-		}
-
-	}
 	dependencias = make(map[string]interface{})
-	dependencias["Dependencias Supervisor"] = dependenciasList
+	dependencias["Dependencias Supervisor"], errorOutput = GetDependenciasSupervisor(documento)
+	dependencias["Dependencias Ordenador"], errorOutput = GetDependenciasOrdenadr(documento)
 	if dependencias != nil {
 		return dependencias, nil
 	}
