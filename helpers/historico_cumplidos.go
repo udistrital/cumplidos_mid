@@ -6,30 +6,56 @@ import (
 	"github.com/udistrital/cumplidos_mid/models"
 )
 
-func GetEstadosPago(documento string) (depenendicas interface{}, outputError interface{}) {
+func ObtenerDependencias(documento string) (dependencias map[string]interface{}, errorOutput interface{}) {
+
 	defer func() {
+
 		if err := recover(); err != nil {
-			outputError := map[string]interface{}{
-				"Succes":  true,
+			errorOutput = map[string]interface{}{
+				"Success": true,
 				"Status":  502,
-				"Message": "Error al consultar cambios de estados del pago :" + documento,
-				"Error":   err}
-			panic(outputError)
+				"Message": "Error al consultar las dependencias: " + documento,
+				"Error":   err,
+			}
+			panic(errorOutput)
 		}
 	}()
+	dependenciasList := make([]models.DependenciaSimple, 0)
+	var respuesta map[string]interface{}
+	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/dependencias_supervisor/"+documento, &respuesta); (err == nil) && (response == 200) {
 
-	var respuesta_peticion models.DependenciasXmln
-	if response, err := getXMLTest(beego.AppConfig.String("UrlAdministrativaJBPM")+"/dependencias_sic/"+documento, &respuesta_peticion); err == nil && response == 200 {
+		if respuesta != nil {
 
-		for _, dep := range respuesta_peticion.Dependencias {
-			// Aquí puedes hacer lo que necesites con cada dependencia
+			if dependenciasMap, ok := respuesta["dependencias"].(map[string]interface{}); ok {
 
-			fmt.Println(dep.EsfCodigoDep)
+				for _, depList := range dependenciasMap {
+
+					if list, ok := depList.([]interface{}); ok {
+
+						for _, dep := range list {
+
+							depMap := dep.(map[string]interface{})
+							dependencia := models.DependenciaSimple{
+
+								Codigo: depMap["codigo"].(string),
+								Nombre: depMap["nombre"].(string),
+							}
+
+							dependenciasList = append(dependenciasList, dependencia)
+							fmt.Println(dependenciasList)
+						}
+
+					}
+				}
+			}
 		}
 
-	} else {
-		//Ejecutar si hay un error o status !=200
-		return nil, outputError
 	}
-	return depenendicas, nil
+	dependencias = make(map[string]interface{})
+	dependencias["Dependencias Supervisor"] = dependenciasList
+	if dependencias != nil {
+		return dependencias, nil
+	}
+
+	return nil, errorOutput
 }
