@@ -1,7 +1,5 @@
 package models
 
-import "encoding/xml"
-
 type Dependencia struct {
 	Id                  int
 	Nombre              string
@@ -9,17 +7,7 @@ type Dependencia struct {
 	CorreoElectronico   string
 }
 
-type DependenciasXmln struct {
-	XMLName      xml.Name          `xml:"DependenciasSic"`
-	Dependencias []DependenciaXmln `xml:"Dependencia"`
-}
-
-type DependenciaXmln struct {
-	EsfCodigoDep    string `xml:"ESFCODIGODEP"`
-	EsfDepEncargada string `xml:"ESFDEPENCARGADA"`
-}
-
 type DependenciaSimple struct {
-	Id     int
+	Codigo string
 	Nombre string
 }
