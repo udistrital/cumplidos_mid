@@ -51,6 +51,11 @@ func init() {
 		beego.NSNamespace("/historicos",
 			beego.NSInclude(
 				&controllers.HistoricoCumplidos{},
+       ),                  
+    ),
+		beego.NSNamespace("/solicitudes_pagos",
+			beego.NSInclude(
+				&controllers.SolicitudesPagoMensualController{},
 			),
 		),
 	)
