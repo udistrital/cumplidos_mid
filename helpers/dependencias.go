@@ -54,7 +54,7 @@ func GetDependenciasSupervisor(documento string) (dependenciasList []models.Depe
 	return nil, nil
 }
 
-func GetDependenciasOrdenadr(documento string) (dependenciasList []models.DependenciaSimple, errorOutput interface{}) {
+func GetDependenciasOrdenador(documento string) (dependenciasList []models.DependenciaSimple, errorOutput interface{}) {
 	defer func() {
 
 		if err := recover(); err != nil {

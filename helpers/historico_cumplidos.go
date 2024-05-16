@@ -16,7 +16,7 @@ func ObtenerDependencias(documento string) (dependencias map[string]interface{},
 	}()
 	dependencias = make(map[string]interface{})
 	dependencias["Dependencias Supervisor"], errorOutput = GetDependenciasSupervisor(documento)
-	dependencias["Dependencias Ordenador"], errorOutput = GetDependenciasOrdenadr(documento)
+	dependencias["Dependencias Ordenador"], errorOutput = GetDependenciasOrdenador(documento)
 	if dependencias != nil {
 		return dependencias, nil
 	}
