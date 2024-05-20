@@ -33,10 +33,12 @@ func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPa
 				if err != nil {
 					panic(outputError)
 				} else {
+					cambiosEstado[i].CargoResponsable = capitalizarPrimeraLetra(cambiosEstado[i].CargoResponsable)
 					cambiosEstado[i].NombreEstado = estado.Nombre
 					cambiosEstado[i].DescripcionEstado = estado.Descripcion
 					cambiosEstado[i].PagoMensualId = idPagoMensual
 					cambiosEstado[i].NombreResponsable = nombreResponsable
+					cambiosEstado[i].NombreEstado = capitalizarPrimeraLetra(cambiosEstado[i].NombreEstado)
 
 				}
 
@@ -48,4 +50,28 @@ func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPa
 		return nil, outputError
 	}
 	return cambiosEstado, nil
+}
+
+func ObtenerDependencias(documento string) (dependencias map[string]interface{}, errorOutput interface{}) {
+
+	defer func() {
+
+		if err := recover(); err != nil {
+			errorOutput = map[string]interface{}{
+				"Success": true,
+				"Status":  502,
+				"Message": "Error al consultar las dependencias: " + documento,
+				"Error":   err,
+			}
+			panic(errorOutput)
+		}
+	}()
+	dependencias = make(map[string]interface{})
+	dependencias["Dependencias Supervisor"], errorOutput = GetDependenciasSupervisor(documento)
+	dependencias["Dependencias Ordenador"], errorOutput = GetDependenciasOrdenador(documento)
+	if dependencias != nil {
+		return dependencias, nil
+	}
+
+	return nil, errorOutput
 }

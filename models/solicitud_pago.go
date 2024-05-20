@@ -9,4 +9,5 @@ type SolicitudPago struct {
 	Ano                  string
 	Mes                  string
 	Estado               string
+	Id 					 string
 }

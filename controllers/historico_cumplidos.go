@@ -12,8 +12,15 @@ type HistoricoCumplidos struct {
 
 func (c *HistoricoCumplidos) URLMapping() {
 	c.Mapping("GetCambioEstado", c.GetCambioEstado)
+	c.Mapping("GetDependencias", c.GetDependencias)
 }
 
+// @Title GetCambioEstado
+// @Description get the state change history for a given payment ID
+// @Param idPagoMensual path string true "ID of the monthly payment"
+// @Success 200 {object} map[string]interface{} "Success"
+// @Failure 404 {object} map[string]interface{} "Error"
+// @router /historicos/cambio-estado/:idPagoMensual [get]
 func (c *HistoricoCumplidos) GetCambioEstado() {
 
 	defer func() {
@@ -42,4 +49,41 @@ func (c *HistoricoCumplidos) GetCambioEstado() {
 		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 201, "Message": "Consulta completa", "Data": estadospago}
 	}
 	c.ServeJSON()
+}
+
+// @Title GetDependencias
+// @Description get the dependencies for a given document
+// @Param documento path string true "Document number"
+// @Success 200 {object} map[string]interface{} "Success"
+// @Failure 404 {object} map[string]interface{} "Error"
+// @router /historicos/dependencias/:documento [get]
+func (c *HistoricoCumplidos) GetDependencias() {
+
+	defer func() {
+		if err := recover(); err != nil {
+			logs.Error(err)
+			localError := err.(map[string]interface{})
+			c.Data["message"] = beego.AppConfig.String("appname") + "/historicos/cambio-estado/" + "/" + localError["funcion"].(string)
+			c.Data["data"] = localError["err"]
+			if status, ok := localError["status"]; ok {
+				c.Abort(status.(string))
+			} else {
+				c.Abort("404")
+			}
+		}
+	}()
+
+	documento := c.GetString(":documento")
+
+	dependencias, err := helpers.ObtenerDependencias(documento)
+
+	if err != nil {
+		panic(c.Data)
+	} else if dependencias == nil {
+		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 204, "Message": "No hay datos", "Data": dependencias}
+	} else {
+		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 200, "Message": "Consulta completa", "Data": dependencias}
+	}
+	c.ServeJSON()
+
 }

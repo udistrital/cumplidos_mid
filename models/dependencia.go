@@ -6,3 +6,7 @@ type Dependencia struct {
 	TelefonoDependencia string
 	CorreoElectronico   string
 }
+type DependenciaSimple struct {
+	Codigo string
+	Nombre string
+}
