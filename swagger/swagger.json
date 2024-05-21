@@ -79,6 +79,32 @@
                 }
             }
         },
+        "/download_documents/{pago_mensual_id}": {
+            "get": {
+                "tags": [
+                    "download_documents"
+                ],
+                "description": "Download in a .zip file all the documents uploaded in the payment request form",
+                "operationId": "DescargarDocumentosSolicitudesPagosController.GetDocumentosPagoMensual",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id_pago_mensual",
+                        "description": "Id Pago Mensual",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "not found resource"
+                    }
+                }
+            }
+        },
         "/informacion_informe/preliquidacion/{pago_mensual_id}": {
             "get": {
                 "tags": [
@@ -677,31 +703,31 @@
         }
     },
     "definitions": {
-        "23578.0xc0004e4240.false": {
+        "23966.0xc0005318f0.false": {
             "title": "false",
             "type": "object"
         },
-        "23858.0xc0004e4270.false": {
+        "24246.0xc000531920.false": {
             "title": "false",
             "type": "object"
         },
-        "23919.0xc0004e42a0.false": {
+        "24307.0xc000531950.false": {
             "title": "false",
             "type": "object"
         },
-        "23987.0xc0004e4390.false": {
+        "24375.0xc000531a40.false": {
             "title": "false",
             "type": "object"
         },
-        "24124.0xc0004e43c0.false": {
+        "24512.0xc000531a70.false": {
             "title": "false",
             "type": "object"
         },
-        "24275.0xc0004e43f0.false": {
+        "24663.0xc000531aa0.false": {
             "title": "false",
             "type": "object"
         },
-        "40471.0xc000513c20.false": {
+        "40859.0xc0005992f0.false": {
             "title": "false",
             "type": "object"
         },
@@ -1177,13 +1203,13 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/23858.0xc0004e4270.false"
+                    "$ref": "#/definitions/24246.0xc000531920.false"
                 },
                 "Dependencia": {
                     "type": "string"
                 },
                 "EjecutadoDinero": {
-                    "$ref": "#/definitions/24275.0xc0004e43f0.false"
+                    "$ref": "#/definitions/24663.0xc000531aa0.false"
                 },
                 "FechaCPS": {
                     "type": "string"
@@ -1200,22 +1226,22 @@
                     "$ref": "#/definitions/models.FechasConNovedades"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/24124.0xc0004e43c0.false"
+                    "$ref": "#/definitions/24512.0xc000531a70.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/23987.0xc0004e4390.false"
+                    "$ref": "#/definitions/24375.0xc000531a40.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/23919.0xc0004e42a0.false"
+                    "$ref": "#/definitions/24307.0xc000531950.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/23578.0xc0004e4240.false"
+                    "$ref": "#/definitions/23966.0xc0005318f0.false"
                 },
                 "ValorContrato": {
                     "type": "integer",
@@ -1566,7 +1592,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/40471.0xc000513c20.false"
+                    "$ref": "#/definitions/40859.0xc0005992f0.false"
                 }
             }
         }

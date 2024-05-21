@@ -25,6 +25,15 @@ func init() {
             Filters: nil,
             Params: nil})
 
+    beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:DescargarDocumentosSolicitudesPagosController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:DescargarDocumentosSolicitudesPagosController"],
+        beego.ControllerComments{
+            Method: "GetDocumentosPagoMensual",
+            Router: "/:pago_mensual_id",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
     beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:InformacionInformeController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:InformacionInformeController"],
         beego.ControllerComments{
             Method: "GetInformacionInforme",
