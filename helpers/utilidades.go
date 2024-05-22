@@ -389,3 +389,12 @@ func ConvertInt(data []string) {
 		}
 	}
 }
+func capitalizarPrimeraLetra(texto string) string {
+	if len(texto) == 0 {
+		return texto
+	}
+
+    texto = strings.TrimSpace(texto) // Eliminar espacios iniciales y finales
+	texto = strings.ToLower(texto)
+	return strings.ToUpper(texto[:1]) + texto[1:]
+}

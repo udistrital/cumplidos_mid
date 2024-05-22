@@ -169,4 +169,21 @@ func init() {
             Filters: nil,
             Params: nil})
 
+	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"],
+		beego.ControllerComments{
+			Method:           "GetCambioEstado",
+			Router:           "/cambio_estado_pago/:idPagoMensual",
+			AllowHTTPMethods: []string{"get"},
+			MethodParams:     param.Make(),
+			Filters:          nil,
+			Params:           nil})
+            beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"],
+            beego.ControllerComments{
+                Method:           "GetDependencias",
+                Router:           "/dependencias/:documento",
+                AllowHTTPMethods: []string{"get"},
+                MethodParams:     param.Make(),
+                Filters:          nil,
+                Params:           nil})
+
 }
