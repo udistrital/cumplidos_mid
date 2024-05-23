@@ -2,16 +2,17 @@ package helpers
 
 import (
 	"archive/zip"
+	"bytes"
 	"encoding/base64"
 	"fmt"
-	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/models"
 )
 
-func DescargarDocumentosSolicitudesPagos(id_pago_mensual string) (outputError map[string]interface{}) {
+func DescargarDocumentosSolicitudesPagos(id_pago_mensual string) (DocumentosZip models.DescargaDocumentos, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = map[string]interface{}{
@@ -26,17 +27,11 @@ func DescargarDocumentosSolicitudesPagos(id_pago_mensual string) (outputError ma
 
 	//Realizar la solicitud opara obtener los documentos asociados al pago
 
-	//documentos, error := TraerEnlacesDocumentosAsociadosPagoMensual(id_pago_mensual)
+	var respuesta_peticion map[string]interface{}
+	var pagos_mensuales []models.PagoMensual
+	documentos, error := TraerEnlacesDocumentosAsociadosPagoMensual(id_pago_mensual)
 
-	var documentos []models.DocumentosSoporte
-	var respuesta_consulta map[string]interface{}
-
-	fmt.Println(beego.AppConfig.String("UrlPruebasApi2") + "/contratos_contratista/documentos_pago_mensual/" + id_pago_mensual)
-	if response, error := getJsonTest(beego.AppConfig.String("UrlPruebasApi2")+"/contratos_contratista/documentos_pago_mensual/"+id_pago_mensual, &respuesta_consulta); (response == 200) && (error == nil) {
-		if len(respuesta_consulta) > 0 {
-			LimpiezaRespuestaRefactor(respuesta_consulta, &documentos)
-		}
-	} else {
+	if error != nil {
 		outputError = map[string]interface{}{
 			"Succes":  false,
 			"Status":  502,
@@ -44,39 +39,13 @@ func DescargarDocumentosSolicitudesPagos(id_pago_mensual string) (outputError ma
 			"Funcion": "TraerEnlacesDocumentosAsociadosPagoMensual",
 			"Error":   error,
 		}
-		return outputError
+		return DocumentosZip, outputError
 	}
-
-	/*
-		if error != nil {
-			outputError = map[string]interface{}{
-				"Succes":  false,
-				"Status":  502,
-				"Message": "Error al obtener los documentos del pago",
-				"Funcion": "TraerEnlacesDocumentosAsociadosPagoMensual",
-				"Error":   error,
-			}
-			return outputError
-		}
-
-	*/
 
 	//Crear un archivo ZIP
 
-	zipFile, err := os.Create("documentos_pago.zip")
-	if err != nil {
-		outputError = map[string]interface{}{
-			"Succes":  false,
-			"Status":  502,
-			"Message": "Error al crear el archivo ZIP",
-			"Funcion": "DescargarDocumentosSolicitudesPagos",
-		}
-		return outputError
-	}
-	defer zipFile.Close()
-
-	zipWriter := zip.NewWriter(zipFile)
-	defer zipWriter.Close()
+	buf := new(bytes.Buffer)
+	zipWriter := zip.NewWriter(buf)
 
 	// Decodificar los archivos en base64 y agregarlos al .zip
 	for i, documento := range documentos {
@@ -88,7 +57,7 @@ func DescargarDocumentosSolicitudesPagos(id_pago_mensual string) (outputError ma
 				"Message": "Error al decodificar el archivo base64",
 				"Error":   error,
 			}
-			return outputError
+			return DocumentosZip, outputError
 		}
 
 		// Crear una entrada en el ZIP para cada archivo PDF con su nombre específico y un índice único
@@ -101,7 +70,7 @@ func DescargarDocumentosSolicitudesPagos(id_pago_mensual string) (outputError ma
 				"Message": "Error al crear la entrada en el archivo ZIP",
 				"Error":   err.Error(),
 			}
-			return outputError
+			return DocumentosZip, outputError
 		}
 
 		// Escribir los datos del PDF en la entrada del ZIP
@@ -113,9 +82,46 @@ func DescargarDocumentosSolicitudesPagos(id_pago_mensual string) (outputError ma
 				"Message": "Error al escribir el contenido del PDF en el archivo ZIP",
 				"Error":   err.Error(),
 			}
-			return outputError
+			return DocumentosZip, outputError
 		}
 	}
 
-	return nil
+	// Cerrar el writer del ZIP
+	err := zipWriter.Close()
+	if err != nil {
+		outputError := map[string]interface{}{
+			"Success": false,
+			"Status":  502,
+			"Message": "Error al cerrar el archivo ZIP",
+			"Error":   err.Error(),
+		}
+		return DocumentosZip, outputError
+	}
+
+	DocumentosZip.File = base64.StdEncoding.EncodeToString(buf.Bytes())
+
+	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?query=Id:" + id_pago_mensual)
+	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=Id:"+id_pago_mensual, &respuesta_peticion); (err == nil) && (response == 200) {
+		if respuesta_peticion != nil {
+			LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
+		}
+	}
+
+	var informacion_contrato_contratista models.InformacionContratoContratista
+	for _, pago_mensual := range pagos_mensuales {
+		informacion_contrato_contratista, error = GetInformacionContratoContratista(pago_mensual.NumeroContrato, strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64))
+
+		if error == nil {
+			DocumentosZip.Nombre = informacion_contrato_contratista.InformacionContratista.NombreCompleto + "_" + pago_mensual.NumeroContrato + "_" + informacion_contrato_contratista.InformacionContratista.Documento.Numero + "_" + strconv.FormatFloat(pago_mensual.Ano, 'f', 0, 64) + "_" + strconv.FormatFloat(pago_mensual.Mes, 'f', 0, 64)
+		} else {
+			outputError := map[string]interface{}{
+				"Success": false,
+				"Status":  502,
+				"Message": "Error al Buscar los datos del contratista",
+			}
+			return DocumentosZip, outputError
+		}
+	}
+
+	return DocumentosZip, nil
 }

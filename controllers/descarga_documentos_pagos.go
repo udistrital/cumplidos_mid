@@ -45,9 +45,9 @@ func (c *DescargarDocumentosSolicitudesPagosController) GetDocumentosPagoMensual
 		panic(map[string]interface{}{"funcion": "GetDocumentosPagoMensual", "err": "Error en los parametros de ingreso", "status": "400"})
 	}
 
-	if err := helpers.DescargarDocumentosSolicitudesPagos(pago_mensual_id); err == nil {
+	if data, err := helpers.DescargarDocumentosSolicitudesPagos(pago_mensual_id); err == nil {
 		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": "Descarga completada con éxito"}
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": data}
 	} else {
 		panic(err)
 	}

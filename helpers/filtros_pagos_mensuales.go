@@ -207,7 +207,7 @@ func SolicitudesPagoMensual(codigos_dependencias []string, vigencias []string, d
 					filtro_pago_dependencia.Estado = pago_filtrado.EstadoPagoMensualId.Nombre
 					filtro_pago_dependencia.DocumentoContratista = informacion_contrato_contratista.InformacionContratista.Documento.Numero
 					filtro_pago_dependencia.NombreContratista = informacion_contrato_contratista.InformacionContratista.NombreCompleto
-					filtro_pago_dependencia.Id =strconv.Itoa(pago_filtrado.Id)
+					filtro_pago_dependencia.IdPagoMensual = strconv.Itoa(pago_filtrado.Id)
 					pagos = append(pagos, filtro_pago_dependencia)
 				} else {
 					return nil, outputError
