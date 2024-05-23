@@ -58,6 +58,11 @@ func init() {
 				&controllers.SolicitudesPagoMensualController{},
 			),
 		),
+		beego.NSNamespace("/download_documents",
+			beego.NSInclude(
+				&controllers.DescargarDocumentosSolicitudesPagosController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

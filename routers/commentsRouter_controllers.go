@@ -25,6 +25,33 @@ func init() {
             Filters: nil,
             Params: nil})
 
+    beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:DescargarDocumentosSolicitudesPagosController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:DescargarDocumentosSolicitudesPagosController"],
+        beego.ControllerComments{
+            Method: "GetDocumentosPagoMensual",
+            Router: "/:pago_mensual_id",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"],
+        beego.ControllerComments{
+            Method: "GetCambioEstado",
+            Router: "/historicos/cambio-estado/:idPagoMensual",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"],
+        beego.ControllerComments{
+            Method: "GetDependencias",
+            Router: "/historicos/dependencias/:documento",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
     beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:InformacionInformeController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:InformacionInformeController"],
         beego.ControllerComments{
             Method: "GetInformacionInforme",
@@ -159,22 +186,5 @@ func init() {
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
-
-	beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"],
-		beego.ControllerComments{
-			Method:           "GetCambioEstado",
-			Router:           "/cambio_estado_pago/:idPagoMensual",
-			AllowHTTPMethods: []string{"get"},
-			MethodParams:     param.Make(),
-			Filters:          nil,
-			Params:           nil})
-            beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"],
-            beego.ControllerComments{
-                Method:           "GetDependencias",
-                Router:           "/dependencias/:documento",
-                AllowHTTPMethods: []string{"get"},
-                MethodParams:     param.Make(),
-                Filters:          nil,
-                Params:           nil})
 
 }
