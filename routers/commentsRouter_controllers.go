@@ -27,7 +27,7 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:DescargarDocumentosSolicitudesPagosController"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:DescargarDocumentosSolicitudesPagosController"],
         beego.ControllerComments{
-            Method: "GetDocumentosPagoMensual",
+            Method: "GetDocumentosPagoZip",
             Router: "/:pago_mensual_id",
             AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
