@@ -105,6 +105,64 @@
                 }
             }
         },
+        "/historicos/historicos/cambio-estado/{idPagoMensual}": {
+            "get": {
+                "tags": [
+                    "historicos"
+                ],
+                "description": "get the state change history for a given payment ID",
+                "operationId": "HistoricoCumplidos.GetCambioEstado",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "idPagoMensual",
+                        "description": "ID of the monthly payment",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "\"Success\"",
+                        "schema": {
+                            "$ref": "#/definitions/map[string]interface{}"
+                        }
+                    },
+                    "404": {
+                        "description": "{object} map[string]interface{} \"Error\""
+                    }
+                }
+            }
+        },
+        "/historicos/historicos/dependencias/{documento}": {
+            "get": {
+                "tags": [
+                    "historicos"
+                ],
+                "description": "get the dependencies for a given document",
+                "operationId": "HistoricoCumplidos.GetDependencias",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "documento",
+                        "description": "Document number",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "\"Success\"",
+                        "schema": {
+                            "$ref": "#/definitions/map[string]interface{}"
+                        }
+                    },
+                    "404": {
+                        "description": "{object} map[string]interface{} \"Error\""
+                    }
+                }
+            }
+        },
         "/informacion_informe/preliquidacion/{pago_mensual_id}": {
             "get": {
                 "tags": [
@@ -703,32 +761,36 @@
         }
     },
     "definitions": {
-        "23578.0xc00054b170.false": {
+        "24095.0xc0004f91d0.false": {
             "title": "false",
             "type": "object"
         },
-        "23858.0xc00054b1a0.false": {
+        "24375.0xc0004f9200.false": {
             "title": "false",
             "type": "object"
         },
-        "23919.0xc00054b1d0.false": {
+        "24436.0xc0004f9230.false": {
             "title": "false",
             "type": "object"
         },
-        "23987.0xc00054b2c0.false": {
+        "24504.0xc0004f9320.false": {
             "title": "false",
             "type": "object"
         },
-        "24124.0xc00054b2f0.false": {
+        "24641.0xc0004f9350.false": {
             "title": "false",
             "type": "object"
         },
-        "24275.0xc00054b320.false": {
+        "24792.0xc0004f9380.false": {
             "title": "false",
             "type": "object"
         },
-        "40471.0xc0005a4b70.false": {
+        "41017.0xc0005916b0.false": {
             "title": "false",
+            "type": "object"
+        },
+        "map[string]interface{}": {
+            "title": "map[string]interface{}",
             "type": "object"
         },
         "models.ActividadEspecifica": {
@@ -1203,13 +1265,13 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/23858.0xc00054b1a0.false"
+                    "$ref": "#/definitions/24375.0xc0004f9200.false"
                 },
                 "Dependencia": {
                     "type": "string"
                 },
                 "EjecutadoDinero": {
-                    "$ref": "#/definitions/24275.0xc00054b320.false"
+                    "$ref": "#/definitions/24792.0xc0004f9380.false"
                 },
                 "FechaCPS": {
                     "type": "string"
@@ -1226,22 +1288,22 @@
                     "$ref": "#/definitions/models.FechasConNovedades"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/24124.0xc00054b2f0.false"
+                    "$ref": "#/definitions/24641.0xc0004f9350.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/23987.0xc00054b2c0.false"
+                    "$ref": "#/definitions/24504.0xc0004f9320.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/23919.0xc00054b1d0.false"
+                    "$ref": "#/definitions/24436.0xc0004f9230.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/23578.0xc00054b170.false"
+                    "$ref": "#/definitions/24095.0xc0004f91d0.false"
                 },
                 "ValorContrato": {
                     "type": "integer",
@@ -1515,6 +1577,9 @@
                 "Estado": {
                     "type": "string"
                 },
+                "IdPagoMensual": {
+                    "type": "string"
+                },
                 "Mes": {
                     "type": "string"
                 },
@@ -1592,7 +1657,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/40471.0xc0005a4b70.false"
+                    "$ref": "#/definitions/41017.0xc0005916b0.false"
                 }
             }
         }

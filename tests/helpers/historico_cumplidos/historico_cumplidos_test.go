@@ -1,4 +1,4 @@
-package filtros_pagos_mensuales
+package historico_cumplidos
 
 import (
 	"flag"
@@ -53,79 +53,28 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-// TestGetPagosFiltrados ...
-func TestGetPagosFiltrados(t *testing.T) {
+func TestGetEstadosPago(t *testing.T) {
 	t.Log("-----------------------------------------------------")
-	numerosContratos := []string{"619", "48"}
-	numerosDocumentos := []string{"80145797", "1022926896"}
-	anios := []string{"2018"}
-	meses := []string{"5", "4"}
-	estadosPagos := []string{"12"}
-	vigencias := []string{"2017"}
-	pagos, outputError := helpers.GetPagosFiltrados(numerosContratos, numerosDocumentos, anios, meses, estadosPagos, vigencias)
+	cambiosEstado, outputError := helpers.GetEstadosPago("89499")
 	if outputError != nil {
-		t.Error("Error en la función GetPagosFiltrados:", outputError)
+		t.Error("Error en la función GetEstadosPago")
 		t.Fail()
 	} else {
-		t.Log(pagos)
-		t.Log("TestGetPagosFiltrados Finalizado Correctamente (OK)")
+		t.Log(cambiosEstado)
+		t.Log("TestGetEstadosPago Finalizado Correctamente (OK)")
 	}
-
 	t.Log("-----------------------------------------------------")
 }
 
-func TestFiltrosDependencia(t *testing.T) {
+func TestObtenerDependencias(t *testing.T) {
 	t.Log("-----------------------------------------------------")
-
-	dependencias := []string{"'DEP12'", "'DEP626'"}
-	vigencias := []string{"2017"}
-	contratos, outputError := helpers.FiltrosDependencia(dependencias, vigencias)
-
+	dependencias, outputError := helpers.ObtenerDependencias("19483708")
 	if outputError != nil {
-		t.Error("Error en la función FiltrosDependencia:", outputError)
+		t.Error("Error en la función ObtenerDependencias")
 		t.Fail()
 	} else {
-		t.Log(contratos)
-		t.Log("TestFiltrosDependencia Finalizado Correctamente (OK)")
+		t.Log(dependencias)
+		t.Log("TestGetEstadosPago Finalizado Correctamente (OK)")
 	}
-
-	t.Log("-----------------------------------------------------")
-}
-
-func TestSolicitudesPagoMensual(t *testing.T) {
-
-	t.Log("-----------------------------------------------------")
-	codigos_dependencias := []string{"'DEP12'", "'DEP626'"}
-	vigencias := []string{"2017", "2018"}
-	documentos_contratistas := []string{"1109843316", "1109843316"}
-	numeros_contratos := []string{}
-	meses := []string{"5", "6"}
-	anios := []string{"2018"}
-	estados := []string{}
-
-	pagos, outputError := helpers.SolicitudesPagoMensual(codigos_dependencias, vigencias, documentos_contratistas, numeros_contratos, meses, anios, estados)
-
-	if outputError != nil {
-		t.Error("Error en la función SolicitudesPagoMensual:", outputError)
-		t.Fail()
-	} else {
-		t.Log(pagos)
-		t.Log("TestSolicitudesPagoMensual Finalizado Correctamente (OK)")
-	}
-
-	t.Log("-----------------------------------------------------")
-}
-
-func TestGetInformacionContrato(t *testing.T) {
-	t.Log("-----------------------------------------------------")
-	informacionContrato, outputError := helpers.GetInformacionContrato("1406", "2020")
-	if outputError != nil {
-		t.Error("Error en la función GetInformacionContrato")
-		t.Fail()
-	} else {
-		t.Log(informacionContrato)
-		t.Log("TestGetInformacionContrato Finalizado Correctamente (OK)")
-	}
-
 	t.Log("-----------------------------------------------------")
 }
