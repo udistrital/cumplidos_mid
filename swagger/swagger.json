@@ -85,7 +85,7 @@
                     "download_documents"
                 ],
                 "description": "Download in a .zip file all the documents uploaded in the payment request form",
-                "operationId": "DescargarDocumentosSolicitudesPagosController.GetDocumentosPagoMensual",
+                "operationId": "DescargarDocumentosSolicitudesPagosController.GetDocumentosPagoZip",
                 "parameters": [
                     {
                         "in": "path",
@@ -105,7 +105,7 @@
                 }
             }
         },
-        "/historicos/historicos/cambio-estado/{idPagoMensual}": {
+        "/historicos/cambio_estado_pago/{idPagoMensual}": {
             "get": {
                 "tags": [
                     "historicos"
@@ -134,65 +134,7 @@
                 }
             }
         },
-        "/historicos/historicos/dependencias/{documento}": {
-            "get": {
-                "tags": [
-                    "historicos"
-                ],
-                "description": "get the dependencies for a given document",
-                "operationId": "HistoricoCumplidos.GetDependencias",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "documento",
-                        "description": "Document number",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "\"Success\"",
-                        "schema": {
-                            "$ref": "#/definitions/map[string]interface{}"
-                        }
-                    },
-                    "404": {
-                        "description": "{object} map[string]interface{} \"Error\""
-                    }
-                }
-            }
-        },
-        "/historicos/historicos/cambio-estado/{idPagoMensual}": {
-            "get": {
-                "tags": [
-                    "historicos"
-                ],
-                "description": "get the state change history for a given payment ID",
-                "operationId": "HistoricoCumplidos.GetCambioEstado",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "idPagoMensual",
-                        "description": "ID of the monthly payment",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "\"Success\"",
-                        "schema": {
-                            "$ref": "#/definitions/map[string]interface{}"
-                        }
-                    },
-                    "404": {
-                        "description": "{object} map[string]interface{} \"Error\""
-                    }
-                }
-            }
-        },
-        "/historicos/historicos/dependencias/{documento}": {
+        "/historicos/dependencias/{documento}": {
             "get": {
                 "tags": [
                     "historicos"
@@ -819,43 +761,32 @@
         }
     },
     "definitions": {
-        "24897.0x11fe9fe0.false": {
-        "24095.0xc0004f91d0.false": {
+        "24897.0x1246a090.false": {
             "title": "false",
             "type": "object"
         },
-        "25189.0x12028000.false": {
-        "24375.0xc0004f9200.false": {
+        "25189.0x1246a0a8.false": {
             "title": "false",
             "type": "object"
         },
-        "25254.0x12028018.false": {
-        "24436.0xc0004f9230.false": {
+        "25254.0x1246a0c0.false": {
             "title": "false",
             "type": "object"
         },
-        "25326.0x12028090.false": {
-        "24504.0xc0004f9320.false": {
+        "25326.0x1246a138.false": {
             "title": "false",
             "type": "object"
         },
-        "25469.0x120280a8.false": {
-        "24641.0xc0004f9350.false": {
+        "25469.0x1246a150.false": {
             "title": "false",
             "type": "object"
         },
-        "25626.0x120280c0.false": {
-        "24792.0xc0004f9380.false": {
+        "25626.0x1246a168.false": {
             "title": "false",
             "type": "object"
         },
-        "42565.0x12029440.false": {
-        "41017.0xc0005916b0.false": {
+        "42565.0x1246b4e8.false": {
             "title": "false",
-            "type": "object"
-        },
-        "map[string]interface{}": {
-            "title": "map[string]interface{}",
             "type": "object"
         },
         "map[string]interface{}": {
@@ -1334,15 +1265,13 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/24375.0xc0004f9200.false"
-                    "$ref": "#/definitions/25189.0x12028000.false"
+                    "$ref": "#/definitions/25189.0x1246a0a8.false"
                 },
                 "Dependencia": {
                     "type": "string"
                 },
                 "EjecutadoDinero": {
-                    "$ref": "#/definitions/25626.0x120280c0.false"
-                    "$ref": "#/definitions/24792.0xc0004f9380.false"
+                    "$ref": "#/definitions/25626.0x1246a168.false"
                 },
                 "FechaCPS": {
                     "type": "string"
@@ -1359,26 +1288,22 @@
                     "$ref": "#/definitions/models.FechasConNovedades"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/25469.0x120280a8.false"
-                    "$ref": "#/definitions/24641.0xc0004f9350.false"
+                    "$ref": "#/definitions/25469.0x1246a150.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/24504.0xc0004f9320.false"
-                    "$ref": "#/definitions/25326.0x12028090.false"
+                    "$ref": "#/definitions/25326.0x1246a138.false"
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/24436.0xc0004f9230.false"
-                    "$ref": "#/definitions/25254.0x12028018.false"
+                    "$ref": "#/definitions/25254.0x1246a0c0.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/24897.0x11fe9fe0.false"
-                    "$ref": "#/definitions/24095.0xc0004f91d0.false"
+                    "$ref": "#/definitions/24897.0x1246a090.false"
                 },
                 "ValorContrato": {
                     "type": "integer",
@@ -1655,9 +1580,6 @@
                 "IdPagoMensual": {
                     "type": "string"
                 },
-                "IdPagoMensual": {
-                    "type": "string"
-                },
                 "Mes": {
                     "type": "string"
                 },
@@ -1735,8 +1657,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/42565.0x12029440.false"
-                    "$ref": "#/definitions/41017.0xc0005916b0.false"
+                    "$ref": "#/definitions/42565.0x1246b4e8.false"
                 }
             }
         }
