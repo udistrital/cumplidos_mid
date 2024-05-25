@@ -14,7 +14,7 @@ import (
 
 //Funcion para construir el query dinamico
 
-func GetPagosFiltrados(numeros_contratos []string, numeros_documentos []string, anios []string, meses []string, estados_pagos []string) (PagoMensual []models.PagoMensual, outputError interface{}) {
+func GetPagosFiltrados(numeros_contratos []string, numeros_documentos []string, anios []string, meses []string, estados_pagos []string, vigencias []string) (PagoMensual []models.PagoMensual, outputError interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			outputError = map[string]interface{}{
@@ -32,7 +32,7 @@ func GetPagosFiltrados(numeros_contratos []string, numeros_documentos []string, 
 
 	//Se contruye dinamicamente el query
 
-	query := strings.TrimSuffix(("?query=" + buildQuery(numeros_contratos, "NumeroContrato") + buildQuery(numeros_documentos, "DocumentoPersonaId") +
+	query := strings.TrimSuffix(("?query=" + buildQuery(numeros_contratos, "NumeroContrato") + buildQuery(vigencias, "VigenciaContrato") + buildQuery(numeros_documentos, "DocumentoPersonaId") +
 		buildQuery(anios, "Ano") + buildQuery(meses, "Mes") + buildQuery(estados_pagos, "EstadoPagoMensualId__Id")), ",")
 	order := "&order=desc"
 	sortby := "&sortby=Ano,Mes,DocumentoPersonaId"
@@ -167,18 +167,11 @@ func SolicitudesPagoMensual(codigos_dependencias []string, vigencias []string, d
 		}
 	}()
 
+	contratos := numeros_contratos
+
 	var pagos_filtrados []models.PagoMensual
 	var filtros_dependencias []models.ContratoSuscritoDependencia
 
-	pagos_filtrados, err := GetPagosFiltrados(numeros_contratos, documentos_contratistas, anios, meses, estados)
-	if err != nil {
-		outputError = map[string]interface{}{
-			"Succes":  false,
-			"Status":  502,
-			"Message": "Error al filtrar los pagos, Ningun parametro coincide con los filtros",
-		}
-		return nil, outputError
-	}
 	filtros_dependencias, error := FiltrosDependencia(codigos_dependencias, vigencias)
 	if error != nil {
 		outputError := map[string]interface{}{
@@ -191,29 +184,38 @@ func SolicitudesPagoMensual(codigos_dependencias []string, vigencias []string, d
 	}
 
 	for _, filtro_dependencia := range filtros_dependencias {
-		for _, pago_filtrado := range pagos_filtrados {
-			var filtro_pago_dependencia models.SolicitudPago
-			if filtro_dependencia.NumeroContratoSuscrito == pago_filtrado.NumeroContrato && filtro_dependencia.Vigencia == strconv.Itoa(int(pago_filtrado.VigenciaContrato)) {
-				var contrato models.InformacionContrato
-				contrato, outputError = GetInformacionContrato(pago_filtrado.NumeroContrato, strconv.FormatFloat(pago_filtrado.VigenciaContrato, 'f', 0, 64))
-				var informacion_contrato_contratista models.InformacionContratoContratista
-				informacion_contrato_contratista, outputError = GetInformacionContratoContratista(pago_filtrado.NumeroContrato, strconv.FormatFloat(pago_filtrado.VigenciaContrato, 'f', 0, 64))
-				if outputError == nil {
-					filtro_pago_dependencia.NombreDependencia = informacion_contrato_contratista.InformacionContratista.Dependencia
-					filtro_pago_dependencia.Rubro = contrato.Contrato.Rubro
-					filtro_pago_dependencia.Vigencia = strconv.FormatFloat(pago_filtrado.VigenciaContrato, 'f', 0, 64)
-					filtro_pago_dependencia.Ano = strconv.FormatFloat(pago_filtrado.Ano, 'f', 0, 64)
-					filtro_pago_dependencia.Mes = strconv.FormatFloat(pago_filtrado.Mes, 'f', 0, 64)
-					filtro_pago_dependencia.Estado = pago_filtrado.EstadoPagoMensualId.Nombre
-					filtro_pago_dependencia.DocumentoContratista = informacion_contrato_contratista.InformacionContratista.Documento.Numero
-					filtro_pago_dependencia.NombreContratista = informacion_contrato_contratista.InformacionContratista.NombreCompleto
-					filtro_pago_dependencia.IdPagoMensual = strconv.Itoa(pago_filtrado.Id)
-					pagos = append(pagos, filtro_pago_dependencia)
-				} else {
-					return nil, outputError
-				}
-			}
+		contratos = append(contratos, filtro_dependencia.NumeroContratoSuscrito)
+	}
+
+	pagos_filtrados, err := GetPagosFiltrados(contratos, documentos_contratistas, anios, meses, estados, vigencias)
+	if err != nil {
+		outputError := map[string]interface{}{
+			"Succes":  false,
+			"Status":  502,
+			"Message": "Error al filtrar los pagos, Ningun parametro coincide con los filtros",
 		}
+		return nil, outputError
+	}
+
+	for _, pago_filtrado := range pagos_filtrados {
+		contrato, err := GetInformacionContrato(pago_filtrado.NumeroContrato, strconv.Itoa(int(pago_filtrado.VigenciaContrato)))
+		if err != nil {
+			return nil, err
+		}
+		informacion_contrato_contratista, err := GetInformacionContratoContratista(pago_filtrado.NumeroContrato, strconv.Itoa(int(pago_filtrado.VigenciaContrato)))
+		if err != nil {
+			return nil, err
+		}
+		pagos = append(pagos, models.SolicitudPago{
+			NombreDependencia:    informacion_contrato_contratista.InformacionContratista.Dependencia,
+			Rubro:                contrato.Contrato.Rubro,
+			Vigencia:             strconv.Itoa(int(pago_filtrado.VigenciaContrato)),
+			Ano:                  strconv.Itoa(int(pago_filtrado.Ano)),
+			Mes:                  strconv.Itoa(int(pago_filtrado.Mes)),
+			Estado:               pago_filtrado.EstadoPagoMensualId.Nombre,
+			DocumentoContratista: informacion_contrato_contratista.InformacionContratista.Documento.Numero,
+			NombreContratista:    informacion_contrato_contratista.InformacionContratista.NombreCompleto,
+			IdPagoMensual:        strconv.Itoa(pago_filtrado.Id)})
 	}
 
 	return pagos, nil

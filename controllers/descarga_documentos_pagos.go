@@ -46,8 +46,14 @@ func (c *DescargarDocumentosSolicitudesPagosController) GetDocumentosPagoMensual
 	}
 
 	if data, err := helpers.DescargarDocumentosSolicitudesPagos(pago_mensual_id); err == nil {
-		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": data}
+		if data.Nombre != "___0_0" {
+			c.Ctx.Output.SetStatus(200)
+			c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": data}
+		} else {
+			c.Ctx.Output.SetStatus(204)
+			c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": "Ningun Pago coincide con el parametro de busqueda"}
+		}
+
 	} else {
 		panic(err)
 	}
