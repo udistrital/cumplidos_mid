@@ -13,7 +13,7 @@ type DescargarDocumentosSolicitudesPagosController struct {
 }
 
 func (c *DescargarDocumentosSolicitudesPagosController) URLMapping() {
-	c.Mapping("GetDocumentosPagoMensual", c.GetDocumentosPagoMensual)
+	c.Mapping("GetDocumentosPagoZip", c.GetDocumentosPagoZip)
 }
 
 // GetDocumentosPagoMensual ...
@@ -23,7 +23,7 @@ func (c *DescargarDocumentosSolicitudesPagosController) URLMapping() {
 // @Success 200
 // @Failure 404 not found resource
 // @router /:pago_mensual_id [get]
-func (c *DescargarDocumentosSolicitudesPagosController) GetDocumentosPagoMensual() {
+func (c *DescargarDocumentosSolicitudesPagosController) GetDocumentosPagoZip() {
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)

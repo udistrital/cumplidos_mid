@@ -63,7 +63,7 @@ func (c *HistoricoCumplidos) GetDependencias() {
 		if err := recover(); err != nil {
 			logs.Error(err)
 			localError := err.(map[string]interface{})
-			c.Data["message"] = beego.AppConfig.String("appname") + "/historicos/cambio-estado/" + "/" + localError["funcion"].(string)
+			c.Data["message"] = beego.AppConfig.String("appname") + "/historicos/dependencias/" + "/" + localError["funcion"].(string)
 			c.Data["data"] = localError["err"]
 			if status, ok := localError["status"]; ok {
 				c.Abort(status.(string))
@@ -73,9 +73,9 @@ func (c *HistoricoCumplidos) GetDependencias() {
 		}
 	}()
 
-	documento := c.GetString(":documento")
 
-	dependencias, err := helpers.ObtenerDependencias(documento)
+	documentoUsuario := c.GetString(":documento")
+	dependencias, err := helpers.ObtenerDependencias(documentoUsuario)
 
 	if err != nil {
 		panic(c.Data)
