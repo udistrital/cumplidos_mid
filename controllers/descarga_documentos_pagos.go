@@ -16,8 +16,8 @@ func (c *DescargarDocumentosSolicitudesPagosController) URLMapping() {
 	c.Mapping("GetDocumentosPagoZip", c.GetDocumentosPagoZip)
 }
 
-// GetDocumentosPagoMensual ...
-// @Title GetDocumentosPagoMensual
+// GetDocumentosPagoZip ...
+// @Title GetDocumentosPagoZip
 // @Description Download in a .zip file all the documents uploaded in the payment request form
 // @Param id_pago_mensual path string true "Id Pago Mensual"
 // @Success 200
@@ -42,7 +42,7 @@ func (c *DescargarDocumentosSolicitudesPagosController) GetDocumentosPagoZip() {
 	_, err := strconv.Atoi(pago_mensual_id)
 
 	if err != nil {
-		panic(map[string]interface{}{"funcion": "GetDocumentosPagoMensual", "err": "Error en los parametros de ingreso", "status": "400"})
+		panic(map[string]interface{}{"funcion": "GetDocumentosPagoZip", "err": "Error en los parametros de ingreso", "status": "400"})
 	}
 
 	if data, err := helpers.DescargarDocumentosSolicitudesPagos(pago_mensual_id); err == nil {

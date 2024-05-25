@@ -20,14 +20,14 @@ func (c *HistoricoCumplidos) URLMapping() {
 // @Param idPagoMensual path string true "ID of the monthly payment"
 // @Success 200 {object} map[string]interface{} "Success"
 // @Failure 404 {object} map[string]interface{} "Error"
-// @router /historicos/cambio-estado/:idPagoMensual [get]
+// @router /cambio_estado_pago/:idPagoMensual [get]
 func (c *HistoricoCumplidos) GetCambioEstado() {
 
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
 			localError := err.(map[string]interface{})
-			c.Data["message"] = beego.AppConfig.String("appname") + "/historicos/cambio-estado/" + "/" + localError["funcion"].(string)
+			c.Data["message"] = beego.AppConfig.String("appname") + "/cambio_estado_pago/" + "/" + localError["funcion"].(string)
 			c.Data["data"] = localError["err"]
 			if status, ok := localError["status"]; ok {
 				c.Abort(status.(string))
@@ -56,14 +56,14 @@ func (c *HistoricoCumplidos) GetCambioEstado() {
 // @Param documento path string true "Document number"
 // @Success 200 {object} map[string]interface{} "Success"
 // @Failure 404 {object} map[string]interface{} "Error"
-// @router /historicos/dependencias/:documento [get]
+// @router /dependencias/:documento [get]
 func (c *HistoricoCumplidos) GetDependencias() {
 
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
 			localError := err.(map[string]interface{})
-			c.Data["message"] = beego.AppConfig.String("appname") + "/historicos/dependencias/" + "/" + localError["funcion"].(string)
+			c.Data["message"] = beego.AppConfig.String("appname") + "/dependencias/" + "/" + localError["funcion"].(string)
 			c.Data["data"] = localError["err"]
 			if status, ok := localError["status"]; ok {
 				c.Abort(status.(string))
