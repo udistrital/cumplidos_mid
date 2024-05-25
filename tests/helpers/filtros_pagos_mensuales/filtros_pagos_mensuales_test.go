@@ -2,7 +2,6 @@ package filtros_pagos_mensuales
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"testing"
 
@@ -25,14 +24,6 @@ var parameters struct {
 }
 
 func TestMain(m *testing.M) {
-
-	err := os.Setenv("UrlCrudCumplidos", "http://pruebasapi.intranetoas.udistrital.edu.co:8511/v1")
-	err = os.Setenv("UrlAdministrativaJBPMContratosDependencia", "http://busservicios.intranetoas.udistrital.edu.co:8282/administrativa")
-	err = os.Setenv("UrlAdministrativaJBPM", "http://busservicios.intranetoas.udistrital.edu.co:8282/wso2eiserver/services/administrativa_pruebas")
-	if err != nil {
-		fmt.Println("Error estableciendo la variable de entorno:", err)
-		return
-	}
 
 	parameters.UrlCrudCumplidos = os.Getenv("UrlCrudCumplidos")
 	parameters.UrlcrudAgora = os.Getenv("UrlcrudAgora")
