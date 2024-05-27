@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"net/http"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
@@ -23,6 +24,8 @@ func sendJson(url string, trequest string, target interface{}, datajson interfac
 		}
 	}
 	client := &http.Client{}
+	fmt.Print("Json que se le va a apasar a la funcion: ")
+	fmt.Println(b)
 	req, err := http.NewRequest(trequest, url, b)
 	r, err := client.Do(req)
 	if err != nil {
@@ -36,6 +39,52 @@ func sendJson(url string, trequest string, target interface{}, datajson interfac
 	}()
 
 	return json.NewDecoder(r.Body).Decode(target)
+}
+
+func sendJson3(url string, trequest string, target interface{}, datajson interface{}) error {
+	// Convertir datajson en un Formato Json para poderlo enviar como parametro
+	b := new(bytes.Buffer)
+	if datajson != nil {
+		if err := json.NewEncoder(b).Encode(datajson); err != nil {
+			fmt.Println(err)
+			beego.Error(err)
+		}
+	}
+
+	// Crear una nueva solicitud POST con el cuerpo del JSON
+	req, err := http.NewRequest(trequest, url, b)
+	if err != nil {
+		fmt.Println("Error al crear la solicitud POST:", err)
+		return err
+	}
+
+	//Configurar el encabezado Accept
+	req.Header.Set("Accept", "application/json")
+	// Configurar el encabezado Content-Type
+	req.Header.Set("Content-Type", "application/json")
+
+	// Configurar el cliente HTTP con tiempo de espera y tamaño de búfer
+	client := &http.Client{
+		Timeout: time.Second * 10, // Tiempo de espera máximo de 10 segundos
+		Transport: &http.Transport{
+			MaxIdleConns:        100, // Número máximo de conexiones inactivas permitidas
+			MaxIdleConnsPerHost: 100, // Número máximo de conexiones inactivas permitidas por host
+		},
+	}
+
+	// Realizar la solicitud POST
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error al enviar la solicitud POST:", err)
+		return err
+	}
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			beego.Error(err)
+		}
+	}()
+
+	return json.NewDecoder(resp.Body).Decode(target)
 }
 
 func getJsonTest(url string, target interface{}) (status int, err error) {
@@ -294,4 +343,58 @@ func dias31(fecha_inicio time.Time, fecha_fin time.Time) (dias31 int) {
 		}
 	}
 	return
+}
+
+func buildQuery(slices []string, columna string) string {
+
+	query := ""
+
+	if len(slices) == 1 {
+		query += fmt.Sprintf("%s.in:%v,", columna, slices[0])
+	}
+	if len(slices) > 1 {
+		for i, dato := range slices {
+			if i == 0 {
+				query += fmt.Sprintf("%s.in:%v|", columna, dato)
+			} else if i < len(slices)-1 {
+				query += fmt.Sprintf("%s|", dato)
+			} else {
+				query += fmt.Sprintf("%s,", dato)
+			}
+		}
+		return query
+	}
+	return query
+}
+
+// Funcion para agregar los datos a un slice
+func StringToSlice(cadena string) (slice []string) {
+	parts := strings.Split(cadena, ",")
+
+	if cadena != "" {
+		for _, part := range parts {
+			slice = append(slice, part)
+		}
+	}
+	return slice
+}
+
+//Funcion para Verificar que se ingresen datos correctos cuando el parametro sean números
+
+func ConvertInt(data []string) {
+	for _, str := range data {
+		_, err := strconv.Atoi(str)
+		if err != nil && len(data) > 0 {
+			panic(map[string]interface{}{"funcion: ": "convertInt", "err": "El valor " + str + "no es un número"})
+		}
+	}
+}
+func capitalizarPrimeraLetra(texto string) string {
+	if len(texto) == 0 {
+		return texto
+	}
+
+    texto = strings.TrimSpace(texto) // Eliminar espacios iniciales y finales
+	texto = strings.ToLower(texto)
+	return strings.ToUpper(texto[:1]) + texto[1:]
 }
