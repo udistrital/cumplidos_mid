@@ -10,4 +10,5 @@ type SolicitudPago struct {
 	Mes                  string
 	Estado               string
 	IdPagoMensual        string
+	NumeroContrato       string
 }
