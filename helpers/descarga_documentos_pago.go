@@ -40,6 +40,8 @@ func DescargarDocumentosSolicitudesPagos(id_pago_mensual string) (DocumentosZip 
 			"Error":   error,
 		}
 		return DocumentosZip, outputError
+	} else if len(documentos) == 0 {
+		return DocumentosZip, nil
 	}
 
 	//Crear un archivo ZIP
