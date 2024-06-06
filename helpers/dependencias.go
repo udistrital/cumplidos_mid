@@ -123,7 +123,10 @@ func GetDependenciasRolGeneral() (dependenciasList []models.DependenciaSimple, e
 	println(beego.AppConfig.String("UrlcrudAgora")+"/dependencia_SIC/?limit=-1");
 	var respuesta []interface{}
 	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlcrudAgora")+"/dependencia_SIC/?limit=-1", &respuesta); (err == nil) && (response == 200) {
-	
+
+		dependenciasMap := make(map[string]models.DependenciaSimple)
+		
+		
 						for _, list := range respuesta {
 
 							depMap := list.(map[string]interface{})
@@ -132,8 +135,15 @@ func GetDependenciasRolGeneral() (dependenciasList []models.DependenciaSimple, e
 								Codigo: depMap["ESFCODIGODEP"].(string),
 								Nombre: depMap["ESFDEPENCARGADA"].(string),
 							}
+					
+							dependenciasMap[dependencia.Codigo] = dependencia
+							
+						}
+						for _, dependencia := range dependenciasMap {
 							dependenciasList = append(dependenciasList, dependencia)
 						}
+					
+						
 				
 		
 	} else {

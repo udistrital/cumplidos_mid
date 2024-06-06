@@ -4,6 +4,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/helpers"
+
 )
 
 type HistoricoCumplidos struct {
@@ -91,14 +92,16 @@ func (c *HistoricoCumplidos) GetDependencias() {
 // @Description get all  dependencies 
 // @Success 200 {object} map[string]interface{} "Success"
 // @Failure 404 {object} map[string]interface{} "Error"
-// @router /dependenciasgen/
+// @router /dependencias_generales/
 func (c *HistoricoCumplidos) GetDependenciasGeneral() {
+
+
 
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
 			localError := err.(map[string]interface{})
-			c.Data["message"] = beego.AppConfig.String("appname") + "/dependencias/" + "/" + localError["funcion"].(string)
+			c.Data["message"] = beego.AppConfig.String("appname") + "/dependenciasgen/" + "/" + localError["funcion"].(string)
 			c.Data["data"] = localError["err"]
 			if status, ok := localError["status"]; ok {
 				c.Abort(status.(string))

@@ -55,7 +55,7 @@ func init() {
     beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"] = append(beego.GlobalControllerRouter["github.com/udistrital/cumplidos_mid/controllers:HistoricoCumplidos"],
         beego.ControllerComments{
             Method: "GetDependenciasGeneral",
-            Router: "/dependenciasgen/",
+            Router: "/dependencias_generales/",
             AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,
