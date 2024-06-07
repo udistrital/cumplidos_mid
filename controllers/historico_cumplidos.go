@@ -4,6 +4,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/helpers"
+
 )
 
 type HistoricoCumplidos struct {
@@ -81,6 +82,40 @@ func (c *HistoricoCumplidos) GetDependencias() {
 		panic(c.Data)
 	} else if dependencias == nil {
 		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 204, "Message": "No hay datos", "Data": dependencias}
+	} else {
+		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 200, "Message": "Consulta completa", "Data": dependencias}
+	}
+	c.ServeJSON()
+
+}
+// @Title GetDependenciasGeneral
+// @Description get all  dependencies 
+// @Success 200 {object} map[string]interface{} "Success"
+// @Failure 404 {object} map[string]interface{} "Error"
+// @router /dependencias_generales/
+func (c *HistoricoCumplidos) GetDependenciasGeneral() {
+
+
+
+	defer func() {
+		if err := recover(); err != nil {
+			logs.Error(err)
+			localError := err.(map[string]interface{})
+			c.Data["message"] = beego.AppConfig.String("appname") + "/dependenciasgen/" + "/" + localError["funcion"].(string)
+			c.Data["data"] = localError["err"]
+			if status, ok := localError["status"]; ok {
+				c.Abort(status.(string))
+			} else {
+				c.Abort("404")
+			}
+		}
+	}()
+	dependencias, err := helpers.GetDependenciasRolGeneral()
+
+	if err != nil {
+		panic(c.Data)
+	} else if dependencias == nil {
+		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 204, "Message": "No hay datos en general", "Data": dependencias}
 	} else {
 		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 200, "Message": "Consulta completa", "Data": dependencias}
 	}
