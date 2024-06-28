@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"fmt"
+	// "fmt"
 	"strconv"
 
 	"github.com/astaxie/beego"
@@ -22,7 +22,7 @@ func Informe(pago_mensual_id string) (informe []models.Informe, outputError map[
 	var query string
 	var respuesta_peticion map[string]interface{}
 	query = "PagoMensualId.Id:" + pago_mensual_id
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/informe/?query=" + query)
+	// fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/informe/?query=" + query)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/?query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
@@ -75,7 +75,7 @@ func GetActividadesEspecificas(idInforme string) (actividades_especificas []mode
 	var query string
 	var respuesta_peticion map[string]interface{}
 	query = "informeid:" + idInforme + ",Activo:true"
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/actividad_especifica/?query=" + query + "&limit=-1&sortby=FechaCreacion&order=asc")
+	// fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/actividad_especifica/?query=" + query + "&limit=-1&sortby=FechaCreacion&order=asc")
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
@@ -113,7 +113,7 @@ func GetActividadesRealizadas(idActividadEspecifica string) (actividades_realiza
 	var query string
 	var respuesta_peticion map[string]interface{}
 	query = "actividadespecificaid:" + idActividadEspecifica + ",Activo:true"
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/actividad_realizada/?query=" + query + "&limit=-1&sortby=FechaCreacion&order=asc")
+	// fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/actividad_realizada/?query=" + query + "&limit=-1&sortby=FechaCreacion&order=asc")
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_realizada/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
@@ -285,7 +285,7 @@ func UltimoInformeContratista(pago_mensual_id string) (informe []models.Informe,
 			sortby := "&sortby=PagoMensualId.Ano,PagoMensualId.Mes"
 			limit := "&limit=1"
 
-			fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/informe/?query=" + query + sortby + order + limit)
+			// fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/informe/?query=" + query + sortby + order + limit)
 			if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/?query="+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
 				if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
