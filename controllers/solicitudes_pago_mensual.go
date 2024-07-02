@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/helpers"
@@ -45,20 +46,58 @@ func (c *SolicitudesPagoMensualController) GetSolicitudesPagoMensual() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 
 	dependencias := helpers.StringToSlice(v.Dependencias)
+	if len(dependencias) == 0 {
+		c.Ctx.Output.SetStatus(400)
+		c.Data["json"] = map[string]interface{}{"Succes": false, "Status:": 400, "Message": "Debe proporcionar al menos una dependencia", "Data": nil}
+		c.ServeJSON()
+		return
+	}
 	vigencias := helpers.StringToSlice(v.Vigencias)
-	helpers.ConvertInt(vigencias)
+	err_vigencias := helpers.ConvertInt(vigencias)
+	if err_vigencias != nil {
+		c.Ctx.Output.SetStatus(400)
+		c.Data["json"] = err_vigencias
+		c.ServeJSON()
+		return
+	}
 	documentos_persona_id := helpers.StringToSlice(v.DocumentosPersonaId)
-	helpers.ConvertInt(documentos_persona_id)
+	err_documentos := helpers.ConvertInt(documentos_persona_id)
+	if err_documentos != nil {
+		c.Ctx.Output.SetStatus(400)
+		c.Data["json"] = err_documentos
+		c.ServeJSON()
+		return
+	}
 	numeros_contratos := helpers.StringToSlice(v.NumerosContratos)
-	helpers.ConvertInt(numeros_contratos)
+	err_contratos := helpers.ConvertInt(numeros_contratos)
+	if err_contratos != nil {
+		c.Ctx.Output.SetStatus(400)
+		c.Data["json"] = err_contratos
+		c.ServeJSON()
+		return
+	}
+
 	meses := helpers.StringToSlice(v.Meses)
-	helpers.ConvertInt(numeros_contratos)
+	err_meses := helpers.ConvertInt(meses)
+	if err_meses != nil {
+		c.Ctx.Output.SetStatus(400)
+		c.Data["json"] = err_meses
+		c.ServeJSON()
+		return
+	}
 	anios := helpers.StringToSlice(v.Anios)
-	helpers.ConvertInt(anios)
+	err_anios := helpers.ConvertInt(anios)
+	if err_anios != nil {
+		c.Ctx.Output.SetStatus(400)
+		c.Data["json"] = err_anios
+		c.ServeJSON()
+		return
+	}
 	estados_pagos := helpers.StringToSlice(v.EstadosPagos)
 
 	filtros_pago, err := helpers.SolicitudesPagoMensual(dependencias, vigencias, documentos_persona_id, numeros_contratos, meses, anios, estados_pagos)
 
+	fmt.Println("El error es: ", err)
 	if err != nil {
 		c.Ctx.Output.SetStatus(204)
 		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 204, "Message": "No hay datos que coincidan con los filtros", "Data": nil}

@@ -781,6 +781,7 @@
         }
     },
     "definitions": {
+<<<<<<< Updated upstream
         "24897.0x128d67b0.false": {
             "title": "false",
             "type": "object"
@@ -806,6 +807,33 @@
             "type": "object"
         },
         "42595.0x128d7c08.false": {
+=======
+        "24095.0xc0005b3b30.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "24375.0xc0005b3b60.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "24436.0xc0005b3b90.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "24504.0xc0005b3c80.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "24641.0xc0005b3cb0.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "24792.0xc0005b3ce0.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "41046.0xc000617530.false": {
+>>>>>>> Stashed changes
             "title": "false",
             "type": "object"
         },
@@ -1285,13 +1313,21 @@
                     "type": "string"
                 },
                 "CDP": {
+<<<<<<< Updated upstream
                     "$ref": "#/definitions/25189.0x128d67c8.false"
+=======
+                    "$ref": "#/definitions/24375.0xc0005b3b60.false"
+>>>>>>> Stashed changes
                 },
                 "Dependencia": {
                     "type": "string"
                 },
                 "EjecutadoDinero": {
+<<<<<<< Updated upstream
                     "$ref": "#/definitions/25626.0x128d6888.false"
+=======
+                    "$ref": "#/definitions/24792.0xc0005b3ce0.false"
+>>>>>>> Stashed changes
                 },
                 "FechaCPS": {
                     "type": "string"
@@ -1308,22 +1344,37 @@
                     "$ref": "#/definitions/models.FechasConNovedades"
                 },
                 "InformacionContratista": {
+<<<<<<< Updated upstream
                     "$ref": "#/definitions/25469.0x128d6870.false"
                 },
                 "Novedades": {
                     "$ref": "#/definitions/25326.0x128d6858.false"
+=======
+                    "$ref": "#/definitions/24641.0xc0005b3cb0.false"
+                },
+                "Novedades": {
+                    "$ref": "#/definitions/24504.0xc0005b3c80.false"
+>>>>>>> Stashed changes
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
+<<<<<<< Updated upstream
                     "$ref": "#/definitions/25254.0x128d67e0.false"
+=======
+                    "$ref": "#/definitions/24436.0xc0005b3b90.false"
+>>>>>>> Stashed changes
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
+<<<<<<< Updated upstream
                     "$ref": "#/definitions/24897.0x128d67b0.false"
+=======
+                    "$ref": "#/definitions/24095.0xc0005b3b30.false"
+>>>>>>> Stashed changes
                 },
                 "ValorContrato": {
                     "type": "integer",
@@ -1680,7 +1731,11 @@
                     "format": "datetime"
                 },
                 "Periodo": {
+<<<<<<< Updated upstream
                     "$ref": "#/definitions/42595.0x128d7c08.false"
+=======
+                    "$ref": "#/definitions/41046.0xc000617530.false"
+>>>>>>> Stashed changes
                 }
             }
         }
