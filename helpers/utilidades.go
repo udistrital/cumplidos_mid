@@ -386,10 +386,10 @@ func ConvertInt(data []string) (outputError map[string]interface{}) {
 		_, err := strconv.Atoi(str)
 		if err != nil && len(data) > 0 {
 			outputError = map[string]interface{}{
+				"Data":    nil,
 				"Success": false,
 				"Status":  400,
-				"Message": "El valor " + str + " no es un número",
-				"funcion": "convertInt",
+				"Message": "El valor " + str + " no es un número, funcion convertInt",
 			}
 			return outputError
 		}
