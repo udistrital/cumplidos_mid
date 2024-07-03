@@ -381,20 +381,28 @@ func StringToSlice(cadena string) (slice []string) {
 
 //Funcion para Verificar que se ingresen datos correctos cuando el parametro sean números
 
-func ConvertInt(data []string) {
+func ConvertInt(data []string) (outputError map[string]interface{}) {
 	for _, str := range data {
 		_, err := strconv.Atoi(str)
 		if err != nil && len(data) > 0 {
-			panic(map[string]interface{}{"funcion: ": "convertInt", "err": "El valor " + str + "no es un número"})
+			outputError = map[string]interface{}{
+				"Data":    nil,
+				"Success": false,
+				"Status":  400,
+				"Message": "El valor " + str + " no es un número, funcion convertInt",
+			}
+			return outputError
 		}
 	}
+	return nil
 }
+
 func capitalizarPrimeraLetra(texto string) string {
 	if len(texto) == 0 {
 		return texto
 	}
 
-    texto = strings.TrimSpace(texto) // Eliminar espacios iniciales y finales
+	texto = strings.TrimSpace(texto) // Eliminar espacios iniciales y finales
 	texto = strings.ToLower(texto)
 	return strings.ToUpper(texto[:1]) + texto[1:]
 }
