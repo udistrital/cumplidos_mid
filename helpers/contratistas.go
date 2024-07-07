@@ -11,6 +11,7 @@ import (
 	_ "github.com/astaxie/beego/httplib"
 	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/models"
+	"github.com/udistrital/utils_oas/request"
 )
 
 //RFC 45758 Se agrega función para comparar los contratos de la dependencia con la informacion de los cumplidos solicitados
@@ -50,7 +51,7 @@ func CertificacionCumplidosContratistas(dependencia string, mes string, anio str
 		return nil, outputError
 	}
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion.in:AS|AP,Mes:"+strconv.Itoa(nmes)+",Ano:"+anio+"&limit=-1", &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlcrudCumplidos")+"/pago_mensual/?query=EstadoPagoMensualId.CodigoAbreviacion.in:AS|AP,Mes:"+strconv.Itoa(nmes)+",Ano:"+anio+"&limit=-1", &respuesta_peticion); (err == nil) && (response == 200) {
 
 		pagos_mensuales = []models.PagoMensual{}
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
@@ -58,7 +59,7 @@ func CertificacionCumplidosContratistas(dependencia string, mes string, anio str
 
 			//RFC 45758 Se modifica la condición para comparar los contratos de la dependencia con los cumpñlidos solicitados en el mes
 			if contratoExists(strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64), pago_mensual.NumeroContrato, contratos_dependencia.Contratos.Contrato) {
-				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago_mensual.DocumentoPersonaId, &contratistas); (err == nil) && (response == 200) {
+				if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago_mensual.DocumentoPersonaId, &contratistas); (err == nil) && (response == 200) {
 					var contrato models.InformacionContrato
 					contrato, outputError = GetContrato(pago_mensual.NumeroContrato, strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64))
 					if outputError == nil {
@@ -111,7 +112,7 @@ func AprobacionPagosContratistas(v []models.PagoContratistaCdpRp) (outputError m
 		pago_mensual = pm.PagoMensual
 		pagos_mensuales = append(pagos_mensuales, pago_mensual)
 	}
-	if err := sendJson(beego.AppConfig.String("UrlCrudCumplidos")+"/tr_aprobacion_masiva_pagos", "POST", &response, pagos_mensuales); err != nil {
+	if err := request.SendJson(beego.AppConfig.String("UrlCrudCumplidos")+"/tr_aprobacion_masiva_pagos", "POST", &response, pagos_mensuales); err != nil {
 		logs.Error(err)
 		outputError = map[string]interface{}{"funcion": "/AprobacionPagosContratistas", "err": err.Error(), "status": "502"}
 		return outputError
@@ -134,7 +135,7 @@ func SolicitudesOrdenadorContratistas(doc_ordenador string, limit int, offset in
 	// var contratos_disponibilidad []models.ContratoDisponibilidad
 	var respuesta_peticion map[string]interface{}
 	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?limit=" + strconv.Itoa(limit) + "&offset=" + strconv.Itoa(offset) + "&query=EstadoPagoMensualId.CodigoAbreviacion:AS,DocumentoResponsableId:" + doc_ordenador)
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?limit="+strconv.Itoa(limit)+"&offset="+strconv.Itoa(offset)+"&query=EstadoPagoMensualId.CodigoAbreviacion:AS,DocumentoResponsableId:"+doc_ordenador, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?limit="+strconv.Itoa(limit)+"&offset="+strconv.Itoa(offset)+"&query=EstadoPagoMensualId.CodigoAbreviacion:AS,DocumentoResponsableId:"+doc_ordenador, &respuesta_peticion); (err == nil) && (response == 200) {
 
 		pagos_mensuales = []models.PagoMensual{}
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
@@ -170,7 +171,7 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 	var ordenadores []models.Ordenador
 
 	fmt.Println(beego.AppConfig.String("UrlAdministrativaJBPM") + "/" + "contrato_elaborado/" + numero_contrato + "/" + vigencia)
-	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contrato_elaborado/"+numero_contrato+"/"+vigencia, &temp); err == nil && temp != nil && response == 200 {
+	if response, err := request.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contrato_elaborado/"+numero_contrato+"/"+vigencia, &temp); err == nil && temp != nil && response == 200 {
 		json_contrato_elaborado, error_json := json.Marshal(temp)
 		if error_json == nil {
 			if err := json.Unmarshal(json_contrato_elaborado, &contrato_elaborado); err == nil {
@@ -178,12 +179,12 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 				fecha = strings.Split(fecha[0], "-")
 
 				//RFC 45758 Se consulta el ordenador inmediatamente anterior a la fecha de registro del contrato
-				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=IdOrdenador:"+contrato_elaborado.Contrato.OrdenadorGasto+",FechaInicio__lt:"+fecha[1]+"/"+fecha[2]+"/"+fecha[0]+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
+				if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=IdOrdenador:"+contrato_elaborado.Contrato.OrdenadorGasto+",FechaInicio__lt:"+fecha[1]+"/"+fecha[2]+"/"+fecha[0]+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
 
 					for _, ordenador := range ordenadores {
 
 						//RFC 45758 Se consulta el ordenador más reciente vinculado al rol obtenido con la consulta anterior
-						if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=RolOrdenador:"+strings.Replace(ordenador.RolOrdenador, " ", "%20", -1)+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
+						if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=RolOrdenador:"+strings.Replace(ordenador.RolOrdenador, " ", "%20", -1)+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
 
 							for _, ordenador := range ordenadores {
 								informacion_ordenador.NumeroDocumento = ordenador.Documento
@@ -248,7 +249,7 @@ func GetCumplidosRevertiblesPorOrdenador(NumDocumentoOrdenador string) (cumplido
 	var respuesta_peticion map[string]interface{}
 
 	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:" + NumDocumentoOrdenador + ",FechaModificacion__gte:" + mes + "/" + dia + "/" + año)
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:"+NumDocumentoOrdenador+",FechaModificacion__gte:"+mes+"/"+dia+"/"+año, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:"+NumDocumentoOrdenador+",FechaModificacion__gte:"+mes+"/"+dia+"/"+año, &respuesta_peticion); (err == nil) && (response == 200) {
 
 		pagos_mensuales = []models.PagoMensual{}
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
@@ -267,7 +268,7 @@ func GetCumplidosRevertiblesPorOrdenador(NumDocumentoOrdenador string) (cumplido
 					var temp_ordenes_pago_tercero models.OrdenesPagoTercero
 					//fmt.Println("rp", rp)
 					//fmt.Println(beego.AppConfig.String("UrlFinancieraJBPM") + "/" + "ordenes_pago_tercero/" + rp.RpNumeroRegistro + "/" + rp.RpVigencia + "/" + pago_mensual.DocumentoPersonaId + "/" + strconv.Itoa(int(pago_mensual.Ano)))
-					if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlFinancieraJBPM")+"/"+"ordenes_pago_tercero/"+rp.RpNumeroRegistro+"/"+rp.RpVigencia+"/"+pago_mensual.DocumentoPersonaId+"/"+strconv.Itoa(int(pago_mensual.Ano)), &temp); (err == nil) && (response == 200) {
+					if response, err := request.GetJsonWSO2Test(beego.AppConfig.String("UrlFinancieraJBPM")+"/"+"ordenes_pago_tercero/"+rp.RpNumeroRegistro+"/"+rp.RpVigencia+"/"+pago_mensual.DocumentoPersonaId+"/"+strconv.Itoa(int(pago_mensual.Ano)), &temp); (err == nil) && (response == 200) {
 						json_ordenes_pago_tercero, error_json := json.Marshal(temp)
 						if error_json == nil {
 							if err := json.Unmarshal(json_ordenes_pago_tercero, &temp_ordenes_pago_tercero); err == nil {
@@ -340,7 +341,7 @@ func TraerEnlacesDocumentosAsociadosPagoMensual(pago_mensual_id string) (documen
 
 	var respuesta_peticion map[string]interface{}
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/soporte_pago_mensual/?limit=-1&query=PagoMensualId.Id:"+pago_mensual_id, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlCrudCumplidos")+"/soporte_pago_mensual/?limit=-1&query=PagoMensualId.Id:"+pago_mensual_id, &respuesta_peticion); (err == nil) && (response == 200) {
 		LimpiezaRespuestaRefactor(respuesta_peticion, &soportes_pagos_mensuales)
 		if len(soportes_pagos_mensuales) != 0 {
 			var ids_documentos []string
@@ -349,10 +350,10 @@ func TraerEnlacesDocumentosAsociadosPagoMensual(pago_mensual_id string) (documen
 			}
 
 			var ids_documentos_juntos = strings.Join(ids_documentos, "|")
-			if response, err := getJsonTest(beego.AppConfig.String("UrlDocumentosCrud")+"/documento/?limit=-1&query=Activo:True,Id.in:"+ids_documentos_juntos, &documentos_crud); (err == nil) && (response == 200) {
+			if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlDocumentosCrud")+"/documento/?limit=-1&query=Activo:True,Id.in:"+ids_documentos_juntos, &documentos_crud); (err == nil) && (response == 200) {
 				for _, documento_crud := range documentos_crud {
 					soporte.Documento = documento_crud
-					if response, err := getJsonTest(beego.AppConfig.String("UrlGestorDocumental")+"/document/"+documento_crud.Enlace, &fileGestor); (err == nil) && (response == 200) {
+					if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlGestorDocumental")+"/document/"+documento_crud.Enlace, &fileGestor); (err == nil) && (response == 200) {
 						soporte.Archivo = fileGestor
 						documentos = append(documentos, soporte)
 					} else { //If gestor documento get

@@ -10,6 +10,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/models"
+	"github.com/udistrital/utils_oas/request"
 )
 
 //Funcion para construir el query dinamico
@@ -38,7 +39,7 @@ func GetPagosFiltrados(numeros_contratos []string, numeros_documentos []string, 
 	sortby := "&sortby=Ano,Mes,DocumentoPersonaId"
 	limit := "&limit=0"
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/"+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/"+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
 		if respuesta_peticion != nil {
 			LimpiezaRespuestaRefactor(respuesta_peticion, &PagoMensual)
 			return PagoMensual, nil
@@ -128,7 +129,7 @@ func FiltrosDependencia(dependencias []string, vigencias []string) (contratos []
 
 	var respuesta_peticion map[string]interface{}
 
-	err := sendJson3(beego.AppConfig.String("UrlAdministrativaJBPMContratosDependencia")+"/contratos_dependencias", "POST", &respuesta_peticion, parametro)
+	err := request.SendJson2(beego.AppConfig.String("UrlAdministrativaJBPMContratosDependencia")+"/contratos_dependencias", "POST", &respuesta_peticion, parametro)
 
 	if err == nil {
 
@@ -224,7 +225,7 @@ func GetInformacionContrato(num_contrato_suscrito string, vigencia string) (info
 
 	var temp map[string]interface{}
 
-	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"informacion_contrato/"+num_contrato_suscrito+"/"+vigencia, &temp); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"informacion_contrato/"+num_contrato_suscrito+"/"+vigencia, &temp); (err == nil) && (response == 200) {
 		json_contrato, error_json := json.Marshal(temp)
 		if error_json == nil {
 			var contrato models.InformacionContrato

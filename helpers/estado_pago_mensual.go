@@ -3,6 +3,7 @@ package helpers
 import (
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/models"
+	"github.com/udistrital/utils_oas/request"
 )
 
 func GetEstado(idEstado string) (estado *models.EstadoPagoMensual, outputError interface{}) {
@@ -20,7 +21,7 @@ func GetEstado(idEstado string) (estado *models.EstadoPagoMensual, outputError i
 
 	var respuesta_peticion map[string]interface{}
 	///println(beego.AppConfig.String("UrlCrudCumplidos") + "/estado_pago_mensual/" + idEstado)
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/estado_pago_mensual/"+idEstado, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlCrudCumplidos")+"/estado_pago_mensual/"+idEstado, &respuesta_peticion); (err == nil) && (response == 200) {
 		//Ejecuta si no hay error y estado = 200
 		if respuesta_peticion != nil {
 			LimpiezaRespuestaRefactor(respuesta_peticion, &estado)

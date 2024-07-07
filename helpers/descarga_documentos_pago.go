@@ -10,6 +10,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/models"
+	"github.com/udistrital/utils_oas/request"
 )
 
 func DescargarDocumentosSolicitudesPagos(id_pago_mensual string) (DocumentosZip models.DescargaDocumentos, outputError map[string]interface{}) {
@@ -103,7 +104,7 @@ func DescargarDocumentosSolicitudesPagos(id_pago_mensual string) (DocumentosZip 
 	DocumentosZip.File = base64.StdEncoding.EncodeToString(buf.Bytes())
 
 	//fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?query=Id:" + id_pago_mensual)
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=Id:"+id_pago_mensual, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=Id:"+id_pago_mensual, &respuesta_peticion); (err == nil) && (response == 200) {
 		if respuesta_peticion != nil {
 			LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
 		}

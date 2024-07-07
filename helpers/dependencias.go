@@ -3,7 +3,7 @@ package helpers
 import (
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/models"
-
+	"github.com/udistrital/utils_oas/request"
 )
 
 func GetDependenciasSupervisor(documento string) (dependenciasList []models.DependenciaSimple, errorOutput interface{}) {
@@ -20,7 +20,7 @@ func GetDependenciasSupervisor(documento string) (dependenciasList []models.Depe
 		}
 	}()
 	var respuesta map[string]interface{}
-	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/dependencias_supervisor/"+documento, &respuesta); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/dependencias_supervisor/"+documento, &respuesta); (err == nil) && (response == 200) {
 
 		if respuesta != nil {
 
@@ -69,7 +69,7 @@ func GetDependenciasOrdenador(documento string) (dependenciasList []models.Depen
 		}
 	}()
 	var respuesta map[string]interface{}
-	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/dependencias_sic/"+documento, &respuesta); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/dependencias_sic/"+documento, &respuesta); (err == nil) && (response == 200) {
 
 		if respuesta != nil {
 
@@ -122,7 +122,7 @@ func GetDependenciasRolGeneral() (dependenciasList []models.DependenciaSimple, e
 	}()
 	println(beego.AppConfig.String("UrlcrudAgora")+"/dependencia_SIC/?limit=-1");
 	var respuesta []interface{}
-	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlcrudAgora")+"/dependencia_SIC/?limit=-1", &respuesta); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonWSO2Test(beego.AppConfig.String("UrlcrudAgora")+"/dependencia_SIC/?limit=-1", &respuesta); (err == nil) && (response == 200) {
 
 		dependenciasMap := make(map[string]models.DependenciaSimple)
 		

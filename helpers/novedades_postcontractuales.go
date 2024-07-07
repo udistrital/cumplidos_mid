@@ -5,6 +5,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/models"
+	"github.com/udistrital/utils_oas/request"
 )
 
 func GetNovedadesPostcontractuales(tipo_novedad models.TipoNovedad, query string, sortby string, order string, limit string, offset string, fields string, target interface{}) (status int, err_nov error) {
@@ -44,7 +45,7 @@ func GetNovedadesPostcontractuales(tipo_novedad models.TipoNovedad, query string
 	}
 
 	fmt.Println(peticion)
-	if response, err := getJsonTest(peticion, target); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonTest2(peticion, target); (err == nil) && (response == 200) {
 		return 200, nil
 	} else {
 		err_nov = err

@@ -10,6 +10,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/models"
+	"github.com/udistrital/utils_oas/request"
 )
 
 //RFC 47758 Se elimina función debido a que sólo contemplaba la última vigencia para un número de contrato, se usará la función GetContratosDependenciaFiltro
@@ -19,7 +20,7 @@ import (
 	var contratos_dependencia models.ContratoDependencia
 	//var salida map[string]string
 
-	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contratos_dependencia/"+dependencia+"/"+fecha+"/"+fecha, &temp); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contratos_dependencia/"+dependencia+"/"+fecha+"/"+fecha, &temp); (err == nil) && (response == 200) {
 		if json_contrato, error_json := json.Marshal(temp); error_json == nil {
 			if err := json.Unmarshal(json_contrato, &contratos_dependencia); err == nil {
 				for _, cd := range contratos_dependencia.Contratos.Contrato {
@@ -49,14 +50,14 @@ import (
 //practicamente es el mismo metodo anterior
 func GetContratosDependenciaFiltro(dependencia string, fecha_inicio string, fecha_fin string) (contratos_dependencia models.ContratoDependencia, outputError map[string]interface{}) {
 	var temp map[string]interface{}
-	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlHomologacionDepsJBPM")+"/oikos_argo/"+dependencia, &temp); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonWSO2Test(beego.AppConfig.String("UrlHomologacionDepsJBPM")+"/oikos_argo/"+dependencia, &temp); (err == nil) && (response == 200) {
 		json_dep_oikos, error_json := json.Marshal(temp)
 		if error_json == nil {
 			var depOikos models.HomologacionDepOikos
 			if err := json.Unmarshal(json_dep_oikos, &depOikos); err == nil {
 
 				if len(depOikos.Dependencias.Dependencia) != 0 {
-					if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/contratos_dependencia_oikos/"+depOikos.Dependencias.Dependencia[0].IDMaster+"/"+fecha_inicio+"/"+fecha_fin, &temp); (err == nil) && (response == 200) {
+					if response, err := request.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/contratos_dependencia_oikos/"+depOikos.Dependencias.Dependencia[0].IDMaster+"/"+fecha_inicio+"/"+fecha_fin, &temp); (err == nil) && (response == 200) {
 						json_contrato, error_json := json.Marshal(temp)
 						if error_json == nil {
 							if err := json.Unmarshal(json_contrato, &contratos_dependencia); err == nil {
@@ -109,7 +110,7 @@ func GetContratosOrdenadorDependencia(dependencia string, fechaInicio string, fe
 	}()
 
 	var temp map[string]interface{}
-	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contratos_ordenador_dependencia/"+dependencia+"/"+fechaInicio+"/"+fechaFin, &temp); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contratos_ordenador_dependencia/"+dependencia+"/"+fechaInicio+"/"+fechaFin, &temp); (err == nil) && (response == 200) {
 		json_contrato_dependencia, error_json := json.Marshal(temp)
 		if error_json == nil {
 			if err := json.Unmarshal(json_contrato_dependencia, &contratos_ordenador_dependencia); err == nil {
