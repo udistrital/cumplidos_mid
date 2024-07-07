@@ -6,6 +6,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/models"
+	"github.com/udistrital/utils_oas/request"
 )
 
 func ValidarPeriodoCargaCumplido(dependencia_supervisor string, anio string, mes string) (Validacion models.ValidacionFechaCargaCumplido, outputError map[string]interface{}) {
@@ -24,7 +25,7 @@ func ValidarPeriodoCargaCumplido(dependencia_supervisor string, anio string, mes
 	sortby := "&sortby=FechaModificacion"
 	limit := "&limit=0"
 	//fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/fechas_carga_cumplidos/" + query + sortby + order + limit)
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/fechas_carga_cumplidos/"+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlCrudCumplidos")+"/fechas_carga_cumplidos/"+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
 		//Se encontro alguna parametrizacion
 
 		//fmt.Println("fechas carga cumplido:", respuesta_peticion)

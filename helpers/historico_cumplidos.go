@@ -4,6 +4,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/models"
 	"strconv"
+	"github.com/udistrital/utils_oas/request"
 )
 
 func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPago, outputError interface{}) {
@@ -22,7 +23,7 @@ func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPa
 	var respuesta_peticion map[string]interface{}
 	//println(beego.AppConfig.String("UrlCrudCumplidos") + "/cambio_estado_pago/?query=" + query)
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/cambio_estado_pago/?query="+query+"&sortby=FechaCreacion&order=asc&limit=-1", &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := request.GetJsonTest2(beego.AppConfig.String("UrlCrudCumplidos")+"/cambio_estado_pago/?query="+query+"&sortby=FechaCreacion&order=asc&limit=-1", &respuesta_peticion); (err == nil) && (response == 200) {
 		//Ejecuta si no hay error y estado = 200
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 			LimpiezaRespuestaRefactor(respuesta_peticion, &cambiosEstado)
