@@ -340,7 +340,6 @@ func TraerEnlacesDocumentosAsociadosPagoMensual(pago_mensual_id string) (documen
 
 	var respuesta_peticion map[string]interface{}
 
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/soporte_pago_mensual/?limit=-1&query=PagoMensualId.Id:" + pago_mensual_id)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/soporte_pago_mensual/?limit=-1&query=PagoMensualId.Id:"+pago_mensual_id, &respuesta_peticion); (err == nil) && (response == 200) {
 		LimpiezaRespuestaRefactor(respuesta_peticion, &soportes_pagos_mensuales)
 		if len(soportes_pagos_mensuales) != 0 {
@@ -350,11 +349,9 @@ func TraerEnlacesDocumentosAsociadosPagoMensual(pago_mensual_id string) (documen
 			}
 
 			var ids_documentos_juntos = strings.Join(ids_documentos, "|")
-			fmt.Println(beego.AppConfig.String("UrlDocumentosCrud") + "/documento/?limit=-1&query=Id.in:" + ids_documentos_juntos)
 			if response, err := getJsonTest(beego.AppConfig.String("UrlDocumentosCrud")+"/documento/?limit=-1&query=Activo:True,Id.in:"+ids_documentos_juntos, &documentos_crud); (err == nil) && (response == 200) {
 				for _, documento_crud := range documentos_crud {
 					soporte.Documento = documento_crud
-					fmt.Println(beego.AppConfig.String("UrlGestorDocumental") + "/document/" + documento_crud.Enlace)
 					if response, err := getJsonTest(beego.AppConfig.String("UrlGestorDocumental")+"/document/"+documento_crud.Enlace, &fileGestor); (err == nil) && (response == 200) {
 						soporte.Archivo = fileGestor
 						documentos = append(documentos, soporte)

@@ -125,7 +125,7 @@ func TestGetActaDeInicio(t *testing.T) {
 func TestEndPointCumplidosCpsMid(t *testing.T) {
 	t.Log("-----------------------------------------------------")
 	t.Log("Testing EndPoint UrlCrudCumplidos ")
-	t.Log(parameters.UrlCrudCumplidos)
+	t.Log("URLcrud: ", parameters.UrlCrudCumplidos)
 	t.Log("Testing EndPoint UrlcrudAgora")
 	t.Log(parameters.UrlcrudAgora)
 	t.Log("Testing EndPoint UrlFinancieraJBPM")

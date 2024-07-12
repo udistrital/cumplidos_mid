@@ -48,6 +48,21 @@ func init() {
 				&controllers.ValidacionFechaCargaCumplidoController{},
 			),
 		),
+		beego.NSNamespace("/historicos",
+			beego.NSInclude(
+				&controllers.HistoricoCumplidos{},
+       ),                  
+    ),
+		beego.NSNamespace("/solicitudes_pagos",
+			beego.NSInclude(
+				&controllers.SolicitudesPagoMensualController{},
+			),
+		),
+		beego.NSNamespace("/download_documents",
+			beego.NSInclude(
+				&controllers.DescargarDocumentosSolicitudesPagosController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
