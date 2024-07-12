@@ -44,7 +44,7 @@ func GetNovedadesPostcontractuales(tipo_novedad models.TipoNovedad, query string
 		peticion += "&fields" + fields
 	}
 
-	fmt.Println(peticion)
+	fmt.Println("PETICION ", peticion)
 	if response, err := getJsonTest(peticion, target); (err == nil) && (response == 200) {
 		return 200, nil
 	} else {
@@ -73,6 +73,7 @@ func ConstruirNovedadOtroSi(id string, cdp string, novedadRes *models.Novedades)
 	} else {
 		fmt.Println(err)
 	}
+	novedaux.TipoNovedad = "NP_ADPRO"
 	novedaux.NumeroCdp = cdp
 	novedadRes.Novedades = append(novedadRes.Novedades, novedaux)
 }
@@ -102,11 +103,13 @@ func ConstruirNovedadCesion(id string, novedadRes *models.Novedades) {
 	} else {
 		fmt.Println(err)
 	}
+	novedaux.TipoNovedad = "NP_CES"
 	novedadRes.Novedades = append(novedadRes.Novedades, novedaux)
 }
 
 func ConstruirNovedadSuspension(id string, novedadRes *models.Novedades) {
 	var fechaTemp []models.Fecha
+	var propiedadTemp []models.Propiedad
 	novedaux := models.Noveda{}
 	url := beego.AppConfig.String("UrlNovedadesCrud") + "/fechas/?query=IdNovedadesPoscontractuales.Id:" + id
 	if status, err := getJsonTest(url, &fechaTemp); err == nil && status == 200 {
@@ -127,9 +130,32 @@ func ConstruirNovedadSuspension(id string, novedadRes *models.Novedades) {
 	} else {
 		fmt.Println(err)
 	}
+	url = beego.AppConfig.String("UrlNovedadesCrud") + "/propiedad/?query=IdTipoPropiedad.Id:3,IdNovedadesPoscontractuales.Id:" + id
+	if status, err := getJsonTest(url, &propiedadTemp); err == nil && status == 200 {
+		novedaux.PlazoEjecucion = strconv.Itoa(propiedadTemp[0].Propiedad)
+	} else {
+		fmt.Println(err)
+	}
+	novedaux.TipoNovedad = "NP_SUS"
 	novedadRes.Novedades = append(novedadRes.Novedades, novedaux)
 }
 
 func ConstruirNovedadTerminacion(id string, novedadRes *models.Novedades) {
-
+	var fechaTemp []models.Fecha
+	novedaux := models.Noveda{}
+	url := beego.AppConfig.String("UrlNovedadesCrud") + "/fechas/?query=IdNovedadesPoscontractuales.Id:" + id
+	if status, err := getJsonTest(url, &fechaTemp); err == nil && status == 200 {
+		for _, f := range fechaTemp {
+			tipoInterface := f.IdTipoFecha.(map[string]interface{})
+			idTipo := tipoInterface["Id"].(float64)
+			switch idTipo {
+			case 12:
+				novedaux.FechaFin = f.Fecha[:10]
+			}
+		}
+	} else {
+		fmt.Println(err)
+	}
+	novedaux.TipoNovedad = "NP_TER"
+	novedadRes.Novedades = append(novedadRes.Novedades, novedaux)
 }

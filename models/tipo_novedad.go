@@ -13,13 +13,13 @@ const (
 func (tN TipoNovedad) String() string {
 	switch tN {
 	case TipoNovedadOtrosi:
-		return "220"
+		return "TipoNovedad:8"
 	case TipoNovedadCesion:
-		return "219"
+		return "TipoNovedad:2"
 	case TipoNovedadTerminacion:
-		return "218"
+		return "TipoNovedad:5"
 	case TipoNovedadSuspension:
-		return "216"
+		return "TipoNovedad:1"
 	}
 	return "All"
 }
