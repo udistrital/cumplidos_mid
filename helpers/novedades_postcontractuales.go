@@ -53,7 +53,7 @@ func GetNovedadesPostcontractuales(tipo_novedad models.TipoNovedad, query string
 	return 400, err_nov
 }
 
-func ConstruirNovedadOtroSi(id string, cdp string, novedadRes *models.Novedades) {
+func ConstruirNovedadOtroSi(id string, cdp string, vigenciaCdp string, novedadRes []models.Noveda) []models.Noveda {
 	var fechaTemp []models.Fecha
 	novedaux := models.Noveda{}
 	url := beego.AppConfig.String("UrlNovedadesCrud") + "/fechas/?query=IdNovedadesPoscontractuales.Id:" + id
@@ -70,15 +70,17 @@ func ConstruirNovedadOtroSi(id string, cdp string, novedadRes *models.Novedades)
 				novedaux.FechaFin = f.Fecha[:10]
 			}
 		}
+		novedaux.NumeroCdp = cdp
+		novedaux.VigenciaCdp = vigenciaCdp
 	} else {
 		fmt.Println(err)
 	}
 	novedaux.TipoNovedad = "NP_ADPRO"
-	novedaux.NumeroCdp = cdp
-	novedadRes.Novedades = append(novedadRes.Novedades, novedaux)
+	novedadRes = append(novedadRes, novedaux)
+	return novedadRes
 }
 
-func ConstruirNovedadCesion(id string, novedadRes *models.Novedades) {
+func ConstruirNovedadCesion(id string, novedadRes []models.Noveda) []models.Noveda {
 	var fechaTemp []models.Fecha
 	var propiedadTemp []models.Propiedad
 	novedaux := models.Noveda{}
@@ -104,10 +106,11 @@ func ConstruirNovedadCesion(id string, novedadRes *models.Novedades) {
 		fmt.Println(err)
 	}
 	novedaux.TipoNovedad = "NP_CES"
-	novedadRes.Novedades = append(novedadRes.Novedades, novedaux)
+	novedadRes = append(novedadRes, novedaux)
+	return novedadRes
 }
 
-func ConstruirNovedadSuspension(id string, novedadRes *models.Novedades) {
+func ConstruirNovedadSuspension(id string, novedadRes []models.Noveda) []models.Noveda {
 	var fechaTemp []models.Fecha
 	var propiedadTemp []models.Propiedad
 	novedaux := models.Noveda{}
@@ -137,10 +140,11 @@ func ConstruirNovedadSuspension(id string, novedadRes *models.Novedades) {
 		fmt.Println(err)
 	}
 	novedaux.TipoNovedad = "NP_SUS"
-	novedadRes.Novedades = append(novedadRes.Novedades, novedaux)
+	novedadRes = append(novedadRes, novedaux)
+	return novedadRes
 }
 
-func ConstruirNovedadTerminacion(id string, novedadRes *models.Novedades) {
+func ConstruirNovedadTerminacion(id string, novedadRes []models.Noveda) []models.Noveda {
 	var fechaTemp []models.Fecha
 	novedaux := models.Noveda{}
 	url := beego.AppConfig.String("UrlNovedadesCrud") + "/fechas/?query=IdNovedadesPoscontractuales.Id:" + id
@@ -157,5 +161,6 @@ func ConstruirNovedadTerminacion(id string, novedadRes *models.Novedades) {
 		fmt.Println(err)
 	}
 	novedaux.TipoNovedad = "NP_TER"
-	novedadRes.Novedades = append(novedadRes.Novedades, novedaux)
+	novedadRes = append(novedadRes, novedaux)
+	return novedadRes
 }

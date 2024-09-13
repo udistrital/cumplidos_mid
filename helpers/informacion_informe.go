@@ -180,9 +180,10 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 
 	// Consulta novedades
 	var novedades []models.NovedadPostcontractual
-	novStruct := &models.Novedades{
-		Novedades: []models.Noveda{{}},
-	}
+	// novStruct := &models.Novedades{
+	// 	Novedades: []models.Noveda{{}},
+	// }
+	var novStruct []models.Noveda
 	query := "ContratoId:" + contrato + ",Vigencia:" + vigencia + ",Activo:true"
 	if response, err := GetNovedadesPostcontractuales(models.TipoNovedadTodas, query, "FechaCreacion", "asc", "-1", "", "", &novedades); (err == nil) && (response == 200) {
 		fmt.Println("Len de novedades", len(novedades))
@@ -191,20 +192,19 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 			fmt.Println("----------------TipoNovedad---------", nov.TipoNovedad)
 			switch nov.TipoNovedad {
 			case 6, 7, 8:
-				ConstruirNovedadOtroSi(idNovedad, strconv.Itoa(nov.NumeroCdpId), novStruct)
+				novStruct = ConstruirNovedadOtroSi(idNovedad, strconv.Itoa(nov.NumeroCdpId), strconv.Itoa(nov.VigenciaCdp), novStruct)
 			case 2:
-				ConstruirNovedadCesion(idNovedad, novStruct)
+				novStruct = ConstruirNovedadCesion(idNovedad, novStruct)
 			case 1:
-				ConstruirNovedadSuspension(idNovedad, novStruct)
+				novStruct = ConstruirNovedadSuspension(idNovedad, novStruct)
 			case 5:
-				ConstruirNovedadTerminacion(idNovedad, novStruct)
+				novStruct = ConstruirNovedadTerminacion(idNovedad, novStruct)
 			}
 		}
 	} else {
 		fmt.Println("ERROR: ", err)
 	}
-	informacion_informe.ArrayNovedades = novStruct.Novedades
-
+	informacion_informe.Novedades = novStruct
 	// // Consulta novedades OtroSi
 	// var otrosi []models.Otrosi
 	// fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:220,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
