@@ -73,6 +73,7 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 		//fmt.Println("informacion_persona natural:", informacion_persona_natural)
 		//informacion_informe.InformacionContratista.CiudadExpedicion = informacion_contrato_contratista.InformacionContratista.Documento.Ciudad
 		informacion_informe.InformacionContratista.Nombre = informacion_persona_natural[0].PrimerNombre + " " + informacion_persona_natural[0].SegundoNombre + " " + informacion_persona_natural[0].PrimerApellido + " " + informacion_persona_natural[0].SegundoApellido
+
 		informacion_informe.InformacionContratista.TipoIdentificacion = informacion_persona_natural[0].TipoDocumento.ValorParametro
 
 		fmt.Println(beego.AppConfig.String("UrlcrudCore") + "/ciudad/" + strconv.Itoa(informacion_persona_natural[0].IdCiudadExpedicionDocumento))
@@ -192,13 +193,41 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 			fmt.Println("----------------TipoNovedad---------", nov.TipoNovedad)
 			switch nov.TipoNovedad {
 			case 6, 7, 8:
-				novStruct = ConstruirNovedadOtroSi(idNovedad, strconv.Itoa(nov.NumeroCdpId), strconv.Itoa(nov.VigenciaCdp), novStruct)
+				otrosi, err := ConstruirNovedadOtroSi(idNovedad, strconv.Itoa(nov.NumeroCdpId), strconv.Itoa(nov.VigenciaCdp), novStruct)
+				if err == nil {
+					novStruct = append(novStruct, otrosi)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
+					panic(outputError)
+				}
 			case 2:
-				novStruct = ConstruirNovedadCesion(idNovedad, novStruct)
+				cesion, err := ConstruirNovedadCesion(idNovedad, novStruct)
+				if err == nil {
+					novStruct = append(novStruct, cesion)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
+					panic(outputError)
+				}
 			case 1:
-				novStruct = ConstruirNovedadSuspension(idNovedad, novStruct)
+				suspension, err := ConstruirNovedadSuspension(idNovedad, novStruct)
+				if err == nil {
+					novStruct = append(novStruct, suspension)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
+					panic(outputError)
+				}
 			case 5:
-				novStruct = ConstruirNovedadTerminacion(idNovedad, novStruct)
+				terminacion, err := ConstruirNovedadTerminacion(idNovedad, novStruct)
+				if err == nil {
+					novStruct = append(novStruct, terminacion)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
+					panic(outputError)
+				}
 			}
 		}
 	} else {
