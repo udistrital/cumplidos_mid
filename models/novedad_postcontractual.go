@@ -43,13 +43,14 @@ type Novedades struct {
 }
 
 type Noveda struct {
-	TipoNovedad    string `json:"tipoNovedad"`
-	FechaCreacion  string `json:"fechaCreacion"`
-	FechaInicio    string `json:"fechaInicio"`
-	FechaFin       string `json:"fechaFin"`
-	FechaFinSus    string `json:"fechaFinSus"`
-	PlazoEjecucion string `json:"plazoEjecucion"`
-	NumeroCdp      string `json:"numeroCdp"`
-	Cedente        string `json:"cedente"`
-	Cesionario     string `json:"cesionario"`
+	TipoNovedad    string `json:"TipoNovedad"`
+	FechaCreacion  string `json:"FechaCreacion"`
+	FechaInicio    string `json:"FechaInicio"`
+	FechaFin       string `json:"FechaFin"`
+	FechaFinSus    string `json:"FechaFinSus"`
+	PlazoEjecucion string `json:"PlazoEjecucion"`
+	NumeroCdp      string `json:"NumeroCdp"`
+	VigenciaCdp    string `json:"VigenciaCdp"`
+	Cedente        string `json:"Cedente"`
+	Cesionario     string `json:"Cesionario"`
 }

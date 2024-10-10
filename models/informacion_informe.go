@@ -27,13 +27,7 @@ type InformacionInforme struct {
 		Consecutivo string
 		Fecha       time.Time
 	}
-	Novedades struct {
-		Otrosi      []Otrosi
-		Cesion      []Cesion
-		Terminacion []Terminacion
-		Suspencion  []Suspencion
-	}
-	ArrayNovedades         []Noveda
+	Novedades              []Noveda
 	InformacionContratista struct {
 		Nombre             string
 		TipoIdentificacion string
