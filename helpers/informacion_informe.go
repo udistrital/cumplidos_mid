@@ -73,6 +73,7 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 		//fmt.Println("informacion_persona natural:", informacion_persona_natural)
 		//informacion_informe.InformacionContratista.CiudadExpedicion = informacion_contrato_contratista.InformacionContratista.Documento.Ciudad
 		informacion_informe.InformacionContratista.Nombre = informacion_persona_natural[0].PrimerNombre + " " + informacion_persona_natural[0].SegundoNombre + " " + informacion_persona_natural[0].PrimerApellido + " " + informacion_persona_natural[0].SegundoApellido
+
 		informacion_informe.InformacionContratista.TipoIdentificacion = informacion_persona_natural[0].TipoDocumento.ValorParametro
 
 		fmt.Println(beego.AppConfig.String("UrlcrudCore") + "/ciudad/" + strconv.Itoa(informacion_persona_natural[0].IdCiudadExpedicionDocumento))
@@ -110,10 +111,10 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 	var contrato_general []models.ContratoGeneral
 	var sede []models.Sede
 	var supervisor_contrato []models.SupervisorContrato
-	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/contrato_general/?query=ContratoSuscrito.NumeroContratoSuscrito:" + contrato + ",VigenciaContrato:" + vigencia)
+	// fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/contrato_general/?query=ContratoSuscrito.NumeroContratoSuscrito:" + contrato + ",VigenciaContrato:" + vigencia)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_general/?query=ContratoSuscrito.NumeroContratoSuscrito:"+contrato+",VigenciaContrato:"+vigencia, &contrato_general); (err == nil) && (response == 200) {
 		//fmt.Println("contrato_general:", contrato_general)
-		fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/sedes_SIC/?query=ESFIDSEDE:" + contrato_general[0].LugarEjecucion.Sede)
+		// fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/sedes_SIC/?query=ESFIDSEDE:" + contrato_general[0].LugarEjecucion.Sede)
 		if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/sedes_SIC/?query=ESFIDSEDE:"+contrato_general[0].LugarEjecucion.Sede, &sede); (err == nil) && (response == 200) {
 			//fmt.Println("sede:", sede)
 			informacion_informe.Sede = sede[0].ESFSEDE
@@ -150,7 +151,7 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 
 	var temp map[string]interface{}
 	var cdp_rp models.InformacionCdpRp
-	fmt.Println(beego.AppConfig.String("UrlFinancieraJBPM") + "/" + "cdprp/" + cdp + "/" + vigencia_cdp + "/01")
+	// fmt.Println(beego.AppConfig.String("UrlFinancieraJBPM") + "/" + "cdprp/" + cdp + "/" + vigencia_cdp + "/01")
 	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlFinancieraJBPM")+"/"+"cdprp/"+cdp+"/"+vigencia_cdp+"/01", &temp); (err == nil) && (response == 200) {
 		json_cdp_rp, error_json := json.Marshal(temp)
 
@@ -178,66 +179,121 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 		panic(outputError)
 	}
 
-	// Consulta novedades OtroSi
-	var otrosi []models.Otrosi
-	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:220,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
-	if response, err := GetNovedadesPostcontractuales(models.TipoNovedadOtrosi, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &otrosi); (err == nil) && (response == 200) {
-		for i, os := range otrosi {
-			if valor_girado_otrosi, err := getValorGiradoPorCdp(strconv.Itoa(os.NumeroCdp), strconv.Itoa(os.VigenciaCdp), strconv.Itoa(contrato_general[0].UnidadEjecutora)); err == nil {
-				otrosi[i].ValorNovedadPagado = valor_girado_otrosi
-				informacion_informe.EjecutadoDinero.Faltante = informacion_informe.EjecutadoDinero.Faltante + (otrosi[i].ValorNovedad - otrosi[i].ValorNovedadPagado)
-				informacion_informe.ValorTotalContrato = informacion_informe.ValorTotalContrato + otrosi[i].ValorNovedad
-			} else {
-				logs.Error(err)
-				outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/OtroSi", "err": err, "status": "502"}
-				panic(outputError)
+	// Consulta novedades
+	var novedades []models.NovedadPostcontractual
+	// novStruct := &models.Novedades{
+	// 	Novedades: []models.Noveda{{}},
+	// }
+	var novStruct []models.Noveda
+	query := "ContratoId:" + contrato + ",Vigencia:" + vigencia + ",Activo:true"
+	if response, err := GetNovedadesPostcontractuales(models.TipoNovedadTodas, query, "FechaCreacion", "asc", "-1", "", "", &novedades); (err == nil) && (response == 200) {
+		fmt.Println("Len de novedades", len(novedades))
+		for _, nov := range novedades {
+			idNovedad := strconv.Itoa(nov.Id)
+			fmt.Println("----------------TipoNovedad---------", nov.TipoNovedad)
+			switch nov.TipoNovedad {
+			case 6, 7, 8:
+				otrosi, err := ConstruirNovedadOtroSi(idNovedad, strconv.Itoa(nov.NumeroCdpId), strconv.Itoa(nov.VigenciaCdp), novStruct)
+				if err == nil {
+					novStruct = append(novStruct, otrosi)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
+					panic(outputError)
+				}
+			case 2:
+				cesion, err := ConstruirNovedadCesion(idNovedad, novStruct)
+				if err == nil {
+					novStruct = append(novStruct, cesion)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
+					panic(outputError)
+				}
+			case 1:
+				suspension, err := ConstruirNovedadSuspension(idNovedad, novStruct)
+				if err == nil {
+					novStruct = append(novStruct, suspension)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
+					panic(outputError)
+				}
+			case 5:
+				terminacion, err := ConstruirNovedadTerminacion(idNovedad, novStruct)
+				if err == nil {
+					novStruct = append(novStruct, terminacion)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
+					panic(outputError)
+				}
 			}
 		}
-		informacion_informe.Novedades.Otrosi = otrosi
 	} else {
-		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/OtroSi", "err": err, "status": "502"}
-		panic(outputError)
+		fmt.Println("ERROR: ", err)
 	}
+	informacion_informe.Novedades = novStruct
+	// // Consulta novedades OtroSi
+	// var otrosi []models.Otrosi
+	// fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:220,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
+	// if response, err := GetNovedadesPostcontractuales(models.TipoNovedadOtrosi, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &otrosi); (err == nil) && (response == 200) {
+	// 	for i, os := range otrosi {
+	// 		if valor_girado_otrosi, err := getValorGiradoPorCdp(strconv.Itoa(os.NumeroCdp), strconv.Itoa(os.VigenciaCdp), strconv.Itoa(contrato_general[0].UnidadEjecutora)); err == nil {
+	// 			otrosi[i].ValorNovedadPagado = valor_girado_otrosi
+	// 			informacion_informe.EjecutadoDinero.Faltante = informacion_informe.EjecutadoDinero.Faltante + (otrosi[i].ValorNovedad - otrosi[i].ValorNovedadPagado)
+	// 			informacion_informe.ValorTotalContrato = informacion_informe.ValorTotalContrato + otrosi[i].ValorNovedad
+	// 		} else {
+	// 			logs.Error(err)
+	// 			outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/OtroSi", "err": err, "status": "502"}
+	// 			panic(outputError)
+	// 		}
+	// 	}
+	// 	informacion_informe.Novedades.Otrosi = otrosi
+	// } else {
+	// 	logs.Error(err)
+	// 	outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/OtroSi", "err": err, "status": "502"}
+	// 	panic(outputError)
+	// }
 
-	var cesion []models.Cesion
-	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:219,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
-	if response, err := GetNovedadesPostcontractuales(models.TipoNovedadCesion, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &cesion); (err == nil) && (response == 200) {
-		//fmt.Println("Cesion:", cesion)
-		informacion_informe.Novedades.Cesion = cesion
-	} else {
-		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/Cesion", "err": err, "status": "502"}
-		panic(outputError)
-	}
+	// var cesion []models.Cesion
+	// fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:219,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
+	// if response, err := GetNovedadesPostcontractuales(models.TipoNovedadCesion, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &cesion); (err == nil) && (response == 200) {
+	// 	//fmt.Println("Cesion:", cesion)
+	// 	informacion_informe.Novedades.Cesion = cesion
+	// } else {
+	// 	logs.Error(err)
+	// 	outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/Cesion", "err": err, "status": "502"}
+	// 	panic(outputError)
+	// }
 
-	var terminacion []models.Terminacion
-	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:218,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
-	if response, err := GetNovedadesPostcontractuales(models.TipoNovedadTerminacion, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &terminacion); (err == nil) && (response == 200) {
-		//fmt.Println("terminacion:", terminacion)
-		informacion_informe.Novedades.Terminacion = terminacion
-	} else {
-		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/Terminacion", "err": err, "status": "502"}
-		panic(outputError)
-	}
+	// var terminacion []models.Terminacion
+	// fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:218,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
+	// if response, err := GetNovedadesPostcontractuales(models.TipoNovedadTerminacion, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &terminacion); (err == nil) && (response == 200) {
+	// 	//fmt.Println("terminacion:", terminacion)
+	// 	informacion_informe.Novedades.Terminacion = terminacion
+	// } else {
+	// 	logs.Error(err)
+	// 	outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/Terminacion", "err": err, "status": "502"}
+	// 	panic(outputError)
+	// }
 
-	var suspencion []models.Suspencion
-	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:216,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
-	if response, err := GetNovedadesPostcontractuales(models.TipoNovedadSuspension, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &suspencion); (err == nil) && (response == 200) {
-		//fmt.Println("Suspencion:", suspencion)
-		informacion_informe.Novedades.Suspencion = suspencion
-	} else {
-		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/Suspencion", "err": err, "status": "502"}
-		panic(outputError)
-	}
+	// var suspencion []models.Suspencion
+	// fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/novedad_postcontractual?query=TipoNovedad:216,NumeroContrato:" + contrato + ",Vigencia:" + vigencia + "&sortby=FechaInicio&order=desc")
+	// if response, err := GetNovedadesPostcontractuales(models.TipoNovedadSuspension, "NumeroContrato:"+contrato+",Vigencia:"+vigencia, "FechaInicio", "desc", "-1", "", "", &suspencion); (err == nil) && (response == 200) {
+	// 	//fmt.Println("Suspencion:", suspencion)
+	// 	informacion_informe.Novedades.Suspencion = suspencion
+	// } else {
+	// 	logs.Error(err)
+	// 	outputError = map[string]interface{}{"funcion": "/InformacionInforme/Novedades/Suspencion", "err": err, "status": "502"}
+	// 	panic(outputError)
+	// }
 
 	//Girado contrato original
 	var contratos_disponibilidad []models.ContratoDisponibilidad
 	numero_contrato := contrato_general[0].Id
 
-	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/contrato_disponibilidad/?query=NumeroContrato:" + numero_contrato)
+	// fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/contrato_disponibilidad/?query=NumeroContrato:" + numero_contrato)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+numero_contrato, &contratos_disponibilidad); (err == nil) && (response == 200) {
 
 		if len(contratos_disponibilidad) == 0 {
@@ -385,7 +441,7 @@ func getValorGiradoPorCdp(cdp string, vigencia_cdp string, unidad_ejecucion stri
 	var temp_giros_tercero map[string]interface{}
 	var giros_tercero models.GirosTercero
 	valor_girado = 0
-	fmt.Println(beego.AppConfig.String("UrlFinancieraJBPM") + "/" + "giros_tercero/" + cdp + "/" + vigencia_cdp + "/" + unidad_ejecucion)
+	// fmt.Println(beego.AppConfig.String("UrlFinancieraJBPM") + "/" + "giros_tercero/" + cdp + "/" + vigencia_cdp + "/" + unidad_ejecucion)
 	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlFinancieraJBPM")+"/"+"giros_tercero/"+cdp+"/"+vigencia_cdp+"/"+unidad_ejecucion, &temp_giros_tercero); (err == nil) && (response == 200) {
 		json_giros_tercero, error_json := json.Marshal(temp_giros_tercero)
 		if error_json == nil {
