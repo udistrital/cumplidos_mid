@@ -181,16 +181,11 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 
 	// Consulta novedades
 	var novedades []models.NovedadPostcontractual
-	// novStruct := &models.Novedades{
-	// 	Novedades: []models.Noveda{{}},
-	// }
-	var novStruct []models.Noveda
+	var novStruct = []models.Noveda{}
 	query := "ContratoId:" + contrato + ",Vigencia:" + vigencia + ",Activo:true"
 	if response, err := GetNovedadesPostcontractuales(models.TipoNovedadTodas, query, "FechaCreacion", "asc", "-1", "", "", &novedades); (err == nil) && (response == 200) {
-		fmt.Println("Len de novedades", len(novedades))
 		for _, nov := range novedades {
 			idNovedad := strconv.Itoa(nov.Id)
-			fmt.Println("----------------TipoNovedad---------", nov.TipoNovedad)
 			switch nov.TipoNovedad {
 			case 6, 7, 8:
 				otrosi, err := ConstruirNovedadOtroSi(idNovedad, strconv.Itoa(nov.NumeroCdpId), strconv.Itoa(nov.VigenciaCdp), novStruct)
@@ -386,7 +381,7 @@ func GetPreliquidacion(pago_mensual_id string) (preliquidacion models.Preliquida
 
 	var preliquidaciones []models.PreliquidacionTitan
 	var respuesta_peticion_prel map[string]interface{}
-	fmt.Println(beego.AppConfig.String("UrlTitanMid") + "/detalle_preliquidacion/obtener_detalle_CT/" + anio + "/" + mes + "/" + contrato + "/" + vigencia_contrato + "/" + documento_contratista)
+	// fmt.Println(beego.AppConfig.String("UrlTitanMid") + "/detalle_preliquidacion/obtener_detalle_CT/" + anio + "/" + mes + "/" + contrato + "/" + vigencia_contrato + "/" + documento_contratista)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlTitanMid")+"/detalle_preliquidacion/obtener_detalle_CT/"+anio+"/"+mes+"/"+contrato+"/"+vigencia_contrato+"/"+documento_contratista, &respuesta_peticion_prel); (err == nil) && (response == 201) {
 		LimpiezaRespuestaRefactor(respuesta_peticion_prel, &preliquidaciones)
 		if preliquidacion, err := seleccionarPreliquidacion(preliquidaciones, numero_cdp); err == nil {
