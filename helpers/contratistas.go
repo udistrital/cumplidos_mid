@@ -344,10 +344,21 @@ func TraerEnlacesDocumentosAsociadosPagoMensual(pago_mensual_id string) (documen
 		LimpiezaRespuestaRefactor(respuesta_peticion, &soportes_pagos_mensuales)
 		if len(soportes_pagos_mensuales) != 0 {
 			var ids_documentos []string
-			for _, soporte_pago_mensual := range soportes_pagos_mensuales {
-				ids_documentos = append(ids_documentos, strconv.Itoa(soporte_pago_mensual.Documento))
-			}
-
+			var ids_igycc_actual models.SoportePagoMensual
+            for _, soporte_pago_mensual := range soportes_pagos_mensuales {
+                if soporte_pago_mensual.ItemInformeTipoContratoId.ItemInformeId.CodigoAbreviacion == "IGYCC" {
+                    if ids_igycc_actual == (models.SoportePagoMensual{}) {
+                        ids_igycc_actual = soporte_pago_mensual
+                    } else {
+                        if ids_igycc_actual.FechaCreacion.Before(soporte_pago_mensual.FechaCreacion) {
+                            ids_igycc_actual = soporte_pago_mensual
+                        }
+                    }
+                } else {
+                    ids_documentos = append(ids_documentos, strconv.Itoa(soporte_pago_mensual.Documento))
+                }
+            }
+            ids_documentos = append(ids_documentos, strconv.Itoa(ids_igycc_actual.Documento))
 			var ids_documentos_juntos = strings.Join(ids_documentos, "|")
 			if response, err := getJsonTest(beego.AppConfig.String("UrlDocumentosCrud")+"/documento/?limit=-1&query=Activo:True,Id.in:"+ids_documentos_juntos, &documentos_crud); (err == nil) && (response == 200) {
 				for _, documento_crud := range documentos_crud {
