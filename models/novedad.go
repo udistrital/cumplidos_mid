@@ -14,5 +14,5 @@ type Novedad struct {
 type RespNov struct {
 	Type string
 	Code string
-	Body []Novedad
+	Body []NovedadPoscontractual
 }
