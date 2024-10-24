@@ -22,35 +22,45 @@ type NovedadPostcontractual struct {
 
 type NovedadPoscontractual struct {
 	Id                         int
+	Aclaracion                 string
 	Contrato                   int
-	Vigencia                   int
 	Cedente                    int
 	Cesionario                 int
+	CodAbreviacionTipo         string
+	Vigencia                   int
 	Enlace                     string
-	Entidadaseguradora         int
+	EntidadAseguradora         int
 	Estado                     string
-	Fechaadicion               string
-	Fechacesion                string
-	Fechaexpedicion            string
-	Fechafinefectiva           string
-	Fechaoficio                string
-	Fechaprorroga              string
-	Fecharegistro              string
-	Fechareinicio              string
-	Fechasolicitud             string
-	Fechasuspension            string
-	Fechaterminacionanticipada string
+	FechaAdicion               string
+	FechaCesion                string
+	FechaExpedicion            string
+	FechaFinefectiva           string
+	FechaOficio                string
+	FechaLiquidacion           string
+	FechaProrroga              string
+	FechaRegistro              string
+	FechaReinicio              string
+	FechaSolicitud             string
+	FechaSuspension            string
+	FechaFinSuspension         string
+	FechaTerminacionanticipada string
 	Motivo                     string
+	PeriodoSuspension          int
+	PlazoActual                int
+	TiempoProrroga             int
+	ValorAdicion               int
+	ValorFinalContrato         int
 	NombreEstado               string
 	NombreTipoNovedad          string
-	Numerocdp                  int
+	NumeroActaEntrega          string
+	NumeroCdp                  int
 	VigenciaCdp                int
-	Numerooficioordenador      string
-	Numerooficiosupervisor     string
-	Numerosolicitud            string
+	NumeroOficioordenador      string
+	NumeroOficiosupervisor     string
+	NumeroSolicitud            string
 	Observacion                string
 	Poliza                     string
-	Tiponovedad                int
+	TipoNovedad                int
 }
 
 type Fecha struct {
@@ -76,15 +86,17 @@ type Novedades struct {
 }
 
 type Noveda struct {
+	NumeroContrato     int    `json:"NumeroContrato"`
+	Vigencia           int    `json:"Vigencia"`
 	TipoNovedad        string `json:"TipoNovedad"`
 	FechaCreacion      string `json:"FechaCreacion"`
 	FechaInicio        string `json:"FechaInicio"`
 	FechaFin           string `json:"FechaFin"`
 	FechaFinSus        string `json:"FechaFinSus"`
-	PlazoEjecucion     string `json:"PlazoEjecucion"`
-	NumeroCdp          string `json:"NumeroCdp"`
-	VigenciaCdp        string `json:"VigenciaCdp"`
+	PlazoEjecucion     int    `json:"PlazoEjecucion"`
+	NumeroCdp          int    `json:"NumeroCdp"`
+	VigenciaCdp        int    `json:"VigenciaCdp"`
 	Cedente            string `json:"Cedente"`
 	Cesionario         string `json:"Cesionario"`
-	ValorNovedadPagado int    `json:"OtrosiPagado"`
+	ValorNovedadPagado int    `json:"ValorNovedadPagado"`
 }

@@ -1,11 +1,13 @@
 package helpers
 
 import (
-	"fmt"
+	// "fmt"
+	// "strconv"
+
 	"strconv"
 
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
+	// "github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/models"
 )
 
@@ -13,7 +15,6 @@ func GetNovedadesPostcontractuales(query string, target *[]models.NovedadPoscont
 	var responseWrapper models.RespNov
 	url := beego.AppConfig.String("UrlNovedadesMid") + "/novedad/" + query
 	if response, err := getJsonTest(url, &responseWrapper); (err == nil) && (response == 200) {
-		fmt.Println("Epa")
 		*target = responseWrapper.Body
 		return 200, nil
 	} else {
@@ -22,121 +23,55 @@ func GetNovedadesPostcontractuales(query string, target *[]models.NovedadPoscont
 	return 400, err_nov
 }
 
-func ConstruirNovedadOtroSi(novedadRes models.NovedadPoscontractual) (novedaux models.Noveda, outputError map[string]interface{}) {
-	// url = beego.AppConfig.String("UrlNovedadesCrud") + "/propiedad/?query=IdNovedadesPoscontractuales.Id:" + id
-	// if status, err := getJsonTest(url, &propiedadTemp); err == nil && status == 200 {
-	// 	for _, p := range propiedadTemp {
-	// 		tipoInterface := p.IdTipoPropiedad.(map[string]interface{})
-	// 		idTipo := tipoInterface["Id"].(float64)
-	// 		switch idTipo {
-	// 		case 5:
-	// 			novedaux.FechaCreacion = ""
-	// 		}
-	// 	}
-	// } else {
-	// 	fmt.Println(err) // ! Manejar este error
-	// }
-	// novedaux.NumeroCdp = cdp
-	// novedaux.VigenciaCdp = vigenciaCdp
-	// novedaux.TipoNovedad = "NP_ADPRO"
+func ConstruirNovedadOtroSi(nov models.NovedadPoscontractual) (novedaux models.Noveda, outputError map[string]interface{}) {
+	novedaux.NumeroCdp = nov.NumeroCdp
+	novedaux.VigenciaCdp = nov.VigenciaCdp
+	novedaux.TipoNovedad = "NP_ADPRO"
 	return novedaux, outputError
 }
 
-func ConstruirNovedadCesion(id string, novedadRes []models.Noveda) (novedaux models.Noveda, outputError map[string]interface{}) {
-	var fechaTemp []models.Fecha
-	var propiedadTemp []models.Propiedad
-	url := beego.AppConfig.String("UrlNovedadesCrud") + "/fechas/?query=IdTipoFecha.Id:2,IdNovedadesPoscontractuales.Id:" + id
-	if status, err := getJsonTest(url, &fechaTemp); err == nil && status == 200 {
-		novedaux.FechaInicio = fechaTemp[0].Fecha[:10]
-	} else {
-		fmt.Println(err)
-	}
-	url = beego.AppConfig.String("UrlNovedadesCrud") + "/propiedad/?query=IdNovedadesPoscontractuales.Id:" + id
-	if status, err := getJsonTest(url, &propiedadTemp); err == nil && status == 200 {
-		for _, p := range propiedadTemp {
-			tipoInterface := p.IdTipoPropiedad.(map[string]interface{})
-			idTipo := tipoInterface["Id"].(float64)
-			if idTipo == 1 {
-				var informacion_proveedor []models.InformacionProveedor
-				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor?query=Id:"+strconv.Itoa(p.Propiedad), &informacion_proveedor); (err == nil) && (response == 200) {
-					novedaux.Cedente = informacion_proveedor[0].NomProveedor
-				} else {
-					logs.Error(err)
-					outputError = map[string]interface{}{"funcion": "/ConstruirNovedadCesion/informacion_proveedor", "err": err, "status": "502"}
-					panic(outputError)
-				}
-			}
-			if idTipo == 2 {
-				var informacion_proveedor []models.InformacionProveedor
-				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor?query=Id:"+strconv.Itoa(p.Propiedad), &informacion_proveedor); (err == nil) && (response == 200) {
-					novedaux.Cesionario = informacion_proveedor[0].NomProveedor
-				} else {
-					logs.Error(err)
-					outputError = map[string]interface{}{"funcion": "/ConstruirNovedadCesion/informacion_proveedor", "err": err, "status": "502"}
-					panic(outputError)
-				}
-			}
-		}
-	} else {
-		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/ConstruirNovedadCesion/propiedad", "err": err, "status": "502"}
-		panic(outputError)
-	}
+func ConstruirNovedadCesion(nov models.NovedadPoscontractual) (novedaux models.Noveda, outputError map[string]interface{}) {
 	novedaux.TipoNovedad = "NP_CES"
 	return novedaux, outputError
 }
 
-func ConstruirNovedadSuspension(id string, novedadRes []models.Noveda) (novedaux models.Noveda, outputError map[string]interface{}) {
-	var fechaTemp []models.Fecha
-	var propiedadTemp []models.Propiedad
-	url := beego.AppConfig.String("UrlNovedadesCrud") + "/fechas/?query=IdNovedadesPoscontractuales.Id:" + id
-	if status, err := getJsonTest(url, &fechaTemp); err == nil && status == 200 {
-		for _, f := range fechaTemp {
-			tipoInterface := f.IdTipoFecha.(map[string]interface{})
-			idTipo := tipoInterface["Id"].(float64)
-			switch idTipo {
-			case 5:
-				novedaux.FechaCreacion = f.Fecha[:10]
-			case 8:
-				novedaux.FechaInicio = f.Fecha[:10]
-			case 11:
-				novedaux.FechaFinSus = f.Fecha[:10]
-			case 12:
-				novedaux.FechaFin = f.Fecha[:10]
-			}
-		}
+func ConstruirNovedadSuspension(nov models.NovedadPoscontractual) (suspension models.Noveda, outputError map[string]interface{}) {
+
+	if prov, err := ConsultarProveedorNovedad(nov.Cesionario); err == nil {
+
+		suspension.Cesionario = prov
+
+		suspension.NumeroContrato = nov.Contrato
+		suspension.Vigencia = nov.Vigencia
+		suspension.TipoNovedad = nov.CodAbreviacionTipo
+		suspension.FechaCreacion = nov.FechaRegistro
+		suspension.FechaInicio = nov.FechaSuspension
+		suspension.FechaFin = nov.FechaTerminacionanticipada
+		suspension.FechaFinSus = nov.FechaFinSuspension
+		suspension.PlazoEjecucion = nov.PeriodoSuspension
+		suspension.NumeroCdp = nov.NumeroCdp
+
+		return suspension, nil
 	} else {
-		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/ConstruirNovedadCesion/propiedad", "err": err, "status": "502"}
-		panic(outputError)
+		outputError = map[string]interface{}{"funcion": "/InformacionInforme/ConstruirNovedadSuspension", "err": err, "status": "502"}
+		return suspension, outputError
 	}
-	url = beego.AppConfig.String("UrlNovedadesCrud") + "/propiedad/?query=IdTipoPropiedad.Id:3,IdNovedadesPoscontractuales.Id:" + id
-	if status, err := getJsonTest(url, &propiedadTemp); err == nil && status == 200 {
-		novedaux.PlazoEjecucion = strconv.Itoa(propiedadTemp[0].Propiedad)
-	} else {
-		logs.Error(err)
-		outputError = map[string]interface{}{"funcion": "/ConstruirNovedadCesion/propiedad", "err": err, "status": "502"}
-		panic(outputError)
-	}
-	novedaux.TipoNovedad = "NP_SUS"
+}
+
+func ConstruirNovedadTerminacion(nov models.NovedadPoscontractual) (novedaux models.Noveda, outputError map[string]interface{}) {
+
+	novedaux.TipoNovedad = "NP_TER"
 	return novedaux, outputError
 }
 
-func ConstruirNovedadTerminacion(id string, novedadRes []models.Noveda) (novedaux models.Noveda, outputError map[string]interface{}) {
-	var fechaTemp []models.Fecha
-	url := beego.AppConfig.String("UrlNovedadesCrud") + "/fechas/?query=IdNovedadesPoscontractuales.Id:" + id
-	if status, err := getJsonTest(url, &fechaTemp); err == nil && status == 200 {
-		for _, f := range fechaTemp {
-			tipoInterface := f.IdTipoFecha.(map[string]interface{})
-			idTipo := tipoInterface["Id"].(float64)
-			switch idTipo {
-			case 12:
-				novedaux.FechaFin = f.Fecha[:10]
-			}
-		}
+func ConsultarProveedorNovedad(id int) (docProveedor string, outputError map[string]interface{}) {
+
+	var proveedor models.InformacionProveedor
+	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/"+strconv.Itoa(id), &proveedor); (err == nil) && (response == 200) {
+
+		return docProveedor, nil
 	} else {
-		fmt.Println(err)
+		outputError = map[string]interface{}{"funcion": "/InformacionInforme/ConsultarProveedorNovedad", "err": err, "status": "502"}
+		return "", outputError
 	}
-	novedaux.TipoNovedad = "NP_TER"
-	return novedaux, outputError
 }

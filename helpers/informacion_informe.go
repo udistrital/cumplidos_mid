@@ -186,55 +186,54 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 	query := contrato + "/" + vigencia
 
 	if response, err := GetNovedadesPostcontractuales(query, &novedades); (err == nil) && (response == 200) {
-		fmt.Println("Novedades: ", novedades)
-		// for _, nov := range novedades {ks
-		// 	idNovedad := strconv.Itoa(nov.Id)
-		// 	switch nov.Tiponovedad {
-		// 	case 6, 7, 8:
-		// 		var otrosi models.Noveda
-		// 		otrosi.TipoNovedad = nov.
-		// 		otrosi, err := ConstruirNovedadOtroSi(nov)
-		// 		if err == nil {
-		// 			if valor_girado_otrosi, err := getValorGiradoPorCdp(cdp, strconv.Itoa(nov.Numerocdp), strconv.Itoa(contrato_general[0].UnidadEjecutora)); err == nil {
-		// 				otrosi.ValorNovedadPagado = valor_girado_otrosi
-		// 			} else {
+		for _, nov := range novedades {
+			switch nov.TipoNovedad {
+			case 1:
+				suspension, err := ConstruirNovedadSuspension(nov)
+				if err == nil {
+					novStruct = append(novStruct, suspension)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/ConstruirNovedadSuspension", "err": err, "status": "502"}
+					panic(outputError)
+				}
+			case 2:
+				cesion, err := ConstruirNovedadCesion(nov)
+				if err == nil {
+					novStruct = append(novStruct, cesion)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/ConstruirNovedadCesion", "err": err, "status": "502"}
+					panic(outputError)
+				}
+			case 3:
+				// reinicio, err := ConstruirNovedadReinicio(nov)
+			case 5:
+				terminacion, err := ConstruirNovedadTerminacion(nov)
+				if err == nil {
+					novStruct = append(novStruct, terminacion)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/ConstruirNovedadTerminacion", "err": err, "status": "502"}
+					panic(outputError)
+				}
+			case 6, 7, 8:
+				var otrosi models.Noveda
+				otrosi, err := ConstruirNovedadOtroSi(nov)
+				if err == nil {
+					if valor_girado_otrosi, err := getValorGiradoPorCdp(cdp, strconv.Itoa(nov.NumeroCdp), strconv.Itoa(contrato_general[0].UnidadEjecutora)); err == nil {
+						otrosi.ValorNovedadPagado = valor_girado_otrosi
+					} else {
+					}
+					novStruct = append(novStruct, otrosi)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/ConstruirNovedadOtroSi", "err": err, "status": "502"}
+					panic(outputError)
+				}
+			}
 
-		// 			}
-		// 			novStruct = append(novStruct, otrosi)
-		// 		} else {
-		// 			logs.Error(err)
-		// 			outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
-		// 			panic(outputError)
-		// 		}
-		// 	case 2:
-		// 		cesion, err := ConstruirNovedadCesion(idNovedad, novStruct)
-		// 		if err == nil {
-		// 			novStruct = append(novStruct, cesion)
-		// 		} else {
-		// 			logs.Error(err)
-		// 			outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
-		// 			panic(outputError)
-		// 		}
-		// 	case 1:
-		// 		suspension, err := ConstruirNovedadSuspension(idNovedad, novStruct)
-		// 		if err == nil {
-		// 			novStruct = append(novStruct, suspension)
-		// 		} else {
-		// 			logs.Error(err)
-		// 			outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
-		// 			panic(outputError)
-		// 		}
-		// 	case 5:
-		// 		terminacion, err := ConstruirNovedadTerminacion(idNovedad, novStruct)
-		// 		if err == nil {
-		// 			novStruct = append(novStruct, terminacion)
-		// 		} else {
-		// 			logs.Error(err)
-		// 			outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
-		// 			panic(outputError)
-		// 		}
-		// 	}
-		// }
+		}
 	} else {
 		fmt.Println("ERROR: ", err)
 	}
