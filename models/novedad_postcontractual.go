@@ -98,5 +98,6 @@ type Noveda struct {
 	VigenciaCdp        int    `json:"VigenciaCdp"`
 	Cedente            string `json:"Cedente"`
 	Cesionario         string `json:"Cesionario"`
+	ValorAdicion       int    `json:"ValorAdicion"`
 	ValorNovedadPagado int    `json:"ValorNovedadPagado"`
 }

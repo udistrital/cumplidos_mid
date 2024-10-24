@@ -224,6 +224,9 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 					if valor_girado_otrosi, err := getValorGiradoPorCdp(cdp, strconv.Itoa(nov.NumeroCdp), strconv.Itoa(contrato_general[0].UnidadEjecutora)); err == nil {
 						otrosi.ValorNovedadPagado = valor_girado_otrosi
 					} else {
+						logs.Error(err)
+						outputError = map[string]interface{}{"funcion": "/getValorGiradoPorCdp", "err": err, "status": "502"}
+						panic(outputError)
 					}
 					novStruct = append(novStruct, otrosi)
 				} else {
