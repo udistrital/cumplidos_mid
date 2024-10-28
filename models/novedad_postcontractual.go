@@ -96,8 +96,10 @@ type Noveda struct {
 	PlazoEjecucion     int    `json:"PlazoEjecucion"`
 	NumeroCdp          int    `json:"NumeroCdp"`
 	VigenciaCdp        int    `json:"VigenciaCdp"`
-	Cedente            string `json:"Cedente"`
-	Cesionario         string `json:"Cesionario"`
+	DocCedente         string `json:"DocCedente"`
+	NombreCedente      string `json:"NombreCedente"`
+	DocCesionario      string `json:"DocCesionario"`
+	NombreCesionario   string `json:"NombreCesionario"`
 	ValorAdicion       int    `json:"ValorAdicion"`
 	ValorNovedadPagado int    `json:"ValorNovedadPagado"`
 }

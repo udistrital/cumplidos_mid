@@ -4,6 +4,7 @@ import (
 	// "fmt"
 	// "strconv"
 
+	"fmt"
 	"strconv"
 
 	"github.com/astaxie/beego"
@@ -14,6 +15,7 @@ import (
 func GetNovedadesPostcontractuales(query string, target *[]models.NovedadPoscontractual) (status int, err_nov error) {
 	var responseWrapper models.RespNov
 	url := beego.AppConfig.String("UrlNovedadesMid") + "/novedad/" + query
+	fmt.Println("url", url)
 	if response, err := getJsonTest(url, &responseWrapper); (err == nil) && (response == 200) {
 		*target = responseWrapper.Body
 		return 200, nil
@@ -24,10 +26,10 @@ func GetNovedadesPostcontractuales(query string, target *[]models.NovedadPoscont
 }
 
 func ConstruirNovedadOtroSi(nov models.NovedadPoscontractual) (otrosi models.Noveda, outputError map[string]interface{}) {
-	if prov, err := ConsultarProveedorNovedad(nov.Cesionario); err == nil {
+	if docProv, nomProv, err := ConsultarProveedorNovedad(nov.Cesionario); err == nil {
 
-		otrosi.Cesionario = prov
-
+		otrosi.DocCesionario = docProv
+		otrosi.NombreCesionario = nomProv
 		otrosi.NumeroContrato = nov.Contrato
 		otrosi.Vigencia = nov.Vigencia
 		otrosi.TipoNovedad = nov.CodAbreviacionTipo
@@ -49,10 +51,12 @@ func ConstruirNovedadOtroSi(nov models.NovedadPoscontractual) (otrosi models.Nov
 func ConstruirNovedadCesion(nov models.NovedadPoscontractual) (cesion models.Noveda, outputError map[string]interface{}) {
 	cesion.TipoNovedad = nov.CodAbreviacionTipo
 
-	if cedente, err := ConsultarProveedorNovedad(nov.Cedente); err == nil {
-		if cesionario, err := ConsultarProveedorNovedad(nov.Cesionario); err == nil {
-			cesion.Cedente = cedente
-			cesion.Cesionario = cesionario
+	if docCedente, nomCedente, err := ConsultarProveedorNovedad(nov.Cedente); err == nil {
+		if docCesionario, nomCesionario, err := ConsultarProveedorNovedad(nov.Cesionario); err == nil {
+			cesion.DocCedente = docCedente
+			cesion.NombreCedente = nomCedente
+			cesion.DocCesionario = docCesionario
+			cesion.NombreCesionario = nomCesionario
 			cesion.NumeroContrato = nov.Contrato
 			cesion.Vigencia = nov.Vigencia
 			cesion.FechaCreacion = FormatoFechaNovedad(nov.FechaRegistro)
@@ -73,10 +77,10 @@ func ConstruirNovedadCesion(nov models.NovedadPoscontractual) (cesion models.Nov
 
 func ConstruirNovedadSuspension(nov models.NovedadPoscontractual) (suspension models.Noveda, outputError map[string]interface{}) {
 
-	if prov, err := ConsultarProveedorNovedad(nov.Cesionario); err == nil {
+	if docProv, nomProv, err := ConsultarProveedorNovedad(nov.Cesionario); err == nil {
 
-		suspension.Cesionario = prov
-
+		suspension.DocCesionario = docProv
+		suspension.NombreCesionario = nomProv
 		suspension.NumeroContrato = nov.Contrato
 		suspension.Vigencia = nov.Vigencia
 		suspension.TipoNovedad = nov.CodAbreviacionTipo
@@ -96,10 +100,10 @@ func ConstruirNovedadSuspension(nov models.NovedadPoscontractual) (suspension mo
 
 func ConstruirNovedadTerminacion(nov models.NovedadPoscontractual) (terminacion models.Noveda, outputError map[string]interface{}) {
 
-	if prov, err := ConsultarProveedorNovedad(nov.Cesionario); err == nil {
+	if docProv, nomProv, err := ConsultarProveedorNovedad(nov.Cesionario); err == nil {
 
-		terminacion.Cesionario = prov
-
+		terminacion.DocCesionario = docProv
+		terminacion.NombreCesionario = nomProv
 		terminacion.NumeroContrato = nov.Contrato
 		terminacion.Vigencia = nov.Vigencia
 		terminacion.TipoNovedad = nov.CodAbreviacionTipo
@@ -114,16 +118,23 @@ func ConstruirNovedadTerminacion(nov models.NovedadPoscontractual) (terminacion 
 	}
 }
 
-func ConsultarProveedorNovedad(id int) (docProveedor string, outputError map[string]interface{}) {
+func ConsultarProveedorNovedad(id int) (string, string, map[string]interface{}) {
 
 	var proveedor models.InformacionProveedor
-	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/"+strconv.Itoa(id), &proveedor); (err == nil) && (response == 200) {
+	var docProveedor string
+	var nomProveedor string
+	var outputError map[string]interface{}
 
-		return docProveedor, nil
+	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/"+strconv.Itoa(id), &proveedor); (err == nil) && (response == 200) {
+		docProveedor = proveedor.NumDocumento
+		nomProveedor = proveedor.NomProveedor
+		outputError = nil
 	} else {
+		docProveedor = ""
+		nomProveedor = ""
 		outputError = map[string]interface{}{"funcion": "/InformacionInforme/ConsultarProveedorNovedad", "err": err, "status": "502"}
-		return "", outputError
 	}
+	return docProveedor, nomProveedor, outputError
 }
 
 func FormatoFechaNovedad(fecha string) string {
