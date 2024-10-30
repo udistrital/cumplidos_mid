@@ -68,7 +68,7 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 	//fmt.Println(informacion_informe)
 
 	var informacion_persona_natural []models.InformacionPersonaNatural
-	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/informacion_persona_natural?query=Id:" + num_documento)
+	// fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/informacion_persona_natural?query=Id:" + num_documento)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_persona_natural?query=Id:"+num_documento, &informacion_persona_natural); (err == nil) && (response == 200) {
 		//fmt.Println("informacion_persona natural:", informacion_persona_natural)
 		//informacion_informe.InformacionContratista.CiudadExpedicion = informacion_contrato_contratista.InformacionContratista.Documento.Ciudad
@@ -76,7 +76,7 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 
 		informacion_informe.InformacionContratista.TipoIdentificacion = informacion_persona_natural[0].TipoDocumento.ValorParametro
 
-		fmt.Println(beego.AppConfig.String("UrlcrudCore") + "/ciudad/" + strconv.Itoa(informacion_persona_natural[0].IdCiudadExpedicionDocumento))
+		// fmt.Println(beego.AppConfig.String("UrlcrudCore") + "/ciudad/" + strconv.Itoa(informacion_persona_natural[0].IdCiudadExpedicionDocumento))
 		var ciudad models.Ciudad
 		if response, err := getJsonTest(beego.AppConfig.String("UrlcrudCore")+"/ciudad/"+strconv.Itoa(informacion_persona_natural[0].IdCiudadExpedicionDocumento), &ciudad); (err == nil) && (response == 200) {
 			//fmt.Println("ciudad:", ciudad)
@@ -180,50 +180,62 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 	}
 
 	// Consulta novedades
-	var novedades []models.NovedadPostcontractual
+	var novedades []models.NovedadPoscontractual
 	var novStruct = []models.Noveda{}
-	query := "ContratoId:" + contrato + ",Vigencia:" + vigencia + ",Activo:true"
-	if response, err := GetNovedadesPostcontractuales(models.TipoNovedadTodas, query, "FechaCreacion", "asc", "-1", "", "", &novedades); (err == nil) && (response == 200) {
+
+	query := contrato + "/" + vigencia
+
+	if response, err := GetNovedadesPostcontractuales(query, &novedades); (err == nil) && (response == 200) {
 		for _, nov := range novedades {
-			idNovedad := strconv.Itoa(nov.Id)
 			switch nov.TipoNovedad {
-			case 6, 7, 8:
-				otrosi, err := ConstruirNovedadOtroSi(idNovedad, strconv.Itoa(nov.NumeroCdpId), strconv.Itoa(nov.VigenciaCdp), novStruct)
-				if err == nil {
-					novStruct = append(novStruct, otrosi)
-				} else {
-					logs.Error(err)
-					outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
-					panic(outputError)
-				}
-			case 2:
-				cesion, err := ConstruirNovedadCesion(idNovedad, novStruct)
-				if err == nil {
-					novStruct = append(novStruct, cesion)
-				} else {
-					logs.Error(err)
-					outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
-					panic(outputError)
-				}
 			case 1:
-				suspension, err := ConstruirNovedadSuspension(idNovedad, novStruct)
+				suspension, err := ConstruirNovedadSuspension(nov)
 				if err == nil {
 					novStruct = append(novStruct, suspension)
 				} else {
 					logs.Error(err)
-					outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
+					outputError = map[string]interface{}{"funcion": "/ConstruirNovedadSuspension", "err": err, "status": "502"}
 					panic(outputError)
 				}
+			case 2:
+				cesion, err := ConstruirNovedadCesion(nov)
+				if err == nil {
+					novStruct = append(novStruct, cesion)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/ConstruirNovedadCesion", "err": err, "status": "502"}
+					panic(outputError)
+				}
+			case 3:
+				// reinicio, err := ConstruirNovedadReinicio(nov)
 			case 5:
-				terminacion, err := ConstruirNovedadTerminacion(idNovedad, novStruct)
+				terminacion, err := ConstruirNovedadTerminacion(nov)
 				if err == nil {
 					novStruct = append(novStruct, terminacion)
 				} else {
 					logs.Error(err)
-					outputError = map[string]interface{}{"funcion": "/marshalCDP", "err": err, "status": "502"}
+					outputError = map[string]interface{}{"funcion": "/ConstruirNovedadTerminacion", "err": err, "status": "502"}
+					panic(outputError)
+				}
+			case 6, 7, 8:
+				var otrosi models.Noveda
+				otrosi, err := ConstruirNovedadOtroSi(nov)
+				if err == nil {
+					if valor_girado_otrosi, err := getValorGiradoPorCdp(cdp, strconv.Itoa(nov.NumeroCdp), strconv.Itoa(contrato_general[0].UnidadEjecutora)); err == nil {
+						otrosi.ValorNovedadPagado = valor_girado_otrosi
+					} else {
+						logs.Error(err)
+						outputError = map[string]interface{}{"funcion": "/getValorGiradoPorCdp", "err": err, "status": "502"}
+						panic(outputError)
+					}
+					novStruct = append(novStruct, otrosi)
+				} else {
+					logs.Error(err)
+					outputError = map[string]interface{}{"funcion": "/ConstruirNovedadOtroSi", "err": err, "status": "502"}
 					panic(outputError)
 				}
 			}
+
 		}
 	} else {
 		fmt.Println("ERROR: ", err)

@@ -3,7 +3,8 @@ package helpers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
+
+	// "fmt"
 	"strconv"
 	"time"
 
@@ -81,7 +82,7 @@ func GetRP(numero_cdp string, vigencia_cdp string) (rp models.InformacionCdpRp, 
 
 	var temp map[string]interface{}
 	var temp_cdp_rp models.InformacionCdpRp
-	fmt.Println(beego.AppConfig.String("UrlFinancieraJBPM") + "/" + "cdprp/" + numero_cdp + "/" + vigencia_cdp + "/01")
+	// fmt.Println(beego.AppConfig.String("UrlFinancieraJBPM") + "/" + "cdprp/" + numero_cdp + "/" + vigencia_cdp + "/01")
 	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlFinancieraJBPM")+"/"+"cdprp/"+numero_cdp+"/"+vigencia_cdp+"/01", &temp); (err == nil) && (response == 200) {
 		json_cdp_rp, error_json := json.Marshal(temp)
 
@@ -118,7 +119,7 @@ func GetContratosPersona(num_documento string) (contratos_persona models.Informa
 
 	var temp map[string]interface{}
 	var contratos models.InformacionContratosPersona
-	fmt.Println(beego.AppConfig.String("UrlAdministrativaJBPM") + "/contratos_contratista/" + num_documento)
+	// fmt.Println(beego.AppConfig.String("UrlAdministrativaJBPM") + "/contratos_contratista/" + num_documento)
 	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/contratos_contratista/"+num_documento, &temp); (err == nil) && (response == 200) {
 		json_contratos, error_json := json.Marshal(temp)
 		if error_json == nil {
@@ -231,7 +232,7 @@ func GetInformacionContratoContratista(num_contrato_suscrito string, vigencia st
 func GetActaDeInicio(numero_contrato string, vigencia_contrato int) (acta_inicio models.ActaInicio, outputError map[string]interface{}) {
 
 	var actasInicio []models.ActaInicio
-	fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/acta_inicio/?query=NumeroContrato:" + numero_contrato + ",Vigencia:" + strconv.Itoa(vigencia_contrato))
+	// fmt.Println(beego.AppConfig.String("UrlcrudAgora") + "/acta_inicio/?query=NumeroContrato:" + numero_contrato + ",Vigencia:" + strconv.Itoa(vigencia_contrato))
 	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/acta_inicio/?query=NumeroContrato:"+numero_contrato+",Vigencia:"+strconv.Itoa(vigencia_contrato), &actasInicio); (err == nil) && (response == 200) {
 		if len(actasInicio) == 0 {
 			outputError = map[string]interface{}{"funcion": "/getInformacionContratosContratista", "err": errors.New("No se encontro acta de inicio"), "status": "502"}

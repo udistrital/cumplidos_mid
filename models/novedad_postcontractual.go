@@ -20,6 +20,49 @@ type NovedadPostcontractual struct {
 	EnlaceDocumento   string
 }
 
+type NovedadPoscontractual struct {
+	Id                         int
+	Aclaracion                 string
+	Contrato                   int
+	Cedente                    int
+	Cesionario                 int
+	CodAbreviacionTipo         string
+	Vigencia                   int
+	Enlace                     string
+	EntidadAseguradora         int
+	Estado                     string
+	FechaAdicion               string
+	FechaCesion                string
+	FechaExpedicion            string
+	FechaFinefectiva           string
+	FechaOficio                string
+	FechaLiquidacion           string
+	FechaProrroga              string
+	FechaRegistro              string
+	FechaReinicio              string
+	FechaSolicitud             string
+	FechaSuspension            string
+	FechaFinSuspension         string
+	FechaTerminacionanticipada string
+	Motivo                     string
+	PeriodoSuspension          int
+	PlazoActual                int
+	TiempoProrroga             int
+	ValorAdicion               int
+	ValorFinalContrato         int
+	NombreEstado               string
+	NombreTipoNovedad          string
+	NumeroActaEntrega          string
+	NumeroCdp                  int
+	VigenciaCdp                int
+	NumeroOficioordenador      string
+	NumeroOficiosupervisor     string
+	NumeroSolicitud            string
+	Observacion                string
+	Poliza                     string
+	TipoNovedad                int
+}
+
 type Fecha struct {
 	Fecha                       string
 	Activo                      bool
@@ -43,14 +86,20 @@ type Novedades struct {
 }
 
 type Noveda struct {
-	TipoNovedad    string `json:"TipoNovedad"`
-	FechaCreacion  string `json:"FechaCreacion"`
-	FechaInicio    string `json:"FechaInicio"`
-	FechaFin       string `json:"FechaFin"`
-	FechaFinSus    string `json:"FechaFinSus"`
-	PlazoEjecucion string `json:"PlazoEjecucion"`
-	NumeroCdp      string `json:"NumeroCdp"`
-	VigenciaCdp    string `json:"VigenciaCdp"`
-	Cedente        string `json:"Cedente"`
-	Cesionario     string `json:"Cesionario"`
+	NumeroContrato     int    `json:"NumeroContrato"`
+	Vigencia           int    `json:"Vigencia"`
+	TipoNovedad        string `json:"TipoNovedad"`
+	FechaCreacion      string `json:"FechaCreacion"`
+	FechaInicio        string `json:"FechaInicio"`
+	FechaFin           string `json:"FechaFin"`
+	FechaFinSus        string `json:"FechaFinSus"`
+	PlazoEjecucion     int    `json:"PlazoEjecucion"`
+	NumeroCdp          int    `json:"NumeroCdp"`
+	VigenciaCdp        int    `json:"VigenciaCdp"`
+	DocCedente         string `json:"DocCedente"`
+	NombreCedente      string `json:"NombreCedente"`
+	DocCesionario      string `json:"DocCesionario"`
+	NombreCesionario   string `json:"NombreCesionario"`
+	ValorAdicion       int    `json:"ValorAdicion"`
+	ValorNovedadPagado int    `json:"ValorNovedadPagado"`
 }
