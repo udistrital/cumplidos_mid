@@ -13,7 +13,7 @@ import (
 	"github.com/udistrital/cumplidos_mid/models"
 )
 
-//RFC 45758 Se agrega función para comparar los contratos de la dependencia con la informacion de los cumplidos solicitados
+// RFC 45758 Se agrega función para comparar los contratos de la dependencia con la informacion de los cumplidos solicitados
 func contratoExists(vigencia string, numero string, contratos []struct {
 	Vigencia       string "json:\"vigencia\""
 	NumeroContrato string "json:\"numero_contrato\""
@@ -169,7 +169,7 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 	//var informacion_ordenador models.InformacionOrdenador
 	var ordenadores []models.Ordenador
 
-	fmt.Println(beego.AppConfig.String("UrlAdministrativaJBPM") + "/" + "contrato_elaborado/" + numero_contrato + "/" + vigencia)
+	// fmt.Println("url: " + beego.AppConfig.String("UrlAdministrativaJBPM") + "/" + "contrato_elaborado/" + numero_contrato + "/" + vigencia)
 	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contrato_elaborado/"+numero_contrato+"/"+vigencia, &temp); err == nil && temp != nil && response == 200 {
 		json_contrato_elaborado, error_json := json.Marshal(temp)
 		if error_json == nil {
@@ -178,12 +178,12 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 				fecha = strings.Split(fecha[0], "-")
 
 				//RFC 45758 Se consulta el ordenador inmediatamente anterior a la fecha de registro del contrato
-				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=IdOrdenador:"+contrato_elaborado.Contrato.OrdenadorGasto+",FechaInicio__lt:"+fecha[1]+"/"+fecha[2]+"/"+fecha[0]+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
+				if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=IdOrdenador:"+contrato_elaborado.Contrato.OrdenadorGasto+",FechaInicio__lte:"+fecha[1]+"/"+fecha[2]+"/"+fecha[0]+",FechaFin__gte:"+fecha[1]+"/"+fecha[2]+"/"+fecha[0]+"&sortby=FechaFin&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
 
 					for _, ordenador := range ordenadores {
 
 						//RFC 45758 Se consulta el ordenador más reciente vinculado al rol obtenido con la consulta anterior
-						if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=RolOrdenador:"+strings.Replace(ordenador.RolOrdenador, " ", "%20", -1)+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
+						if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/ordenadores/?query=RolId:"+strconv.Itoa(ordenador.RolId)+"&sortby=FechaInicio&order=desc&limit=1", &ordenadores); (err == nil) && (response == 200) {
 
 							for _, ordenador := range ordenadores {
 								informacion_ordenador.NumeroDocumento = ordenador.Documento
@@ -193,7 +193,7 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 							}
 						} else {
 							logs.Error(err)
-							outputError = map[string]interface{}{"funcion": "/TraerInfoOrdenador/ordenadores", "err": err.Error(), "status": "502"}
+							outputError = map[string]interface{}{"funcion": "/TraerInfoOrdenador/ordenador", "err": err.Error(), "status": "502"}
 							return informacion_ordenador, outputError
 						}
 					}
