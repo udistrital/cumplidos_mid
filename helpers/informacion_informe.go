@@ -222,6 +222,8 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 				if err == nil {
 					if valor_girado_otrosi, err := getValorGiradoPorCdp(cdp, vigencia_cdp, strconv.Itoa(contrato_general[0].UnidadEjecutora)); err == nil {
 						otrosi.ValorNovedadPagado = valor_girado_otrosi
+						informacion_informe.EjecutadoDinero.Faltante = informacion_informe.EjecutadoDinero.Faltante + (otrosi.ValorAdicion - otrosi.ValorNovedadPagado)
+						informacion_informe.ValorTotalContrato = informacion_informe.ValorTotalContrato + otrosi.ValorAdicion
 					} else {
 						logs.Error(err)
 						outputError = map[string]interface{}{"funcion": "/getValorGiradoPorCdp", "err": err, "status": "502"}
