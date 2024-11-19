@@ -220,7 +220,7 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 				var otrosi models.Noveda
 				otrosi, err := ConstruirNovedadOtroSi(nov)
 				if err == nil {
-					if valor_girado_otrosi, err := getValorGiradoPorCdp(cdp, vigencia_cdp, strconv.Itoa(contrato_general[0].UnidadEjecutora)); err == nil {
+					if valor_girado_otrosi, err := getValorGiradoPorCdp(strconv.Itoa(otrosi.NumeroCdp), strconv.Itoa(otrosi.VigenciaCdp), strconv.Itoa(contrato_general[0].UnidadEjecutora)); err == nil {
 						otrosi.ValorNovedadPagado = valor_girado_otrosi
 						informacion_informe.EjecutadoDinero.Faltante = informacion_informe.EjecutadoDinero.Faltante + (otrosi.ValorAdicion - otrosi.ValorNovedadPagado)
 						informacion_informe.ValorTotalContrato = informacion_informe.ValorTotalContrato + otrosi.ValorAdicion
