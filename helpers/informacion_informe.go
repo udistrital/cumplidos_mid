@@ -357,7 +357,7 @@ func getPagoMensual(pago_mensual_id string) (pago_mensual models.PagoMensual, er
 	return
 }
 
-func GetPreliquidacion(pago_mensual_id string) (preliquidacion models.PreliquidacionTitan, outputError map[string]interface{}) {
+func GetPreliquidacion(pago_mensual_id string) (preliquidacion []models.PreliquidacionTitan, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			//fmt.Println("error", err)
@@ -394,9 +394,10 @@ func GetPreliquidacion(pago_mensual_id string) (preliquidacion models.Preliquida
 
 	var preliquidaciones []models.PreliquidacionTitan
 	var respuesta_peticion_prel map[string]interface{}
-	// fmt.Println(beego.AppConfig.String("UrlTitanMid") + "/detalle_preliquidacion/obtener_detalle_CT/" + anio + "/" + mes + "/" + contrato + "/" + vigencia_contrato + "/" + documento_contratista)
+	fmt.Println(beego.AppConfig.String("UrlTitanMid") + "/detalle_preliquidacion/obtener_detalle_CT/" + anio + "/" + mes + "/" + contrato + "/" + vigencia_contrato + "/" + documento_contratista)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlTitanMid")+"/detalle_preliquidacion/obtener_detalle_CT/"+anio+"/"+mes+"/"+contrato+"/"+vigencia_contrato+"/"+documento_contratista, &respuesta_peticion_prel); (err == nil) && (response == 201) {
 		LimpiezaRespuestaRefactor(respuesta_peticion_prel, &preliquidaciones)
+		fmt.Println("preliquidaciones:", preliquidaciones)
 		if preliquidacion, err := seleccionarPreliquidacion(preliquidaciones, numero_cdp); err == nil {
 			//fmt.Println(preliquidacion)
 			return darFormatoPreliquidacion(preliquidacion), nil
@@ -415,32 +416,38 @@ func GetPreliquidacion(pago_mensual_id string) (preliquidacion models.Preliquida
 	return
 }
 
-func seleccionarPreliquidacion(preliquidaciones []models.PreliquidacionTitan, cdp int) (preliquidacion models.PreliquidacionTitan, err error) {
+func seleccionarPreliquidacion(preliquidaciones []models.PreliquidacionTitan, cdp int) (preliquidacion []models.PreliquidacionTitan, err error) {
+
 	if len(preliquidaciones) == 0 {
-		err = errors.New("No se encontraron preliquidaciones")
+		err = errors.New("no se encontraron preliquidaciones")
 		return preliquidacion, err
 	}
 	if len(preliquidaciones) == 1 {
-		return preliquidaciones[0], nil
+		return preliquidaciones, nil
 	}
-
-	for _, prel := range preliquidaciones {
-		if prel.Detalle[0].ContratoPreliquidacionId.ContratoId.Cdp == cdp {
-			return prel, nil
+	if len(preliquidaciones) > 1 {
+		for _, prel := range preliquidaciones {
+			if prel.Detalle[0].ContratoPreliquidacionId.ContratoId.Cdp == cdp {
+				preliquidacion = append(preliquidacion, prel)
+			}
 		}
+		return preliquidacion, nil
 	}
 
 	err = errors.New("No se encuentra preliquidacion asociada al CDP")
 	return preliquidacion, err
 }
 
-func darFormatoPreliquidacion(preliquidacion models.PreliquidacionTitan) (preliquidacionConFormato models.PreliquidacionTitan) {
-	preliquidacionConFormato = preliquidacion
-	preliquidacionConFormato.TotalDevengadoConFormato = FormatMoneyString(formatNumberString(strconv.Itoa(int(preliquidacion.TotalDevengado)), 0, ",", "."), 0)
-	preliquidacionConFormato.TotalDescuentosConFormato = FormatMoneyString(formatNumberString(strconv.Itoa(int(preliquidacion.TotalDescuentos)), 0, ",", "."), 0)
-	preliquidacionConFormato.TotalPagoConFormato = FormatMoneyString(formatNumberString(strconv.Itoa(int(preliquidacion.TotalPago)), 0, ",", "."), 0)
-	for i, _ := range preliquidacionConFormato.Detalle {
-		preliquidacionConFormato.Detalle[i].ValorCalculadoConFormato = FormatMoneyString(formatNumberString(strconv.Itoa(int(preliquidacion.Detalle[i].ValorCalculado)), 0, ",", "."), 0)
+func darFormatoPreliquidacion(preliquidacion []models.PreliquidacionTitan) (preliquidacionConFormato []models.PreliquidacionTitan) {
+	for j, prel := range preliquidacion {
+		preliquidacionConFormato = append(preliquidacionConFormato, prel)
+		preliquidacionConFormato[j].TotalDevengadoConFormato = FormatMoneyString(formatNumberString(strconv.Itoa(int(prel.TotalDevengado)), 0, ",", "."), 0)
+		preliquidacionConFormato[j].TotalDescuentosConFormato = FormatMoneyString(formatNumberString(strconv.Itoa(int(prel.TotalDescuentos)), 0, ",", "."), 0)
+		preliquidacionConFormato[j].TotalPagoConFormato = FormatMoneyString(formatNumberString(strconv.Itoa(int(prel.TotalPago)), 0, ",", "."), 0)
+		for i, _ := range preliquidacionConFormato[j].Detalle {
+			preliquidacionConFormato[j].Detalle[i].ValorCalculadoConFormato = FormatMoneyString(formatNumberString(strconv.Itoa(int(prel.Detalle[i].ValorCalculado)), 0, ",", "."), 0)
+			fmt.Println("Detalle: ", preliquidacionConFormato[j].Detalle[i].Id)
+		}
 	}
 	return
 }
