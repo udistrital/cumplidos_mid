@@ -260,7 +260,15 @@ func GetCumplidosRevertiblesPorOrdenador(NumDocumentoOrdenador string) (cumplido
 			var cdprp models.InformacionCdpRp
 			existeOrdenPago := false
 			fmt.Println("pago mensual", pago_mensual)
-			cdprp, outputError = GetRP(pago_mensual.NumeroCDP, strconv.Itoa(int(pago_mensual.VigenciaCDP)))
+
+			unidad_ejecutora := beego.AppConfig.String("UnidadEjecutora")
+
+			cdprp, outputError = GetRP(
+				pago_mensual.NumeroCDP,
+				strconv.Itoa(int(pago_mensual.VigenciaCDP)),
+				unidad_ejecutora,
+			)
+
 			if outputError == nil {
 				for _, rp := range cdprp.CdpXRp.CdpRp {
 					var temp map[string]interface{}

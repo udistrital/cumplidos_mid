@@ -70,8 +70,15 @@ func ContratosContratistaDependencia(doc_ordenador string, cod_dependencia strin
 
 											for _, contrato_disponibilidad := range contratos_disponibilidad {
 
+												unidad_ejecutora := beego.AppConfig.String("UnidadEjecutora")
+
 												var cdprp models.InformacionCdpRp
-												cdprp, outputError = GetRP(strconv.Itoa(contrato_disponibilidad.NumeroCdp), strconv.Itoa(contrato_disponibilidad.VigenciaCdp))
+												cdprp, outputError = GetRP(
+													strconv.Itoa(contrato_disponibilidad.NumeroCdp),
+													strconv.Itoa(contrato_disponibilidad.VigenciaCdp),
+													unidad_ejecutora,
+												)
+
 												if outputError == nil {
 													for _, rp := range cdprp.CdpXRp.CdpRp {
 														var pago_contratista_cdp_rp models.PagoContratistaCdpRp
@@ -178,8 +185,14 @@ func getInfoPagoMensual(pago_mensual models.PagoMensual) (pago_info models.PagoC
 
 						for _, contrato_disponibilidad := range contratos_disponibilidad {
 
+							unidad_ejecutora := beego.AppConfig.String("UnidadEjecutora")
+
 							var cdprp models.InformacionCdpRp
-							cdprp, outputError = GetRP(strconv.Itoa(contrato_disponibilidad.NumeroCdp), strconv.Itoa(contrato_disponibilidad.VigenciaCdp))
+							cdprp, outputError = GetRP(
+								strconv.Itoa(contrato_disponibilidad.NumeroCdp),
+								strconv.Itoa(contrato_disponibilidad.VigenciaCdp),
+								unidad_ejecutora,
+							)
 							if outputError == nil {
 								for _, rp := range cdprp.CdpXRp.CdpRp {
 
