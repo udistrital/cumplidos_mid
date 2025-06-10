@@ -39,7 +39,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 				informacion_contrato_contratista, outputError = GetInformacionContratoContratista(contrato_persona.NumeroContrato, contrato_persona.Vigencia)
 
 				// Obtener la unidad ejecutora desde el contrato
-				unidadEjecucion := contrato.Contrato.UnidadEjecutora
+				unidadEjecucion := "0" + contrato.Contrato.UnidadEjecutora
 
 				if cdprp, outputError := GetRP(contrato_persona.NumeroCDP, contrato_persona.Vigencia, unidadEjecucion); outputError == nil {
 					for _, rp := range cdprp.CdpXRp.CdpRp {
