@@ -17,7 +17,6 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 
 	defer func() {
 		if err := recover(); err != nil {
-			//fmt.Println("error", err)
 			outputError = map[string]interface{}{"funcion": "/ContratosContratista", "err": err, "status": "502"}
 			panic(outputError)
 		}
@@ -36,9 +35,11 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 				}
 				var informacion_contrato_contratista models.InformacionContratoContratista
 				informacion_contrato_contratista, outputError = GetInformacionContratoContratista(contrato_persona.NumeroContrato, contrato_persona.Vigencia)
-				// se llena el contrato original en el indice 0
 
-				if cdprp, outputError := GetRP(contrato_persona.NumeroCDP, contrato_persona.Vigencia); outputError == nil {
+				// Obtener la unidad ejecutora desde el contrato
+				unidadEjecucion := "0" + contrato.Contrato.UnidadEjecutora
+
+				if cdprp, outputError := GetRP(contrato_persona.NumeroCDP, contrato_persona.Vigencia, unidadEjecucion); outputError == nil {
 					for _, rp := range cdprp.CdpXRp.CdpRp {
 						var contrato_disponibilidad_rp models.ContratoDisponibilidadRp
 						contrato_disponibilidad_rp.NumeroContratoSuscrito = contrato_persona.NumeroContrato
@@ -70,7 +71,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 	return contratos_disponibilidad_rp, nil
 }
 
-func GetRP(numero_cdp string, vigencia_cdp string) (rp models.InformacionCdpRp, outputError map[string]interface{}) {
+func GetRP(numero_cdp string, vigencia_cdp string, unidad_ejecucion string) (rp models.InformacionCdpRp, outputError map[string]interface{}) {
 
 	defer func() {
 		if err := recover(); err != nil {
@@ -81,8 +82,11 @@ func GetRP(numero_cdp string, vigencia_cdp string) (rp models.InformacionCdpRp, 
 
 	var temp map[string]interface{}
 	var temp_cdp_rp models.InformacionCdpRp
-	fmt.Println(beego.AppConfig.String("UrlFinancieraJBPM") + "/" + "cdprp/" + numero_cdp + "/" + vigencia_cdp + "/01")
-	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlFinancieraJBPM")+"/"+"cdprp/"+numero_cdp+"/"+vigencia_cdp+"/01", &temp); (err == nil) && (response == 200) {
+
+	url := fmt.Sprintf("%s/cdprp/%s/%s/%s", beego.AppConfig.String("UrlFinancieraJBPM"), numero_cdp, vigencia_cdp, unidad_ejecucion)
+	fmt.Println(url)
+
+	if response, err := getJsonWSO2Test(url, &temp); (err == nil) && (response == 200) {
 		json_cdp_rp, error_json := json.Marshal(temp)
 
 		if error_json == nil {
@@ -104,7 +108,6 @@ func GetRP(numero_cdp string, vigencia_cdp string) (rp models.InformacionCdpRp, 
 		outputError = map[string]interface{}{"funcion": "/GetRP3", "err": err, "status": "502"}
 		return rp, outputError
 	}
-	return rp, outputError
 }
 
 func GetContratosPersona(num_documento string) (contratos_persona models.InformacionContratosPersona, outputError map[string]interface{}) {
