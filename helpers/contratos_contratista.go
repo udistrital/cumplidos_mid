@@ -84,7 +84,6 @@ func GetRP(numero_cdp string, vigencia_cdp string, unidad_ejecucion string) (rp 
 	var temp_cdp_rp models.InformacionCdpRp
 
 	url := fmt.Sprintf("%s/cdprp/%s/%s/%s", beego.AppConfig.String("UrlFinancieraJBPM"), numero_cdp, vigencia_cdp, unidad_ejecucion)
-	fmt.Println(url)
 
 	if response, err := getJsonWSO2Test(url, &temp); (err == nil) && (response == 200) {
 		json_cdp_rp, error_json := json.Marshal(temp)
