@@ -261,7 +261,10 @@ func GetCumplidosRevertiblesPorOrdenador(NumDocumentoOrdenador string) (cumplido
 			existeOrdenPago := false
 			fmt.Println("pago mensual", pago_mensual)
 
-			unidad_ejecutora := beego.AppConfig.String("UnidadEjecutora")
+			var contrato models.InformacionContrato
+			contrato, outputError = GetContrato(pago_mensual.NumeroContrato, strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64))
+
+			unidad_ejecutora := "0" + contrato.Contrato.UnidadEjecutora
 
 			cdprp, outputError = GetRP(
 				pago_mensual.NumeroCDP,
