@@ -70,7 +70,7 @@ func ContratosContratistaDependencia(doc_ordenador string, cod_dependencia strin
 
 											for _, contrato_disponibilidad := range contratos_disponibilidad {
 
-												unidad_ejecutora := beego.AppConfig.String("UnidadEjecutora")
+												unidad_ejecutora := "0" + contrato.Contrato.UnidadEjecutora
 
 												var cdprp models.InformacionCdpRp
 												cdprp, outputError = GetRP(
@@ -185,7 +185,7 @@ func getInfoPagoMensual(pago_mensual models.PagoMensual) (pago_info models.PagoC
 
 						for _, contrato_disponibilidad := range contratos_disponibilidad {
 
-							unidad_ejecutora := beego.AppConfig.String("UnidadEjecutora")
+							unidad_ejecutora := "0" + contrato.Contrato.UnidadEjecutora
 
 							var cdprp models.InformacionCdpRp
 							cdprp, outputError = GetRP(
