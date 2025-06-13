@@ -147,7 +147,6 @@ func ContratosContratistaSupervisor(doc_supervisor string) (pagos_contratista_cd
 
 	var respuesta_peticion map[string]interface{}
 
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:PRS,DocumentoResponsableId:" + doc_supervisor)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:PRS,DocumentoResponsableId:"+doc_supervisor, &respuesta_peticion); (err == nil) && (response == 200) {
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
 		for _, pago_mensual := range pagos_mensuales {
