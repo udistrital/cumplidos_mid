@@ -7,6 +7,7 @@ type InformacionContratosPersona struct {
 		ContratoPersona []struct {
 			NumeroContrato string    `json:"numero_contrato"`
 			Vigencia       string    `json:"vigencia"`
+			Vigencia_cdp   string    `json:"vigencia_cdp"`
 			NumeroCDP      string    `json:"cdp"`
 			FechaInicio    time.Time `json:"fecha_inicio"`
 			FechaFin       time.Time `json:"fecha_fin"`

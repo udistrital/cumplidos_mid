@@ -45,7 +45,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 						contrato_disponibilidad_rp.NumeroContratoSuscrito = contrato_persona.NumeroContrato
 						contrato_disponibilidad_rp.Vigencia = contrato_persona.Vigencia
 						contrato_disponibilidad_rp.NumeroCdp = contrato_persona.NumeroCDP
-						contrato_disponibilidad_rp.VigenciaCdp = contrato_persona.Vigencia
+						contrato_disponibilidad_rp.VigenciaCdp = contrato_persona.Vigencia_cdp
 						contrato_disponibilidad_rp.NumeroRp = rp.RpNumeroRegistro
 						contrato_disponibilidad_rp.VigenciaRp = rp.RpVigencia
 						contrato_disponibilidad_rp.NombreDependencia = informacion_contrato_contratista.InformacionContratista.Dependencia
@@ -54,7 +54,6 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 						contrato_disponibilidad_rp.FechaFin = contrato_persona.FechaFin
 						contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
 					}
-
 				} else {
 					logs.Error(outputError)
 					continue
