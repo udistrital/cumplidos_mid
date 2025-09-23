@@ -53,10 +53,6 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 						contrato_disponibilidad_rp.FechaInicio = contrato_persona.FechaInicio
 						contrato_disponibilidad_rp.FechaFin = contrato_persona.FechaFin
 						contratos_disponibilidad_rp = append(contratos_disponibilidad_rp, contrato_disponibilidad_rp)
-						fmt.Println("-CDP:", contrato_persona.NumeroCDP,
-							"-VIGENCIA CDP (persona):", contrato_persona.Vigencia_cdp,
-							"-VIGENCIA RP (servicio):", rp.RpVigencia)
-
 					}
 				} else {
 					logs.Error(outputError)
