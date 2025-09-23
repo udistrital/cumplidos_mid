@@ -39,7 +39,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 				// Obtener la unidad ejecutora desde el contrato
 				unidadEjecucion := "0" + contrato.Contrato.UnidadEjecutora
 
-				if cdprp, outputError := GetRP(contrato_persona.NumeroCDP, contrato_persona.Vigencia, unidadEjecucion); outputError == nil {
+				if cdprp, outputError := GetRP(contrato_persona.NumeroCDP, contrato_persona.Vigencia_cdp, unidadEjecucion); outputError == nil {
 					for _, rp := range cdprp.CdpXRp.CdpRp {
 						var contrato_disponibilidad_rp models.ContratoDisponibilidadRp
 						contrato_disponibilidad_rp.NumeroContratoSuscrito = contrato_persona.NumeroContrato
