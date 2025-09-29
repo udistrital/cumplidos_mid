@@ -26,7 +26,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 		for _, contrato_persona := range contratos_persona.ContratosPersonas.ContratoPersona {
 			contrato_persona.FechaInicio = time.Date(contrato_persona.FechaInicio.Year(), contrato_persona.FechaInicio.Month(), contrato_persona.FechaInicio.Day(), 0, 0, 0, 0, contrato_persona.FechaInicio.Location())
 			contrato_persona.FechaFin = time.Date(contrato_persona.FechaFin.Year(), contrato_persona.FechaFin.Month(), contrato_persona.FechaFin.Day(), 0, 0, 0, 0, contrato_persona.FechaFin.Location())
-			if time.Now().AddDate(-1, 0, 0).Before(contrato_persona.FechaFin) {
+			if time.Now().AddDate(-2, 0, 0).Before(contrato_persona.FechaFin) {
 				var contrato models.InformacionContrato
 				contrato, outputError = GetContrato(contrato_persona.NumeroContrato, contrato_persona.Vigencia)
 
