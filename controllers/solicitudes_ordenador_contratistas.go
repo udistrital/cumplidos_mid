@@ -20,7 +20,7 @@ type SolicitudesOrdenadorContratistasController struct {
 	beego.Controller
 }
 
-//URLMapping ...
+// URLMapping ...
 func (c *SolicitudesOrdenadorContratistasController) URLMapping() {
 	c.Mapping("GetSolicitudesOrdenadorContratistas", c.GetSolicitudesOrdenadorContratistas)
 	c.Mapping("AprobarMultiplesPagosContratistas", c.AprobarMultiplesPagosContratistas)

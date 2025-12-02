@@ -781,31 +781,27 @@
         }
     },
     "definitions": {
-        "24095.0xc0005915f0.false": {
+        "24250.0xc0005e4bd0.false": {
             "title": "false",
             "type": "object"
         },
-        "24375.0xc000591620.false": {
+        "24530.0xc0005e4c00.false": {
             "title": "false",
             "type": "object"
         },
-        "24436.0xc000591650.false": {
+        "24591.0xc0005e4c30.false": {
             "title": "false",
             "type": "object"
         },
-        "24504.0xc000591740.false": {
+        "24712.0xc0005e4c90.false": {
             "title": "false",
             "type": "object"
         },
-        "24641.0xc000591770.false": {
+        "24863.0xc0005e4cc0.false": {
             "title": "false",
             "type": "object"
         },
-        "24792.0xc0005917a0.false": {
-            "title": "false",
-            "type": "object"
-        },
-        "41046.0xc0005faff0.false": {
+        "44067.0xc000646900.false": {
             "title": "false",
             "type": "object"
         },
@@ -1285,13 +1281,13 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/24375.0xc000591620.false"
+                    "$ref": "#/definitions/24530.0xc0005e4c00.false"
                 },
                 "Dependencia": {
                     "type": "string"
                 },
                 "EjecutadoDinero": {
-                    "$ref": "#/definitions/24792.0xc0005917a0.false"
+                    "$ref": "#/definitions/24863.0xc0005e4cc0.false"
                 },
                 "FechaCPS": {
                     "type": "string"
@@ -1308,22 +1304,25 @@
                     "$ref": "#/definitions/models.FechasConNovedades"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/24641.0xc000591770.false"
+                    "$ref": "#/definitions/24712.0xc0005e4c90.false"
                 },
                 "Novedades": {
-                    "$ref": "#/definitions/24504.0xc000591740.false"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NovedadCesion"
+                    }
                 },
                 "Objeto": {
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/24436.0xc000591650.false"
+                    "$ref": "#/definitions/24591.0xc0005e4c30.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/24095.0xc0005915f0.false"
+                    "$ref": "#/definitions/24250.0xc0005e4bd0.false"
                 },
                 "ValorContrato": {
                     "type": "integer",
@@ -1393,6 +1392,67 @@
                 },
                 "Proceso": {
                     "type": "string"
+                }
+            }
+        },
+        "models.NovedadCesion": {
+            "title": "NovedadCesion",
+            "type": "object",
+            "properties": {
+                "DocCedente": {
+                    "type": "string"
+                },
+                "DocCesionario": {
+                    "type": "string"
+                },
+                "FechaCreacion": {
+                    "type": "string"
+                },
+                "FechaFin": {
+                    "type": "string"
+                },
+                "FechaFinSus": {
+                    "type": "string"
+                },
+                "FechaInicio": {
+                    "type": "string"
+                },
+                "NombreCedente": {
+                    "type": "string"
+                },
+                "NombreCesionario": {
+                    "type": "string"
+                },
+                "NumeroCdp": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "NumeroContrato": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "PlazoEjecucion": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "TipoNovedad": {
+                    "type": "string"
+                },
+                "ValorAdicion": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "ValorNovedadPagado": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "Vigencia": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "VigenciaCdp": {
+                    "type": "integer",
+                    "format": "int64"
                 }
             }
         },
@@ -1680,7 +1740,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/41046.0xc0005faff0.false"
+                    "$ref": "#/definitions/44067.0xc000646900.false"
                 }
             }
         }
@@ -1704,7 +1764,7 @@
         },
         {
             "name": "informe",
-            "description": " InformeController operations for Informe\n"
+            "description": "InformeController operations for Informe\n"
         },
         {
             "name": "validacion_periodo_carga_cumplido",

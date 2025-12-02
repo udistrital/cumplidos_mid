@@ -163,7 +163,7 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 	}
 
 	var novedades []models.NovedadPoscontractual
-	var novStruct = []models.Noveda{}
+	var novStruct = []models.NovedadCesion{}
 
 	query := contrato + "/" + vigencia
 
@@ -199,7 +199,7 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 					panic(outputError)
 				}
 			case 6, 7, 8:
-				var otrosi models.Noveda
+				var otrosi models.NovedadCesion
 				otrosi, err := ConstruirNovedadOtroSi(nov)
 				if err == nil {
 					if valor_girado_otrosi, err := getValorGiradoPorCdp(strconv.Itoa(otrosi.NumeroCdp), strconv.Itoa(otrosi.VigenciaCdp), strconv.Itoa(contrato_general[0].UnidadEjecutora)); err == nil {

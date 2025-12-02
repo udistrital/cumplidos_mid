@@ -50,7 +50,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-//InformacionInforme ...
+// InformacionInforme ...
 func TestInformacionInforme(t *testing.T) {
 	InformacionInforme, err := helpers.InformacionInforme("94158")
 	if err != nil {
@@ -62,7 +62,7 @@ func TestInformacionInforme(t *testing.T) {
 	}
 }
 
-//GetPreliquidacion ...
+// GetPreliquidacion ...
 func TestGetPreliquidacion(t *testing.T) {
 	InformacionInforme, err := helpers.GetPreliquidacion("94158")
 	if err != nil {

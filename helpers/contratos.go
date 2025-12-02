@@ -46,7 +46,7 @@ import (
 	return salida, outputError
 }*/
 
-//practicamente es el mismo metodo anterior
+// practicamente es el mismo metodo anterior
 func GetContratosDependenciaFiltro(dependencia string, fecha_inicio string, fecha_fin string) (contratos_dependencia models.ContratoDependencia, outputError map[string]interface{}) {
 	var temp map[string]interface{}
 	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlHomologacionDepsJBPM")+"/oikos_argo/"+dependencia, &temp); (err == nil) && (response == 200) {

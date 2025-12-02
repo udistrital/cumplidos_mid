@@ -52,7 +52,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-//Informe ...
+// Informe ...
 func TestInforme(t *testing.T) {
 	Informe, err := helpers.Informe("94162")
 	if err != nil {
@@ -64,7 +64,7 @@ func TestInforme(t *testing.T) {
 	}
 }
 
-//GetActividadesEspecificas ...
+// GetActividadesEspecificas ...
 func TestGetActividadesEspecificas(t *testing.T) {
 	ActividadesEspecificas, err := helpers.GetActividadesEspecificas("96")
 	if err != nil {
@@ -76,7 +76,7 @@ func TestGetActividadesEspecificas(t *testing.T) {
 	}
 }
 
-//GetActividadesRealizadas ...
+// GetActividadesRealizadas ...
 func TestGetActividadesRealizadas(t *testing.T) {
 	ActividadesRealizadas, err := helpers.GetActividadesRealizadas("94")
 	if err != nil {
@@ -88,7 +88,7 @@ func TestGetActividadesRealizadas(t *testing.T) {
 	}
 }
 
-//AddInforme ...
+// AddInforme ...
 func TestAddInforme(t *testing.T) {
 	informePrueba := models.Informe{
 		PeriodoInformeInicio: time.Now(),
@@ -136,7 +136,7 @@ func TestAddInforme(t *testing.T) {
 	}
 }
 
-//AddActividadEspecifica ...
+// AddActividadEspecifica ...
 func TestAddActividadEspecifica(t *testing.T) {
 	var actividad_esp = map[string]interface{}{"ActividadEspecifica": "prueba", "Avance": 20, "InformeId": map[string]interface{}{"Id": 46}}
 	actEsp, err := helpers.AddActividadEspecifica(actividad_esp)
@@ -149,7 +149,7 @@ func TestAddActividadEspecifica(t *testing.T) {
 	}
 }
 
-//AddActividadRealizada ...
+// AddActividadRealizada ...
 func TestAddActividadRealizada(t *testing.T) {
 	var actividad_rea = map[string]interface{}{"Actividad": "prueba", "ProductoAsociado": "prueba", "Evidencia": "prueba", "ActividadEspecificaId": map[string]interface{}{"Id": 96}}
 	actRea, err := helpers.AddActividadRealizada(actividad_rea)
@@ -162,7 +162,7 @@ func TestAddActividadRealizada(t *testing.T) {
 	}
 }
 
-//UpdateInformeById ...
+// UpdateInformeById ...
 func TestUpdateInformeById(t *testing.T) {
 	informePrueba := models.Informe{
 		PeriodoInformeInicio: time.Now(),
@@ -209,7 +209,7 @@ func TestUpdateInformeById(t *testing.T) {
 	}
 }
 
-//UltimoInformeContratista ...
+// UltimoInformeContratista ...
 func TestUltimoInformeContratista(t *testing.T) {
 	informe, err := helpers.UltimoInformeContratista("94162")
 	if err != nil {

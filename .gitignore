@@ -1,10 +1,7 @@
 lastupdate.tmp
 .vscode/
-cumplidos_mid.exe
+cumplidos_mid
 main
-go.mod
-go.sum
-go.sumcd
 swagger.zip
 .scannerwork/
 swagger/*.png

@@ -3,7 +3,6 @@ package helpers
 import (
 	"github.com/astaxie/beego"
 	"github.com/udistrital/administrativa_mid_api/models"
-
 )
 
 func GetNombreResponable(id string) (nombreCompleto string, outputError interface{}) {
@@ -30,7 +29,7 @@ func GetNombreResponable(id string) (nombreCompleto string, outputError interfac
 				" " + capitalizarPrimeraLetra(respuesta_peticion[0].SegundoNombre) +
 				" " + capitalizarPrimeraLetra(respuesta_peticion[0].PrimerApellido) +
 				" " + capitalizarPrimeraLetra(respuesta_peticion[0].SegundoApellido)
-				println(capitalizarPrimeraLetra(respuesta_peticion[0].SegundoApellido))
+			println(capitalizarPrimeraLetra(respuesta_peticion[0].SegundoApellido))
 		}
 	} else {
 
