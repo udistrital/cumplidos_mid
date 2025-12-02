@@ -17,7 +17,7 @@ type ContratosContratistaController struct {
 	beego.Controller
 }
 
-//URLMapping ...
+// URLMapping ...
 func (c *ContratosContratistaController) URLMapping() {
 	c.Mapping("GetContratosContratista", c.GetContratosContratista)
 	c.Mapping("GetDocumentosPagoMensual", c.GetDocumentosPagoMensual)

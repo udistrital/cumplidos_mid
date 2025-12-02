@@ -16,7 +16,7 @@ type ValidacionFechaCargaCumplidoController struct {
 	beego.Controller
 }
 
-//URLMapping ...
+// URLMapping ...
 func (c *ValidacionFechaCargaCumplidoController) URLMapping() {
 	c.Mapping("GetValidacionPeriodo", c.GetValidacionPeriodo)
 }

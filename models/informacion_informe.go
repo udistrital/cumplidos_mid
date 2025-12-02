@@ -27,7 +27,7 @@ type InformacionInforme struct {
 		Consecutivo string
 		Fecha       time.Time
 	}
-	Novedades              []Noveda
+	Novedades              []NovedadCesion
 	InformacionContratista struct {
 		Nombre             string
 		TipoIdentificacion string

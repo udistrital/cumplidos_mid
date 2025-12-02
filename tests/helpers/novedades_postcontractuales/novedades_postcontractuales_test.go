@@ -51,7 +51,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-//GetNovedadesPostcontractuales ...
+// GetNovedadesPostcontractuales ...
 func TestGetNovedadesPostcontractuales(t *testing.T) {
 	var novedades []models.NovedadPostcontractual
 	_, err := helpers.GetNovedadesPostcontractuales(models.TipoNovedadTodas, "Vigencia:2023", "FechaInicio", "asc", "10", "", "", &novedades)

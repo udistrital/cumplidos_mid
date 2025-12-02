@@ -50,7 +50,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-//ValidarPeriodoCargaCumplido ...
+// ValidarPeriodoCargaCumplido ...
 func TestValidarPeriodoCargaCumplido(t *testing.T) {
 	ValidacionFechaCargaCumplido, err := helpers.ValidarPeriodoCargaCumplido("DEP12", "2021", "7")
 	if err != nil {
