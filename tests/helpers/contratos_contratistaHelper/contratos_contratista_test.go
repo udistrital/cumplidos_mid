@@ -62,7 +62,7 @@ func TestContratosContratista(t *testing.T) {
 	}
 }
 
-//GetRP
+// GetRP
 func TestGetRP(t *testing.T) {
 	valor, err := helpers.GetRP("2400", "2020")
 	if err != nil {

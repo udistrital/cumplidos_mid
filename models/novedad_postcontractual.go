@@ -82,10 +82,10 @@ type Propiedad struct {
 }
 
 type Novedades struct {
-	Novedades []Noveda `JSON:"novedades"`
+	Novedades []NovedadCesion `JSON:"novedades"`
 }
 
-type Noveda struct {
+type NovedadCesion struct {
 	NumeroContrato     int    `json:"NumeroContrato"`
 	Vigencia           int    `json:"Vigencia"`
 	TipoNovedad        string `json:"TipoNovedad"`

@@ -3,7 +3,6 @@ package helpers
 import (
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/models"
-
 )
 
 func GetDependenciasSupervisor(documento string) (dependenciasList []models.DependenciaSimple, errorOutput interface{}) {
@@ -95,7 +94,7 @@ func GetDependenciasOrdenador(documento string) (dependenciasList []models.Depen
 			}
 		}
 	} else {
-		
+
 		return nil, errorOutput
 	}
 	if dependenciasList != nil {
@@ -105,49 +104,44 @@ func GetDependenciasOrdenador(documento string) (dependenciasList []models.Depen
 	return nil, nil
 }
 
-
 func GetDependenciasRolGeneral() (dependenciasList []models.DependenciaSimple, errorOutput interface{}) {
-	
+
 	defer func() {
 
 		if err := recover(); err != nil {
 			errorOutput = map[string]interface{}{
 				"Success": true,
 				"Status":  502,
-				"Message": "Error al consultar las dependencias:  para el rol general" ,
+				"Message": "Error al consultar las dependencias:  para el rol general",
 				"Error":   err,
 			}
 			panic(errorOutput)
 		}
 	}()
-	println(beego.AppConfig.String("UrlcrudAgora")+"/dependencia_SIC/?limit=-1");
+	println(beego.AppConfig.String("UrlcrudAgora") + "/dependencia_SIC/?limit=-1")
 	var respuesta []interface{}
 	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlcrudAgora")+"/dependencia_SIC/?limit=-1", &respuesta); (err == nil) && (response == 200) {
 
 		dependenciasMap := make(map[string]models.DependenciaSimple)
-		
-		
-						for _, list := range respuesta {
 
-							depMap := list.(map[string]interface{})
-							dependencia := models.DependenciaSimple{
+		for _, list := range respuesta {
 
-								Codigo: depMap["ESFCODIGODEP"].(string),
-								Nombre: depMap["ESFDEPENCARGADA"].(string),
-							}
-					
-							dependenciasMap[dependencia.Codigo] = dependencia
-							
-						}
-						for _, dependencia := range dependenciasMap {
-							dependenciasList = append(dependenciasList, dependencia)
-						}
-					
-						
-				
-		
+			depMap := list.(map[string]interface{})
+			dependencia := models.DependenciaSimple{
+
+				Codigo: depMap["ESFCODIGODEP"].(string),
+				Nombre: depMap["ESFDEPENCARGADA"].(string),
+			}
+
+			dependenciasMap[dependencia.Codigo] = dependencia
+
+		}
+		for _, dependencia := range dependenciasMap {
+			dependenciasList = append(dependenciasList, dependencia)
+		}
+
 	} else {
-		
+
 		return nil, errorOutput
 	}
 	if dependenciasList != nil {

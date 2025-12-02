@@ -21,7 +21,7 @@ func GetNovedadesPostcontractuales(query string, target *[]models.NovedadPoscont
 	return 400, err_nov
 }
 
-func ConstruirNovedadOtroSi(nov models.NovedadPoscontractual) (otrosi models.Noveda, outputError map[string]interface{}) {
+func ConstruirNovedadOtroSi(nov models.NovedadPoscontractual) (otrosi models.NovedadCesion, outputError map[string]interface{}) {
 	if docProv, nomProv, err := ConsultarProveedorNovedad(nov.Cesionario); err == nil {
 
 		otrosi.DocCesionario = docProv
@@ -44,7 +44,7 @@ func ConstruirNovedadOtroSi(nov models.NovedadPoscontractual) (otrosi models.Nov
 	}
 }
 
-func ConstruirNovedadCesion(nov models.NovedadPoscontractual) (cesion models.Noveda, outputError map[string]interface{}) {
+func ConstruirNovedadCesion(nov models.NovedadPoscontractual) (cesion models.NovedadCesion, outputError map[string]interface{}) {
 	cesion.TipoNovedad = nov.CodAbreviacionTipo
 
 	if docCedente, nomCedente, err := ConsultarProveedorNovedad(nov.Cedente); err == nil {
@@ -71,7 +71,7 @@ func ConstruirNovedadCesion(nov models.NovedadPoscontractual) (cesion models.Nov
 	}
 }
 
-func ConstruirNovedadSuspension(nov models.NovedadPoscontractual) (suspension models.Noveda, outputError map[string]interface{}) {
+func ConstruirNovedadSuspension(nov models.NovedadPoscontractual) (suspension models.NovedadCesion, outputError map[string]interface{}) {
 
 	if docProv, nomProv, err := ConsultarProveedorNovedad(nov.Cesionario); err == nil {
 
@@ -94,7 +94,7 @@ func ConstruirNovedadSuspension(nov models.NovedadPoscontractual) (suspension mo
 	}
 }
 
-func ConstruirNovedadTerminacion(nov models.NovedadPoscontractual) (terminacion models.Noveda, outputError map[string]interface{}) {
+func ConstruirNovedadTerminacion(nov models.NovedadPoscontractual) (terminacion models.NovedadCesion, outputError map[string]interface{}) {
 
 	if docProv, nomProv, err := ConsultarProveedorNovedad(nov.Cesionario); err == nil {
 

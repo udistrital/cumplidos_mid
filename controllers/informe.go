@@ -10,7 +10,7 @@ import (
 	"github.com/udistrital/cumplidos_mid/models"
 )
 
-//  InformeController operations for Informe
+// InformeController operations for Informe
 type InformeController struct {
 	beego.Controller
 }
