@@ -309,7 +309,4 @@ func UltimoInformeContratista(pago_mensual_id string) (informe []models.Informe,
 		return nil, outputError
 	}
 
-	// var aux_informe models.Informe
-
-	return
 }
