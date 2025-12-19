@@ -64,14 +64,28 @@ func TestContratosContratista(t *testing.T) {
 
 // GetRP
 func TestGetRP(t *testing.T) {
-	valor, err := helpers.GetRP("2400", "2020")
-	if err != nil {
-		t.Error("Error helper func GetRP", err)
-		t.Fail()
-	} else {
-		t.Log(valor)
-		t.Log("TestGetRP Finalizado Correctamente (OK)")
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("GetRP panic: %v", r)
+		}
+	}()
+
+	numeroCDP := "2400"
+	vigenciaCDP := "2020"
+	unidadEjecucion := "1"
+
+	valor, outputError := helpers.GetRP(
+		numeroCDP,
+		vigenciaCDP,
+		unidadEjecucion,
+	)
+
+	if outputError != nil {
+		t.Fatalf("Error helper func GetRP: %v", outputError)
 	}
+
+	t.Log(valor)
+	t.Log("TestGetRP Finalizado Correctamente (OK)")
 }
 
 // GetContratosPersona ...

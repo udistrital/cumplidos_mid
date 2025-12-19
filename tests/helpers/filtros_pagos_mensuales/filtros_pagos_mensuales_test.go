@@ -55,14 +55,22 @@ func TestMain(m *testing.M) {
 
 // TestGetPagosFiltrados ...
 func TestGetPagosFiltrados(t *testing.T) {
-	t.Log("-----------------------------------------------------")
+	t.Log("---------------------------------------------")
+
 	numerosContratos := []string{"619", "48"}
 	numerosDocumentos := []string{"80145797", "1022926896"}
 	anios := []string{"2018"}
 	meses := []string{"5", "4"}
 	estadosPagos := []string{"12"}
-	vigencias := []string{"2017"}
-	pagos, outputError := helpers.GetPagosFiltrados(numerosContratos, numerosDocumentos, anios, meses, estadosPagos, vigencias)
+
+	pagos, outputError := helpers.GetPagosFiltrados(
+		numerosContratos,
+		numerosDocumentos,
+		anios,
+		meses,
+		estadosPagos,
+	)
+
 	if outputError != nil {
 		t.Error("Error en la función GetPagosFiltrados:", outputError)
 		t.Fail()
@@ -71,7 +79,7 @@ func TestGetPagosFiltrados(t *testing.T) {
 		t.Log("TestGetPagosFiltrados Finalizado Correctamente (OK)")
 	}
 
-	t.Log("-----------------------------------------------------")
+	t.Log("---------------------------------------------")
 }
 
 func TestFiltrosDependencia(t *testing.T) {
