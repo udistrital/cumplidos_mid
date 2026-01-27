@@ -3,7 +3,6 @@ package helpers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -222,7 +221,7 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 
 		}
 	} else {
-		fmt.Println("ERROR: ", err)
+		logs.Error("ERROR: ", err)
 	}
 	informacion_informe.Novedades = novStruct
 
@@ -279,7 +278,6 @@ func getPagoMensual(pago_mensual_id string) (pago_mensual models.PagoMensual, er
 		err = errors.New("Error en la peticion")
 		return pago_mensual, err
 	}
-	return
 }
 
 func GetPreliquidacion(pago_mensual_id string) (preliquidacion []models.PreliquidacionTitan, outputError map[string]interface{}) {
@@ -333,7 +331,6 @@ func GetPreliquidacion(pago_mensual_id string) (preliquidacion []models.Preliqui
 		panic(outputError)
 	}
 
-	return
 }
 
 func seleccionarPreliquidacion(preliquidaciones []models.PreliquidacionTitan, cdp int) (preliquidacion []models.PreliquidacionTitan, err error) {
@@ -400,5 +397,4 @@ func getValorGiradoPorCdp(cdp string, vigencia_cdp string, unidad_ejecucion stri
 	} else {
 		return valor_girado, err
 	}
-	return
 }

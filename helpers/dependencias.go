@@ -118,7 +118,6 @@ func GetDependenciasRolGeneral() (dependenciasList []models.DependenciaSimple, e
 			panic(errorOutput)
 		}
 	}()
-	println(beego.AppConfig.String("UrlcrudAgora") + "/dependencia_SIC/?limit=-1")
 	var respuesta []interface{}
 	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlcrudAgora")+"/dependencia_SIC/?limit=-1", &respuesta); (err == nil) && (response == 200) {
 
