@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/astaxie/beego"
@@ -12,7 +11,6 @@ import (
 func Informe(pago_mensual_id string) (informe []models.Informe, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
-			//fmt.Println("error", err)
 			outputError = map[string]interface{}{"funcion": "/Informe", "err": err, "status": "502"}
 			panic(outputError)
 		}
@@ -22,7 +20,6 @@ func Informe(pago_mensual_id string) (informe []models.Informe, outputError map[
 	var query string
 	var respuesta_peticion map[string]interface{}
 	query = "PagoMensualId.Id:" + pago_mensual_id
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/informe/?query=" + query)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/?query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
@@ -65,7 +62,6 @@ func Informe(pago_mensual_id string) (informe []models.Informe, outputError map[
 func GetActividadesEspecificas(idInforme string) (actividades_especificas []models.ActividadEspecifica, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
-			//fmt.Println("error", err)
 			outputError = map[string]interface{}{"funcion": "/GetActividadesEspecificas", "err": err, "status": "502"}
 			panic(outputError)
 		}
@@ -75,7 +71,6 @@ func GetActividadesEspecificas(idInforme string) (actividades_especificas []mode
 	var query string
 	var respuesta_peticion map[string]interface{}
 	query = "informeid:" + idInforme + ",Activo:true"
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/actividad_especifica/?query=" + query + "&limit=-1&sortby=FechaCreacion&order=asc")
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
@@ -103,7 +98,6 @@ func GetActividadesEspecificas(idInforme string) (actividades_especificas []mode
 func GetActividadesRealizadas(idActividadEspecifica string) (actividades_realizadas []models.ActividadRealizada, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
-			//fmt.Println("error", err)
 			outputError = map[string]interface{}{"funcion": "/GetActividadesRealizadas", "err": err, "status": "502"}
 			panic(outputError)
 		}
@@ -113,7 +107,6 @@ func GetActividadesRealizadas(idActividadEspecifica string) (actividades_realiza
 	var query string
 	var respuesta_peticion map[string]interface{}
 	query = "actividadespecificaid:" + idActividadEspecifica + ",Activo:true"
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/actividad_realizada/?query=" + query + "&limit=-1&sortby=FechaCreacion&order=asc")
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_realizada/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
@@ -134,7 +127,7 @@ func GetActividadesRealizadas(idActividadEspecifica string) (actividades_realiza
 func AddInforme(informe models.Informe) (response map[string]interface{}, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
-			//fmt.Println("error", err)
+
 			outputError = map[string]interface{}{"funcion": "/AddInforme", "err": err, "status": "502"}
 			panic(outputError)
 		}
@@ -174,7 +167,7 @@ func AddInforme(informe models.Informe) (response map[string]interface{}, output
 func AddActividadEspecifica(actividad_especifica map[string]interface{}) (actividad_especifica_creada models.ActividadEspecifica, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
-			//fmt.Println("error", err)
+
 			outputError = map[string]interface{}{"funcion": "/AddActividadEspecifica", "err": err, "status": "502"}
 			panic(outputError)
 		}
@@ -195,7 +188,7 @@ func AddActividadEspecifica(actividad_especifica map[string]interface{}) (activi
 func AddActividadRealizada(actividad_realizada map[string]interface{}) (actividad_realizada_creada models.ActividadRealizada, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
-			//fmt.Println("error", err)
+
 			outputError = map[string]interface{}{"funcion": "/AddActividadRealizada", "err": err, "status": "502"}
 			panic(outputError)
 		}
@@ -215,7 +208,7 @@ func AddActividadRealizada(actividad_realizada map[string]interface{}) (activida
 func UpdateInformeById(informe models.Informe) (outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
-			//fmt.Println("error", err)
+
 			outputError = map[string]interface{}{"funcion": "/UpdateInforme", "err": err, "status": "502"}
 			panic(outputError)
 		}
@@ -269,7 +262,7 @@ func UpdateInformeById(informe models.Informe) (outputError map[string]interface
 func UltimoInformeContratista(pago_mensual_id string) (informe []models.Informe, outputError map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
-			//fmt.Println("error", err)
+
 			outputError = map[string]interface{}{"funcion": "/UltimoInformeContratista", "err": err, "status": "502"}
 			panic(outputError)
 		}
@@ -285,7 +278,6 @@ func UltimoInformeContratista(pago_mensual_id string) (informe []models.Informe,
 			sortby := "&sortby=PagoMensualId.Ano,PagoMensualId.Mes"
 			limit := "&limit=1"
 
-			fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/informe/?query=" + query + sortby + order + limit)
 			if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/?query="+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
 				if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 

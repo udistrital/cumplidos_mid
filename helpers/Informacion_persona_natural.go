@@ -19,22 +19,26 @@ func GetNombreResponable(id string) (nombreCompleto string, outputError interfac
 	}()
 
 	var respuesta_peticion []*models.InformacionPersonaNatural
-	//println(beego.AppConfig.String("UrlcrudAgora") + "/informacion_persona_natural/" + id)
 	query := "Id:" + id
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_persona_natural?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := getJsonTest(
+		beego.AppConfig.String("UrlcrudAgora")+
+			"/informacion_persona_natural?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query="+query,
+		&respuesta_peticion,
+	); err == nil && response == 200 {
 
-		if respuesta_peticion != nil {
-			nombreCompleto = capitalizarPrimeraLetra(respuesta_peticion[0].PrimerNombre) +
-				" " + capitalizarPrimeraLetra(respuesta_peticion[0].SegundoNombre) +
-				" " + capitalizarPrimeraLetra(respuesta_peticion[0].PrimerApellido) +
-				" " + capitalizarPrimeraLetra(respuesta_peticion[0].SegundoApellido)
-			println(capitalizarPrimeraLetra(respuesta_peticion[0].SegundoApellido))
+		if len(respuesta_peticion) > 0 {
+			nombreCompleto =
+				capitalizarPrimeraLetra(respuesta_peticion[0].PrimerNombre) + " " +
+					capitalizarPrimeraLetra(respuesta_peticion[0].SegundoNombre) + " " +
+					capitalizarPrimeraLetra(respuesta_peticion[0].PrimerApellido) + " " +
+					capitalizarPrimeraLetra(respuesta_peticion[0].SegundoApellido)
 		}
-	} else {
 
+	} else {
 		return "", outputError
 	}
 
 	return nombreCompleto, nil
+
 }
