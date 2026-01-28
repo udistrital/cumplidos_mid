@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
+	_ "github.com/udistrital/cumplidos_mid/routers"
+
 	"github.com/astaxie/beego/plugins/cors"
 	apistatus "github.com/udistrital/utils_oas/apiStatusLib"
 	"github.com/udistrital/utils_oas/auditoria"
