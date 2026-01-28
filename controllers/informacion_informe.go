@@ -84,7 +84,6 @@ func (c *InformacionInformeController) GetPreliquidacion() {
 	}()
 
 	pago_mensual_id := c.GetString(":pago_mensual_id")
-	//fmt.Println("Pago mensual id:", pago_mensual_id)
 
 	_, err := strconv.Atoi(pago_mensual_id)
 

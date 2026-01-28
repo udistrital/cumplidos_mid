@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -133,7 +132,6 @@ func SolicitudesOrdenadorContratistas(doc_ordenador string, limit int, offset in
 
 	// var contratos_disponibilidad []models.ContratoDisponibilidad
 	var respuesta_peticion map[string]interface{}
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?limit=" + strconv.Itoa(limit) + "&offset=" + strconv.Itoa(offset) + "&query=EstadoPagoMensualId.CodigoAbreviacion:AS,DocumentoResponsableId:" + doc_ordenador)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?limit="+strconv.Itoa(limit)+"&offset="+strconv.Itoa(offset)+"&query=EstadoPagoMensualId.CodigoAbreviacion:AS,DocumentoResponsableId:"+doc_ordenador, &respuesta_peticion); (err == nil) && (response == 200) {
 
 		pagos_mensuales = []models.PagoMensual{}
@@ -169,7 +167,6 @@ func TraerInfoOrdenador(numero_contrato string, vigencia string) (informacion_or
 	//var informacion_ordenador models.InformacionOrdenador
 	var ordenadores []models.Ordenador
 
-	// fmt.Println("url: " + beego.AppConfig.String("UrlAdministrativaJBPM") + "/" + "contrato_elaborado/" + numero_contrato + "/" + vigencia)
 	if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlAdministrativaJBPM")+"/"+"contrato_elaborado/"+numero_contrato+"/"+vigencia, &temp); err == nil && temp != nil && response == 200 {
 		json_contrato_elaborado, error_json := json.Marshal(temp)
 		if error_json == nil {
@@ -247,19 +244,16 @@ func GetCumplidosRevertiblesPorOrdenador(NumDocumentoOrdenador string) (cumplido
 
 	var respuesta_peticion map[string]interface{}
 
-	fmt.Println(beego.AppConfig.String("UrlCrudCumplidos") + "/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:" + NumDocumentoOrdenador + ",FechaModificacion__gte:" + mes + "/" + dia + "/" + año)
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?limit=-1&query=EstadoPagoMensualId.CodigoAbreviacion:AP,DocumentoResponsableId:"+NumDocumentoOrdenador+",FechaModificacion__gte:"+mes+"/"+dia+"/"+año, &respuesta_peticion); (err == nil) && (response == 200) {
 
 		pagos_mensuales = []models.PagoMensual{}
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
-		fmt.Println("numero pagos ", len(pagos_mensuales))
 		if (len(pagos_mensuales) == 1 && pagos_mensuales[0] == models.PagoMensual{}) {
 			return nil, nil
 		}
 		for _, pago_mensual := range pagos_mensuales {
 			var cdprp models.InformacionCdpRp
 			existeOrdenPago := false
-			fmt.Println("pago mensual", pago_mensual)
 
 			var contrato models.InformacionContrato
 			contrato, outputError = GetContrato(pago_mensual.NumeroContrato, strconv.FormatFloat(pago_mensual.VigenciaContrato, 'f', 0, 64))
@@ -276,31 +270,24 @@ func GetCumplidosRevertiblesPorOrdenador(NumDocumentoOrdenador string) (cumplido
 				for _, rp := range cdprp.CdpXRp.CdpRp {
 					var temp map[string]interface{}
 					var temp_ordenes_pago_tercero models.OrdenesPagoTercero
-					//fmt.Println("rp", rp)
-					//fmt.Println(beego.AppConfig.String("UrlFinancieraJBPM") + "/" + "ordenes_pago_tercero/" + rp.RpNumeroRegistro + "/" + rp.RpVigencia + "/" + pago_mensual.DocumentoPersonaId + "/" + strconv.Itoa(int(pago_mensual.Ano)))
 					if response, err := getJsonWSO2Test(beego.AppConfig.String("UrlFinancieraJBPM")+"/"+"ordenes_pago_tercero/"+rp.RpNumeroRegistro+"/"+rp.RpVigencia+"/"+pago_mensual.DocumentoPersonaId+"/"+strconv.Itoa(int(pago_mensual.Ano)), &temp); (err == nil) && (response == 200) {
 						json_ordenes_pago_tercero, error_json := json.Marshal(temp)
 						if error_json == nil {
 							if err := json.Unmarshal(json_ordenes_pago_tercero, &temp_ordenes_pago_tercero); err == nil {
 
-								//fmt.Println("ordenes de pago:"+pago_mensual.NumeroContrato+" - "+strconv.Itoa(int(pago_mensual.VigenciaContrato)), temp_ordenes_pago_tercero)
 								for _, orden_de_pago := range temp_ordenes_pago_tercero.OrdenesPago.Tercero {
 									mes := strings.Split(orden_de_pago.Detalle, " ")[5]
-									//fmt.Println("mes orden de pago", mes)
-									//fmt.Println("numero de mes", models.Meses[mes])
+
 									if models.Meses[mes] == int(pago_mensual.Mes) {
 										existeOrdenPago = true
-										fmt.Println("Existe Orden de pago del CPS" + pago_mensual.NumeroContrato + "vigencia:" + strconv.Itoa(int(pago_mensual.VigenciaContrato)) + " mes " + mes)
 										break
 									}
 								}
 
 								if !existeOrdenPago {
-									fmt.Println("NO Existe Orden de pago del CPS" + pago_mensual.NumeroContrato + "vigencia:" + strconv.Itoa(int(pago_mensual.VigenciaContrato)) + " mes " + mes)
 									var cumplidos_revertible models.PagoContratistaCdpRp
 									var outputError map[string]interface{}
 									cumplidos_revertible, outputError = getInfoPagoMensual(pago_mensual)
-									fmt.Println(outputError)
 									if outputError == nil {
 										cumplidos_revertibles = append(cumplidos_revertibles, cumplidos_revertible)
 									}
