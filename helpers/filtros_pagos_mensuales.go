@@ -254,5 +254,4 @@ func GetInformacionContrato(num_contrato_suscrito string, vigencia string) (info
 		return informacion_contrato, outputError
 	}
 
-	return informacion_contrato, nil
 }

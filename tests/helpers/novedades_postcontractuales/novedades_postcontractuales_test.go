@@ -53,15 +53,21 @@ func TestMain(m *testing.M) {
 
 // GetNovedadesPostcontractuales ...
 func TestGetNovedadesPostcontractuales(t *testing.T) {
-	var novedades []models.NovedadPostcontractual
-	_, err := helpers.GetNovedadesPostcontractuales(models.TipoNovedadTodas, "Vigencia:2023", "FechaInicio", "asc", "10", "", "", &novedades)
+	var novedades []models.NovedadPoscontractual
+
+	filtro := "Vigencia:2023"
+
+	status, err := helpers.GetNovedadesPostcontractuales(filtro, &novedades)
+
 	if err != nil {
-		t.Error("Error helper func TestGetNovedadesPostcontractuales", err)
+		t.Errorf("Error helper func TestGetNovedadesPostcontractuales (status %d): %v", status, err)
 		t.Fail()
-	} else {
-		t.Log(novedades)
-		t.Log("TestGetNovedadesPostcontractuales Finalizado Correctamente (OK)")
+		return
 	}
+
+	t.Logf("Status: %d", status)
+	t.Log(novedades)
+	t.Log("TestGetNovedadesPostcontractuales Finalizado Correctamente (OK)")
 }
 
 func TestEndPointCumplidosCpsMid(t *testing.T) {

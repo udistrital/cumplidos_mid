@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/astaxie/beego"
@@ -11,7 +10,7 @@ import (
 func GetNovedadesPostcontractuales(query string, target *[]models.NovedadPoscontractual) (status int, err_nov error) {
 	var responseWrapper models.RespNov
 	url := beego.AppConfig.String("UrlNovedadesMid") + "/novedad/" + query
-	fmt.Println("url", url)
+
 	if response, err := getJsonTest(url, &responseWrapper); (err == nil) && (response == 200) {
 		*target = responseWrapper.Body
 		return 200, nil
