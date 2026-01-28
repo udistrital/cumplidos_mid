@@ -49,9 +49,6 @@ func (c *ValidacionFechaCargaCumplidoController) GetValidacionPeriodo() {
 	dependencia_supervisor := c.GetString(":dependencia_supervisor")
 	anio := c.GetString(":anio")
 	mes := c.GetString(":mes")
-	//fmt.Println("dep", dependencia_supervisor)
-	//fmt.Println("anio", anio)
-	//fmt.Println("mes", mes)
 	_, err_anio := strconv.Atoi(anio)
 	_, err_mes := strconv.Atoi(mes)
 

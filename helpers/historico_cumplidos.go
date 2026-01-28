@@ -1,9 +1,10 @@
 package helpers
 
 import (
+	"strconv"
+
 	"github.com/astaxie/beego"
 	"github.com/udistrital/cumplidos_mid/models"
-	"strconv"
 )
 
 func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPago, outputError interface{}) {
@@ -20,7 +21,6 @@ func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPa
 	//Query de solicitud
 	query := "PagoMensualId.Id:" + idPagoMensual
 	var respuesta_peticion map[string]interface{}
-	//println(beego.AppConfig.String("UrlCrudCumplidos") + "/cambio_estado_pago/?query=" + query)
 
 	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/cambio_estado_pago/?query="+query+"&sortby=FechaCreacion&order=asc&limit=-1", &respuesta_peticion); (err == nil) && (response == 200) {
 		//Ejecuta si no hay error y estado = 200

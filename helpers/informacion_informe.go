@@ -3,7 +3,6 @@ package helpers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -222,7 +221,7 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 
 		}
 	} else {
-		fmt.Println("ERROR: ", err)
+		logs.Error("ERROR: ", err)
 	}
 	informacion_informe.Novedades = novStruct
 
