@@ -34,10 +34,11 @@ func GetNombreResponable(id string) (nombreCompleto string, outputError interfac
 					capitalizarPrimeraLetra(respuesta_peticion[0].PrimerApellido) + " " +
 					capitalizarPrimeraLetra(respuesta_peticion[0].SegundoApellido)
 		}
-	} else {
 
+	} else {
 		return "", outputError
 	}
 
 	return nombreCompleto, nil
+
 }

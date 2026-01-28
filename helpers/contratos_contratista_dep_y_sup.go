@@ -158,7 +158,7 @@ func ContratosContratistaSupervisor(doc_supervisor string) (pagos_contratista_cd
 			}
 		}
 
-	} else { //If pago_mensual get
+	} else {
 		logs.Error(err)
 		outputError = map[string]interface{}{"funcion": "/ContratosContratistaSupervisor1", "err": err, "status": "502"}
 		return nil, outputError

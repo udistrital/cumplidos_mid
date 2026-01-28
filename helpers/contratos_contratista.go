@@ -144,8 +144,6 @@ func GetContratosPersona(num_documento string) (contratos_persona models.Informa
 		return contratos_persona, outputError
 	}
 
-	return contratos_persona, nil
-
 }
 
 func GetContrato(num_contrato_suscrito string, vigencia string) (informacion_contrato models.InformacionContrato, outputError map[string]interface{}) {
@@ -164,7 +162,6 @@ func GetContrato(num_contrato_suscrito string, vigencia string) (informacion_con
 			var contrato models.InformacionContrato
 			if err := json.Unmarshal(json_contrato, &contrato); err == nil {
 				informacion_contrato = contrato
-				//Se valida si esta vacio el objeto
 				if informacion_contrato == (models.InformacionContrato{}) {
 					logs.Error(err)
 					outputError = map[string]interface{}{"funcion": "/GetContrato/EmptyResponse", "err": err, "status": "502"}
@@ -188,7 +185,6 @@ func GetContrato(num_contrato_suscrito string, vigencia string) (informacion_con
 		return informacion_contrato, outputError
 	}
 
-	return informacion_contrato, nil
 }
 
 func GetInformacionContratoContratista(num_contrato_suscrito string, vigencia string) (informacion_contrato_contratista models.InformacionContratoContratista, outputError map[string]interface{}) {

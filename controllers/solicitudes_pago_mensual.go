@@ -98,9 +98,19 @@ func (c *SolicitudesPagoMensualController) GetSolicitudesPagoMensual() {
 
 	if err != nil {
 		c.Ctx.Output.SetStatus(204)
-		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 204, "Message": "No hay datos que coincidan con los filtros", "Data": nil}
+		c.Data["json"] = map[string]interface{}{
+			"Succes":  true,
+			"Status:": 204,
+			"Message": "No hay datos que coincidan con los filtros",
+			"Data":    nil,
+		}
 	} else {
-		c.Data["json"] = map[string]interface{}{"Succes": true, "Status:": 200, "Message": "Consulta exitosa", "Data": filtros_pago}
+		c.Data["json"] = map[string]interface{}{
+			"Succes":  true,
+			"Status:": 200,
+			"Message": "Consulta exitosa",
+			"Data":    filtros_pago,
+		}
 	}
 
 	c.ServeJSON()
