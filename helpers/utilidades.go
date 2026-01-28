@@ -24,8 +24,6 @@ func sendJson(url string, trequest string, target interface{}, datajson interfac
 		}
 	}
 	client := &http.Client{}
-	fmt.Print("Json que se le va a apasar a la funcion: ")
-	fmt.Println(b)
 	req, err := http.NewRequest(trequest, url, b)
 	r, err := client.Do(req)
 	if err != nil {
@@ -46,7 +44,6 @@ func sendJson3(url string, trequest string, target interface{}, datajson interfa
 	b := new(bytes.Buffer)
 	if datajson != nil {
 		if err := json.NewEncoder(b).Encode(datajson); err != nil {
-			fmt.Println(err)
 			beego.Error(err)
 		}
 	}
@@ -54,7 +51,6 @@ func sendJson3(url string, trequest string, target interface{}, datajson interfa
 	// Crear una nueva solicitud POST con el cuerpo del JSON
 	req, err := http.NewRequest(trequest, url, b)
 	if err != nil {
-		fmt.Println("Error al crear la solicitud POST:", err)
 		return err
 	}
 
@@ -75,7 +71,6 @@ func sendJson3(url string, trequest string, target interface{}, datajson interfa
 	// Realizar la solicitud POST
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Error al enviar la solicitud POST:", err)
 		return err
 	}
 	defer func() {
@@ -114,20 +109,6 @@ func getJson(url string, target interface{}) error {
 
 	return json.NewDecoder(r.Body).Decode(target)
 }
-
-// func getJsonTest(w http.ResponseWriter,r *http.Request){
-// 	err := r.ParseForm()
-// 	if err != nil {
-// 	   log.Fatal("parse form error ",err)
-// 	}
-// 	// 初始化请求变量结构
-// 	formData := make(map[string]interface{})
-// 	// 调用json包的解析，解析请求body
-// 	json.NewDecoder(r.Body).Decode(&formData)
-// 	for key,value := range formData{
-// 	   log.Println("key:",key," => value :",value)
-// 	}
-//  }
 
 func getXml(url string, target interface{}) error {
 	r, err := http.Get(url)
@@ -333,11 +314,9 @@ func formatNumberString(x string, precision int, thousand string, decimal string
 
 func dias31(fecha_inicio time.Time, fecha_fin time.Time) (dias31 int) {
 	count := int(fecha_fin.Sub(fecha_inicio).Hours()/24) + 1
-	fmt.Println(count)
 
 	for i := 0; i < count; i++ {
 		day := fecha_inicio.AddDate(0, 0, i).Day()
-		//fmt.Println(day)
 		if day == 31 {
 			dias31++
 		}
