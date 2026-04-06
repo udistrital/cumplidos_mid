@@ -11,7 +11,7 @@ func GetNovedadesPostcontractuales(query string, target *[]models.NovedadPoscont
 	var responseWrapper models.RespNov
 	url := beego.AppConfig.String("UrlNovedadesMid") + "/novedad/" + query
 
-	if response, err := getJsonTest(url, &responseWrapper); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(url, &responseWrapper); (err == nil) && (response == 200) {
 		*target = responseWrapper.Body
 		return 200, nil
 	} else {
@@ -120,7 +120,7 @@ func ConsultarProveedorNovedad(id int) (string, string, map[string]interface{}) 
 	var nomProveedor string
 	var outputError map[string]interface{}
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/"+strconv.Itoa(id), &proveedor); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_proveedor/"+strconv.Itoa(id), &proveedor); (err == nil) && (response == 200) {
 		docProveedor = proveedor.NumDocumento
 		nomProveedor = proveedor.NomProveedor
 		outputError = nil

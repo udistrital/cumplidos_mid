@@ -20,12 +20,12 @@ func Informe(pago_mensual_id string) (informe []models.Informe, outputError map[
 	var query string
 	var respuesta_peticion map[string]interface{}
 	query = "PagoMensualId.Id:" + pago_mensual_id
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/?query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/?query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
 			LimpiezaRespuestaRefactor(respuesta_peticion, &informe)
 			var pagos_mensuales []models.PagoMensual
-			if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=Id:"+pago_mensual_id, &respuesta_peticion); (err == nil) && (response == 200) {
+			if response, err := GetJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=Id:"+pago_mensual_id, &respuesta_peticion); (err == nil) && (response == 200) {
 				LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
 				informe[0].PagoMensualId.NumeroContrato = pagos_mensuales[0].NumeroContrato
 				informe[0].PagoMensualId.VigenciaContrato = pagos_mensuales[0].VigenciaContrato
@@ -72,7 +72,7 @@ func GetActividadesEspecificas(idInforme string) (actividades_especificas []mode
 	var query string
 	var respuesta_peticion map[string]interface{}
 	query = "informeid:" + idInforme + ",Activo:true"
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
 			LimpiezaRespuestaRefactor(respuesta_peticion, &actividades_especificas)
@@ -109,7 +109,7 @@ func GetActividadesRealizadas(idActividadEspecifica string) (actividades_realiza
 	var query string
 	var respuesta_peticion map[string]interface{}
 	query = "actividadespecificaid:" + idActividadEspecifica + ",Activo:true"
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_realizada/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_realizada/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
 			LimpiezaRespuestaRefactor(respuesta_peticion, &actividades_realizadas)
@@ -233,7 +233,7 @@ func UpdateInformeById(informe models.Informe) (outputError map[string]interface
 		var actividades_especificas []models.ActividadEspecifica
 		var respuesta_peticion map[string]interface{}
 		//consulta todas las antiguas actividades especificas
-		if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
+		if response, err := GetJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/actividad_especifica/?query="+query+"&limit=-1&sortby=FechaCreacion&order=asc", &respuesta_peticion); (err == nil) && (response == 200) {
 			if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 				LimpiezaRespuestaRefactor(respuesta_peticion, &actividades_especificas)
 				for _, actEsp := range actividades_especificas {
@@ -272,7 +272,7 @@ func UltimoInformeContratista(pago_mensual_id string) (informe []models.Informe,
 
 	var respuesta_peticion map[string]interface{}
 	var pagos_mensuales []models.PagoMensual
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=Id:"+pago_mensual_id, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=Id:"+pago_mensual_id, &respuesta_peticion); (err == nil) && (response == 200) {
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
 		if len(pagos_mensuales) > 0 {
 			query := "PagoMensualId.NumeroContrato:" + pagos_mensuales[0].NumeroContrato + ",PagoMensualId.VigenciaContrato:" + strconv.Itoa(int(pagos_mensuales[0].VigenciaContrato)) + ",PagoMensualId.DocumentoPersonaId:" + pagos_mensuales[0].DocumentoPersonaId
@@ -280,7 +280,7 @@ func UltimoInformeContratista(pago_mensual_id string) (informe []models.Informe,
 			sortby := "&sortby=PagoMensualId.Ano,PagoMensualId.Mes"
 			limit := "&limit=1"
 
-			if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/?query="+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
+			if response, err := GetJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/informe/?query="+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
 				if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 
 					LimpiezaRespuestaRefactor(respuesta_peticion, &informe)

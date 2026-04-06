@@ -64,12 +64,12 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 	}
 
 	var informacion_persona_natural []models.InformacionPersonaNatural
-	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_persona_natural?query=Id:"+num_documento, &informacion_persona_natural); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_persona_natural?query=Id:"+num_documento, &informacion_persona_natural); (err == nil) && (response == 200) {
 		informacion_informe.InformacionContratista.Nombre = informacion_persona_natural[0].PrimerNombre + " " + informacion_persona_natural[0].SegundoNombre + " " + informacion_persona_natural[0].PrimerApellido + " " + informacion_persona_natural[0].SegundoApellido
 		informacion_informe.InformacionContratista.TipoIdentificacion = informacion_persona_natural[0].TipoDocumento.ValorParametro
 
 		var ciudad models.Ciudad
-		if response, err := getJsonTest(beego.AppConfig.String("UrlcrudCore")+"/ciudad/"+strconv.Itoa(informacion_persona_natural[0].IdCiudadExpedicionDocumento), &ciudad); (err == nil) && (response == 200) {
+		if response, err := GetJsonTest(beego.AppConfig.String("UrlcrudCore")+"/ciudad/"+strconv.Itoa(informacion_persona_natural[0].IdCiudadExpedicionDocumento), &ciudad); (err == nil) && (response == 200) {
 			informacion_informe.InformacionContratista.CiudadExpedicion = ciudad.Nombre
 		} else {
 			logs.Error(err)
@@ -100,9 +100,9 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 	var contrato_general []models.ContratoGeneral
 	var sede []models.Sede
 	var supervisor_contrato []models.SupervisorContrato
-	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_general/?query=ContratoSuscrito.NumeroContratoSuscrito:"+contrato+",VigenciaContrato:"+vigencia, &contrato_general); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_general/?query=ContratoSuscrito.NumeroContratoSuscrito:"+contrato+",VigenciaContrato:"+vigencia, &contrato_general); (err == nil) && (response == 200) {
 
-		if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/sedes_SIC/?query=ESFIDSEDE:"+contrato_general[0].LugarEjecucion.Sede, &sede); (err == nil) && (response == 200) {
+		if response, err := GetJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/sedes_SIC/?query=ESFIDSEDE:"+contrato_general[0].LugarEjecucion.Sede, &sede); (err == nil) && (response == 200) {
 			informacion_informe.Sede = sede[0].ESFSEDE
 		} else {
 			logs.Error(err)
@@ -110,7 +110,7 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 			panic(outputError)
 		}
 
-		if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/supervisor_contrato?query=DependenciaSupervisor:"+contrato_general[0].Supervisor.DependenciaSupervisor+"&sortby=FechaInicio&order=desc", &supervisor_contrato); (err == nil) && (response == 200) {
+		if response, err := GetJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/supervisor_contrato?query=DependenciaSupervisor:"+contrato_general[0].Supervisor.DependenciaSupervisor+"&sortby=FechaInicio&order=desc", &supervisor_contrato); (err == nil) && (response == 200) {
 			informacion_informe.Supervisor.Cargo = supervisor_contrato[0].Cargo
 			informacion_informe.Supervisor.Nombre = supervisor_contrato[0].Nombre
 		} else {
@@ -226,7 +226,7 @@ func InformacionInforme(pago_mensual_id string) (informacion_informe models.Info
 	var contratos_disponibilidad []models.ContratoDisponibilidad
 	numero_contrato := contrato_general[0].Id
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+numero_contrato, &contratos_disponibilidad); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/contrato_disponibilidad/?query=NumeroContrato:"+numero_contrato, &contratos_disponibilidad); (err == nil) && (response == 200) {
 
 		if len(contratos_disponibilidad) == 0 {
 			err = errors.New("No se encontro cdp asociado al contrato")
@@ -261,7 +261,7 @@ func getPagoMensual(pago_mensual_id string) (pago_mensual models.PagoMensual, er
 	var pagos_mensuales []models.PagoMensual
 	var respuesta_peticion map[string]interface{}
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudCumplidos")+"/pago_mensual/?query=Id:"+pago_mensual_id, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlcrudCumplidos")+"/pago_mensual/?query=Id:"+pago_mensual_id, &respuesta_peticion); (err == nil) && (response == 200) {
 
 		pagos_mensuales = []models.PagoMensual{}
 		LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
@@ -314,7 +314,7 @@ func GetPreliquidacion(pago_mensual_id string) (preliquidacion []models.Preliqui
 
 	var preliquidaciones []models.PreliquidacionTitan
 	var respuesta_peticion_prel map[string]interface{}
-	if response, err := getJsonTest(beego.AppConfig.String("UrlTitanMid")+"/detalle_preliquidacion/obtener_detalle_CT/"+anio+"/"+mes+"/"+contrato+"/"+vigencia_contrato+"/"+documento_contratista, &respuesta_peticion_prel); (err == nil) && (response == 201) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlTitanMid")+"/detalle_preliquidacion/obtener_detalle_CT/"+anio+"/"+mes+"/"+contrato+"/"+vigencia_contrato+"/"+documento_contratista, &respuesta_peticion_prel); (err == nil) && (response == 201) {
 		LimpiezaRespuestaRefactor(respuesta_peticion_prel, &preliquidaciones)
 		if preliquidacion, err := seleccionarPreliquidacion(preliquidaciones, numero_cdp); err == nil {
 			return darFormatoPreliquidacion(preliquidacion), nil

@@ -226,7 +226,7 @@ func GetInformacionContratoContratista(num_contrato_suscrito string, vigencia st
 func GetActaDeInicio(numero_contrato string, vigencia_contrato int) (acta_inicio models.ActaInicio, outputError map[string]interface{}) {
 
 	var actasInicio []models.ActaInicio
-	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/acta_inicio/?query=NumeroContrato:"+numero_contrato+",Vigencia:"+strconv.Itoa(vigencia_contrato), &actasInicio); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/acta_inicio/?query=NumeroContrato:"+numero_contrato+",Vigencia:"+strconv.Itoa(vigencia_contrato), &actasInicio); (err == nil) && (response == 200) {
 		if len(actasInicio) == 0 {
 			outputError = map[string]interface{}{"funcion": "/getInformacionContratosContratista", "err": errors.New("No se encontro acta de inicio"), "status": "502"}
 			return acta_inicio, outputError

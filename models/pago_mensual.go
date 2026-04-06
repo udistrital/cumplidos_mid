@@ -5,18 +5,18 @@ import (
 )
 
 type PagoMensual struct {
-	Id                     int
-	NumeroContrato         string
-	VigenciaContrato       float64
-	NumeroCDP              string  //RFC 50388
-	VigenciaCDP            float64 //RFC 50388
-	Mes                    float64
-	DocumentoPersonaId     string
-	EstadoPagoMensualId    *EstadoPagoMensual
-	DocumentoResponsableId string
-	CargoResponsable       string
-	Ano                    float64
-	Activo                 bool
-	FechaCreacion          time.Time
-	FechaModificacion      time.Time
+	Id                     int                `json:"Id"`
+	NumeroContrato         string             `json:"NumeroContrato"`
+	VigenciaContrato       float64            `json:"VigenciaContrato"`
+	NumeroCDP              string             `json:"NumeroCDP"`
+	VigenciaCDP            float64            `json:"VigenciaCDP"`
+	Mes                    float64            `json:"Mes"`
+	DocumentoPersonaId     string             `json:"DocumentoPersonaId"`
+	EstadoPagoMensualId    *EstadoPagoMensual `json:"EstadoPagoMensualId"`
+	DocumentoResponsableId string             `json:"DocumentoResponsableId"`
+	CargoResponsable       string             `json:"CargoResponsable"`
+	Ano                    float64            `json:"Ano"`
+	Activo                 bool               `json:"Activo"`
+	FechaCreacion          time.Time          `json:"FechaCreacion"`
+	FechaModificacion      time.Time          `json:"FechaModificacion"`
 }

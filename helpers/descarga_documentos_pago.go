@@ -102,7 +102,7 @@ func DescargarDocumentosSolicitudesPagos(id_pago_mensual string) (DocumentosZip 
 
 	DocumentosZip.File = base64.StdEncoding.EncodeToString(buf.Bytes())
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=Id:"+id_pago_mensual, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/?query=Id:"+id_pago_mensual, &respuesta_peticion); (err == nil) && (response == 200) {
 		if respuesta_peticion != nil {
 			LimpiezaRespuestaRefactor(respuesta_peticion, &pagos_mensuales)
 		}

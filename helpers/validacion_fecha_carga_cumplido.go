@@ -22,7 +22,7 @@ func ValidarPeriodoCargaCumplido(dependencia_supervisor string, anio string, mes
 	order := "&order=desc"
 	sortby := "&sortby=FechaModificacion"
 	limit := "&limit=0"
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/fechas_carga_cumplidos/"+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/fechas_carga_cumplidos/"+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
 		fecha_actual := time.Now().Add(-time.Hour * 5)
 		Validacion.FechaActual = fecha_actual
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
