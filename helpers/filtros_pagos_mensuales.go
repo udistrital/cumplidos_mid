@@ -38,7 +38,7 @@ func GetPagosFiltrados(numeros_contratos []string, numeros_documentos []string, 
 	sortby := "&sortby=Ano,Mes,DocumentoPersonaId"
 	limit := "&limit=0"
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/"+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/pago_mensual/"+query+sortby+order+limit, &respuesta_peticion); (err == nil) && (response == 200) {
 		if respuesta_peticion != nil {
 			LimpiezaRespuestaRefactor(respuesta_peticion, &PagoMensual)
 			return PagoMensual, nil
@@ -204,7 +204,11 @@ func SolicitudesPagoMensual(codigos_dependencias []string, vigencias []string, d
 					filtro_pago_dependencia.Vigencia = strconv.FormatFloat(pago_filtrado.VigenciaContrato, 'f', 0, 64)
 					filtro_pago_dependencia.Ano = strconv.FormatFloat(pago_filtrado.Ano, 'f', 0, 64)
 					filtro_pago_dependencia.Mes = strconv.FormatFloat(pago_filtrado.Mes, 'f', 0, 64)
-					filtro_pago_dependencia.Estado = pago_filtrado.EstadoPagoMensualId.Nombre
+					if pago_filtrado.EstadoPagoMensualId != nil {
+						filtro_pago_dependencia.Estado = pago_filtrado.EstadoPagoMensualId.Nombre
+					} else {
+						filtro_pago_dependencia.Estado = ""
+					}
 					filtro_pago_dependencia.DocumentoContratista = informacion_contrato_contratista.InformacionContratista.Documento.Numero
 					filtro_pago_dependencia.NombreContratista = informacion_contrato_contratista.InformacionContratista.NombreCompleto
 					filtro_pago_dependencia.IdPagoMensual = strconv.Itoa(pago_filtrado.Id)

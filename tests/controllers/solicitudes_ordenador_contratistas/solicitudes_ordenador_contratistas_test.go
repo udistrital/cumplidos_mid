@@ -109,7 +109,7 @@ func TestAprobarMultiplesPagosContratistas(t *testing.T) {
 
 func TestCertificacionCumplidosContratistas(t *testing.T) {
 
-	if response, err := http.Get("http://localhost:8090/v1/solicitudes_ordenador_contratistas/certificaciones/DEP14/10/2019"); err == nil {
+	if response, err := http.Get("http://localhost:8090/v1/solicitudes_ordenador_contratistas/certificaciones?fechaInicio=2019-10-01T00:00:00Z&dependencia=DEP14"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestEndPoint(TestCertificacionCumplidosContratistas): Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -125,7 +125,7 @@ func TestCertificacionCumplidosContratistas(t *testing.T) {
 
 func TestCertificacionCumplidosContratistasError(t *testing.T) {
 
-	if response, err := http.Get("http://localhost:8090/v1/solicitudes_ordenador_contratistas/certificaciones/DEP14/10/201"); err == nil {
+	if response, err := http.Get("http://localhost:8090/v1/solicitudes_ordenador_contratistas/certificaciones"); err == nil {
 		if response.StatusCode != 400 {
 			t.Error("Error TestEndPoint(TestCertificacionCumplidosContratistasError): Se esperaba 400 y se obtuvo", response.StatusCode)
 			t.Fail()

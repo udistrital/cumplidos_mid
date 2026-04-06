@@ -22,21 +22,23 @@ func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPa
 	query := "PagoMensualId.Id:" + idPagoMensual
 	var respuesta_peticion map[string]interface{}
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/cambio_estado_pago/?query="+query+"&sortby=FechaCreacion&order=asc&limit=-1", &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/cambio_estado_pago/?query="+query+"&sortby=FechaCreacion&order=asc&limit=-1", &respuesta_peticion); (err == nil) && (response == 200) {
 		//Ejecuta si no hay error y estado = 200
 		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
 			LimpiezaRespuestaRefactor(respuesta_peticion, &cambiosEstado)
 
 			for i, cambioEstado := range cambiosEstado {
 				nombreResponsable, _ := GetNombreResponable(cambioEstado.DocumentoResponsableId)
-				estado, err := GetEstado(strconv.Itoa(cambioEstado.EstadoPagoMensualId))
+				estado, err := GetEstado(strconv.Itoa(cambioEstado.EstadoPagoMensualId.Id))
 				if err != nil {
 					panic(outputError)
 				} else {
 					cambiosEstado[i].CargoResponsable = capitalizarPrimeraLetra(cambiosEstado[i].CargoResponsable)
 					cambiosEstado[i].NombreEstado = estado.Nombre
 					cambiosEstado[i].DescripcionEstado = estado.Descripcion
-					cambiosEstado[i].PagoMensualId = idPagoMensual
+					if idPagoMensualInt, err := strconv.Atoi(idPagoMensual); err == nil {
+						cambiosEstado[i].PagoMensualId.Id = idPagoMensualInt
+					}
 					cambiosEstado[i].NombreResponsable = nombreResponsable
 					cambiosEstado[i].NombreEstado = capitalizarPrimeraLetra(cambiosEstado[i].NombreEstado)
 

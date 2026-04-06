@@ -3,7 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	_ "encoding/json"
-	_ "fmt"
+	"fmt"
 	"strconv"
 	_ "time"
 
@@ -13,11 +13,18 @@ import (
 	"github.com/udistrital/cumplidos_mid/helpers"
 	_ "github.com/udistrital/cumplidos_mid/helpers"
 	"github.com/udistrital/cumplidos_mid/models"
+	"github.com/udistrital/cumplidos_mid/services"
 )
 
 // SolicitudesOrdenadorContratistasController operations for SolicitudesOrdenadorContratistas
 type SolicitudesOrdenadorContratistasController struct {
 	beego.Controller
+	certificacionService services.ICertificacionService
+}
+
+// SetCertificacionService inyección de dependencia
+func (c *SolicitudesOrdenadorContratistasController) SetCertificacionService(service services.ICertificacionService) {
+	c.certificacionService = service
 }
 
 // URLMapping ...
@@ -113,51 +120,59 @@ func (c *SolicitudesOrdenadorContratistasController) AprobarMultiplesPagosContra
 	c.ServeJSON()
 }
 
-// SolicitudesOrdenadorContratistasController ...
+// CertificacionCumplidosContratistas obtiene certificaciones de cumplidos para un periodo
+// filtrando aprobaciones desde fechaInicio.
 // @Title certificacion_cumplidos_contratistas
 // @Description get certificacion_cumplidos_contratistas
-// @Param dependencia path string true "Dependencia supervisor"
-// @Param mes path string true "Mes del certificado"
-// @Param ano path string true "Año del certificado "
+// @Param fechaInicio query string true "Fecha inicio de aprobación en formato YYYY-MM-DD"
+// @Param dependencia query string true "Código de la dependencia"
+// @Param mes query string false "Mes del periodo del cumplido en formato MM"
+// @Param anio query string false "Año del periodo del cumplido en formato YYYY"
 // @Success 200 {object} []models.Persona
 // @Failure 404 not found resource
-// @router /certificaciones/:dependencia/:mes/:ano [get]
+// @router /certificaciones [get]
 func (c *SolicitudesOrdenadorContratistasController) CertificacionCumplidosContratistas() {
+	fechaInicio := c.GetString("fechaInicio")
+	dependencia := c.GetString("dependencia")
+	mes := c.GetString("mes")
+	anio := c.GetString("anio")
 
-	dependencia := c.GetString(":dependencia")
-	mes := c.GetString(":mes")
-	ano := c.GetString(":ano")
+	// Inicializar service si no está
+	if c.certificacionService == nil {
+		c.certificacionService = services.NewCertificacionService()
+	}
 
-	//función que maneja el error
 	defer func() {
 		if err := recover(); err != nil {
-			logs.Error(err)
-			localError := err.(map[string]interface{})
-			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorContratistasController" + "/" + (localError["funcion"]).(string))
-			c.Data["data"] = (localError["err"])
+			logs.Error("Panic in CertificacionCumplidosContratistas: %v", err)
+			var localError map[string]interface{}
+			if e, ok := err.(map[string]interface{}); ok {
+				localError = e
+			} else {
+				localError = map[string]interface{}{"funcion": "CertificacionCumplidosContratistas", "err": fmt.Sprintf("%v", err), "status": "500"}
+			}
+			c.Data["mesaage"] = (beego.AppConfig.String("appname") + "/" + "SolicitudesOrdenadorContratistasController" + "/" + "CertificacionCumplidosContratistas")
+			c.Data["data"] = localError["err"]
 			if status, ok := localError["status"]; ok {
 				c.Abort(status.(string))
 			} else {
-				c.Abort("404")
+				c.Abort("500")
 			}
 		}
 	}()
-	//Validación de parametros de entrada
-	//_, err1 := strconv.Atoi(dependencia)
-	mess, err1 := strconv.Atoi(mes)
-	_, err2 := strconv.Atoi(ano)
-	if (mess == 0) || (len(ano) != 4) || (mess > 12) || (err1 != nil) || (err2 != nil) {
-		panic(map[string]interface{}{"funcion": "CertificacionCumplidosContratistas", "err": "Error en los parametros de ingreso", "status": "400"})
+
+	// Validación de parametro
+	if fechaInicio == "" || dependencia == "" {
+		panic(map[string]interface{}{"funcion": "CertificacionCumplidosContratistas", "err": "Fecha inicio y dependencia requeridas", "status": "400"})
 	}
 
-	//var v []models.PagoContratistaCdpRp
-	if personas, err := helpers.CertificacionCumplidosContratistas(dependencia, mes, ano); err == nil {
-		c.Ctx.Output.SetStatus(200)
-		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": personas}
-	} else {
+	personas, err := c.certificacionService.GetCertificaciones(fechaInicio, dependencia, mes, anio)
+	if err != nil {
 		panic(err)
 	}
 
+	c.Ctx.Output.SetStatus(200)
+	c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": personas}
 	c.ServeJSON()
 }
 

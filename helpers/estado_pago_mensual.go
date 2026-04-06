@@ -19,7 +19,7 @@ func GetEstado(idEstado string) (estado *models.EstadoPagoMensual, outputError i
 	}()
 
 	var respuesta_peticion map[string]interface{}
-	if response, err := getJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/estado_pago_mensual/"+idEstado, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/estado_pago_mensual/"+idEstado, &respuesta_peticion); (err == nil) && (response == 200) {
 		//Ejecuta si no hay error y estado = 200
 		if respuesta_peticion != nil {
 			LimpiezaRespuestaRefactor(respuesta_peticion, &estado)
