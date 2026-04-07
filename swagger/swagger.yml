@@ -521,22 +521,22 @@ paths:
         "404":
           description: not found resource
 definitions:
-  17333.0xc000602a80.false:
+  17333.0xc00057ed50.false:
     title: "false"
     type: object
-  17613.0xc000602ab0.false:
+  17613.0xc00057ed80.false:
     title: "false"
     type: object
-  17674.0xc000602ae0.false:
+  17674.0xc00057edb0.false:
     title: "false"
     type: object
-  17795.0xc000602b40.false:
+  17795.0xc00057ee10.false:
     title: "false"
     type: object
-  17946.0xc000602b70.false:
+  17946.0xc00057ee40.false:
     title: "false"
     type: object
-  33694.0xc00065c7b0.false:
+  33694.0xc0005eea80.false:
     title: "false"
     type: object
   map[string]interface{}:
@@ -873,11 +873,11 @@ definitions:
       ActividadesEspecificas:
         type: string
       CDP:
-        $ref: '#/definitions/17613.0xc000602ab0.false'
+        $ref: '#/definitions/17613.0xc00057ed80.false'
       Dependencia:
         type: string
       EjecutadoDinero:
-        $ref: '#/definitions/17946.0xc000602b70.false'
+        $ref: '#/definitions/17946.0xc00057ee40.false'
       FechaCPS:
         type: string
       FechaFin:
@@ -889,7 +889,7 @@ definitions:
       FechasConNovedades:
         $ref: '#/definitions/models.FechasConNovedades'
       InformacionContratista:
-        $ref: '#/definitions/17795.0xc000602b40.false'
+        $ref: '#/definitions/17795.0xc00057ee10.false'
       Novedades:
         type: array
         items:
@@ -897,11 +897,11 @@ definitions:
       Objeto:
         type: string
       RP:
-        $ref: '#/definitions/17674.0xc000602ae0.false'
+        $ref: '#/definitions/17674.0xc00057edb0.false'
       Sede:
         type: string
       Supervisor:
-        $ref: '#/definitions/17333.0xc000602a80.false'
+        $ref: '#/definitions/17333.0xc00057ed50.false'
       ValorContrato:
         type: integer
         format: int64
@@ -1192,7 +1192,7 @@ definitions:
         type: string
         format: datetime
       Periodo:
-        $ref: '#/definitions/33694.0xc00065c7b0.false'
+        $ref: '#/definitions/33694.0xc0005eea80.false'
 tags:
 - name: contratos_contratista
   description: |
