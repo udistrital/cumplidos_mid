@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/cumplidos_mid/helpers"
 	"github.com/udistrital/cumplidos_mid/models"
 )
@@ -30,7 +29,6 @@ func NewCertificacionService() ICertificacionService {
 func (s *CertificacionService) GetCertificaciones(fechaInicio string, dependencia string, mes string, anio string) ([]models.Persona, map[string]interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
-			logs.Error(err)
 			panic(map[string]interface{}{"funcion": "GetCertificaciones", "err": fmt.Sprintf("%v", err), "status": "500"})
 		}
 	}()
@@ -38,20 +36,19 @@ func (s *CertificacionService) GetCertificaciones(fechaInicio string, dependenci
 	// Validar fechaInicio
 	fechaInicio = strings.TrimSpace(fechaInicio)
 	if fechaInicio == "" {
-		logs.Error("Fecha inválida: empty")
 		return nil, map[string]interface{}{"funcion": "GetCertificaciones", "err": "Fecha inválida", "status": "400"}
 	}
 
 	contratosDependencia, err := s.getContratosDependencia(dependencia, fechaInicio, mes, anio)
 	if err != nil {
-		logs.Error("Error getting contratos: %v", err)
 		return nil, err
 	}
 	pagosMensuales, err := s.getPagosMensualesPorContratos(contratosDependencia, mes, anio)
 	if err != nil {
-		logs.Error("Error getting pagos mensuales: %v", err)
 		return nil, err
 	}
+	pagosMensuales = s.filtrarPagosPorContratos(pagosMensuales, contratosDependencia)
+
 	// Filtrar pagos válidos (descartar pagos con Id=0 o NumeroContrato vacío)
 	var pagosValidos []models.PagoMensual
 	for _, pago := range pagosMensuales {
@@ -71,9 +68,10 @@ func (s *CertificacionService) GetCertificaciones(fechaInicio string, dependenci
 	// Obtener cambios de estado aprobados desde fecha para esos pagos
 	cambiosEstado, err := s.getCambiosEstadoAprobadosDesdeFechaParaPagos(fechaInicio, pagoMensualIds)
 	if err != nil {
-		logs.Error("Error getting cambios estado: %v", err)
 		return nil, err
 	}
+	cambiosEstado = s.filtrarCambiosEstadoPorDependencia(cambiosEstado, contratosDependencia)
+
 	// Extraer IDs de pagos que tienen cambios aprobados desde fecha
 	pagoMensualIdsAprobados := s.extractPagoMensualIds(cambiosEstado)
 
@@ -83,7 +81,6 @@ func (s *CertificacionService) GetCertificaciones(fechaInicio string, dependenci
 	// Obtener personas de los pagos finales
 	personas, err := s.getPersonasFromPagos(pagosFinales)
 	if err != nil {
-		logs.Error("Error getting personas: %v", err)
 		return nil, err
 	}
 	return personas, nil
@@ -140,7 +137,6 @@ func (s *CertificacionService) getPagosMensualesPorContratos(contratosDependenci
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &pagosMensuales)
 		return pagosMensuales, nil
 	} else {
-		logs.Error("Error en getPagosMensualesPorContratos, response: %d, err: %v", response, err)
 		errMsg := "Server error"
 		if err != nil {
 			errMsg = err.Error()
@@ -196,8 +192,10 @@ func (s *CertificacionService) getCambiosEstadoAprobadosDesdeFechaParaPagos(fech
 				if hasEstado {
 					switch estado := estadoVal.(type) {
 					case map[string]interface{}:
-						if codigo, ok := estado["CodigoAbreviacion"].(string); ok && codigo != "AS" {
-							continue
+						if codigo, ok := estado["CodigoAbreviacion"].(string); ok {
+							if codigo != "AS" {
+								continue
+							}
 						}
 					case float64:
 						if int(estado) != 13 {
@@ -259,8 +257,6 @@ func (s *CertificacionService) getCambiosEstadoAprobadosDesdeFechaParaPagos(fech
 
 				cambiosEstado = append(cambiosEstado, cambio)
 			}
-		} else {
-			logs.Error("Error en getCambiosEstadoAprobadosDesdeFechaParaPagos para pago %s, response: %d, err: %v", pagoMensualID, response, err)
 		}
 	}
 	return cambiosEstado, nil
@@ -294,7 +290,6 @@ func (s *CertificacionService) getPagosMensuales(ids []string) ([]models.PagoMen
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &pagosMensuales)
 		return pagosMensuales, nil
 	} else {
-		logs.Error(err)
 		return nil, map[string]interface{}{"funcion": "getPagosMensuales", "err": err.Error(), "status": "404"}
 	}
 }
@@ -317,7 +312,6 @@ func (s *CertificacionService) getPersonasFromPagos(pagos []models.PagoMensual) 
 	for _, pago := range pagos {
 		persona, err := s.getPersonaFromPago(pago)
 		if err != nil {
-			logs.Error("Error getting persona for pago ID %d: %v", pago.Id, err)
 			return nil, err
 		}
 		personas = append(personas, persona)
@@ -332,7 +326,6 @@ func (s *CertificacionService) getPersonaFromPago(pago models.PagoMensual) (mode
 	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlCrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago.DocumentoPersonaId, &contratistas); (err == nil) && (response == 200) {
 		contrato, err := helpers.GetContrato(pago.NumeroContrato, strconv.FormatFloat(pago.VigenciaContrato, 'f', 0, 64))
 		if err != nil {
-			logs.Error("Error getting contrato: %v", err)
 			return models.Persona{}, err
 		}
 
@@ -348,7 +341,6 @@ func (s *CertificacionService) getPersonaFromPago(pago models.PagoMensual) (mode
 			return persona, nil
 		}
 	} else {
-		logs.Error("Error getting contratista, response: %d, err: %v", response, err)
 		errMsg := "Server error"
 		if err != nil {
 			errMsg = err.Error()
@@ -365,19 +357,16 @@ func (s *CertificacionService) getContratosDependencia(dependencia string, fecha
 	if strings.TrimSpace(mes) != "" && strings.TrimSpace(anio) != "" {
 		mesInt, err := strconv.Atoi(strings.TrimSpace(mes))
 		if err != nil || mesInt < 1 || mesInt > 12 {
-			logs.Error("Invalid mes in getContratosDependencia: %s", mes)
 			return models.ContratoDependencia{}, map[string]interface{}{"funcion": "getContratosDependencia", "err": "Mes inválido", "status": "400"}
 		}
 
 		anioInt, err := strconv.Atoi(strings.TrimSpace(anio))
 		if err != nil || anioInt < 1 {
-			logs.Error("Invalid anio in getContratosDependencia: %s", anio)
 			return models.ContratoDependencia{}, map[string]interface{}{"funcion": "getContratosDependencia", "err": "Año inválido", "status": "400"}
 		}
 
 		fechaPeriodo, err = time.Parse("2006-01", fmt.Sprintf("%04d-%02d", anioInt, mesInt))
 		if err != nil {
-			logs.Error("Invalid periodo in getContratosDependencia: anio=%s, mes=%s", anio, mes)
 			return models.ContratoDependencia{}, map[string]interface{}{"funcion": "getContratosDependencia", "err": "Mes o año inválido", "status": "400"}
 		}
 	} else {
@@ -386,7 +375,6 @@ func (s *CertificacionService) getContratosDependencia(dependencia string, fecha
 		if err != nil {
 			fechaPeriodo, err = time.Parse(time.RFC3339, fechaInicio)
 			if err != nil {
-				logs.Error("Invalid date in getContratosDependencia: %s", fechaInicio)
 				return models.ContratoDependencia{}, map[string]interface{}{"funcion": "getContratosDependencia", "err": "Fecha inválida", "status": "400"}
 			}
 		}
@@ -396,7 +384,6 @@ func (s *CertificacionService) getContratosDependencia(dependencia string, fecha
 
 	contratosDependencia, outputError := helpers.GetContratosDependenciaFiltro(dependencia, fechaConsulta, fechaConsulta)
 	if outputError != nil {
-		logs.Error("Error in GetContratosDependenciaFiltro: %v", outputError)
 		return models.ContratoDependencia{}, outputError
 	}
 	if contratosDependencia.Contratos.Contrato == nil {
@@ -467,7 +454,6 @@ func (s *CertificacionService) getCambiosEstadoAprobadosDesdeFecha(fechaInicio s
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &cambiosEstado)
 		return cambiosEstado, nil
 	} else {
-		logs.Error("[CAMBIOS_DIRECTO] Error en getCambiosEstadoAprobadosDesdeFecha, response: %d, err: %v", response, err)
 		errMsg := "Server error"
 		if err != nil {
 			errMsg = err.Error()
@@ -519,7 +505,6 @@ func (s *CertificacionService) getPagosMensualesById(ids []string) ([]models.Pag
 		helpers.LimpiezaRespuestaRefactor(respuestaPeticion, &pagosMensuales)
 		return pagosMensuales, nil
 	} else {
-		logs.Error("[PAGOS_BY_ID] Error, response: %d, err: %v", response, err)
 		errMsg := "Server error"
 		if err != nil {
 			errMsg = err.Error()
