@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"math/big"
 	"net/http"
 	"reflect"
@@ -82,10 +83,10 @@ func sendJson3(url string, trequest string, target interface{}, datajson interfa
 	return json.NewDecoder(resp.Body).Decode(target)
 }
 
-func getJsonTest(url string, target interface{}) (status int, err error) {
+func GetJsonTest(url string, target interface{}) (status int, err error) {
 	r, err := http.Get(url)
 	if err != nil {
-		return r.StatusCode, err
+		return 0, err
 	}
 	defer func() {
 		if err := r.Body.Close(); err != nil {
@@ -93,7 +94,11 @@ func getJsonTest(url string, target interface{}) (status int, err error) {
 		}
 	}()
 
-	return r.StatusCode, json.NewDecoder(r.Body).Decode(target)
+	err = json.NewDecoder(r.Body).Decode(target)
+	if err == io.EOF {
+		return r.StatusCode, nil
+	}
+	return r.StatusCode, err
 }
 
 func getJson(url string, target interface{}) error {

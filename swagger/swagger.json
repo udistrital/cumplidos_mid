@@ -396,7 +396,7 @@
                 }
             }
         },
-        "/solicitudes_ordenador_contratistas/certificaciones/{dependencia}/{mes}/{ano}": {
+        "/solicitudes_ordenador_contratistas/certificaciones": {
             "get": {
                 "tags": [
                     "solicitudes_ordenador_contratistas"
@@ -405,24 +405,29 @@
                 "operationId": "SolicitudesOrdenadorContratistasController.certificacion_cumplidos_contratistas",
                 "parameters": [
                     {
-                        "in": "path",
+                        "in": "query",
+                        "name": "fechaInicio",
+                        "description": "Fecha inicio de aprobación en formato YYYY-MM-DD",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
                         "name": "dependencia",
-                        "description": "Dependencia supervisor",
+                        "description": "Código de la dependencia",
                         "required": true,
                         "type": "string"
                     },
                     {
-                        "in": "path",
+                        "in": "query",
                         "name": "mes",
-                        "description": "Mes del certificado",
-                        "required": true,
+                        "description": "Mes del periodo del cumplido en formato MM",
                         "type": "string"
                     },
                     {
-                        "in": "path",
-                        "name": "ano",
-                        "description": "Año del certificado",
-                        "required": true,
+                        "in": "query",
+                        "name": "anio",
+                        "description": "Año del periodo del cumplido en formato YYYY",
                         "type": "string"
                     }
                 ],
@@ -781,27 +786,27 @@
         }
     },
     "definitions": {
-        "24250.0xc0005e4bd0.false": {
+        "17333.0xc00057ed50.false": {
             "title": "false",
             "type": "object"
         },
-        "24530.0xc0005e4c00.false": {
+        "17613.0xc00057ed80.false": {
             "title": "false",
             "type": "object"
         },
-        "24591.0xc0005e4c30.false": {
+        "17674.0xc00057edb0.false": {
             "title": "false",
             "type": "object"
         },
-        "24712.0xc0005e4c90.false": {
+        "17795.0xc00057ee10.false": {
             "title": "false",
             "type": "object"
         },
-        "24863.0xc0005e4cc0.false": {
+        "17946.0xc00057ee40.false": {
             "title": "false",
             "type": "object"
         },
-        "44067.0xc000646900.false": {
+        "33694.0xc0005eea80.false": {
             "title": "false",
             "type": "object"
         },
@@ -1281,13 +1286,13 @@
                     "type": "string"
                 },
                 "CDP": {
-                    "$ref": "#/definitions/24530.0xc0005e4c00.false"
+                    "$ref": "#/definitions/17613.0xc00057ed80.false"
                 },
                 "Dependencia": {
                     "type": "string"
                 },
                 "EjecutadoDinero": {
-                    "$ref": "#/definitions/24863.0xc0005e4cc0.false"
+                    "$ref": "#/definitions/17946.0xc00057ee40.false"
                 },
                 "FechaCPS": {
                     "type": "string"
@@ -1304,7 +1309,7 @@
                     "$ref": "#/definitions/models.FechasConNovedades"
                 },
                 "InformacionContratista": {
-                    "$ref": "#/definitions/24712.0xc0005e4c90.false"
+                    "$ref": "#/definitions/17795.0xc00057ee10.false"
                 },
                 "Novedades": {
                     "type": "array",
@@ -1316,13 +1321,13 @@
                     "type": "string"
                 },
                 "RP": {
-                    "$ref": "#/definitions/24591.0xc0005e4c30.false"
+                    "$ref": "#/definitions/17674.0xc00057edb0.false"
                 },
                 "Sede": {
                     "type": "string"
                 },
                 "Supervisor": {
-                    "$ref": "#/definitions/24250.0xc0005e4bd0.false"
+                    "$ref": "#/definitions/17333.0xc00057ed50.false"
                 },
                 "ValorContrato": {
                     "type": "integer",
@@ -1740,7 +1745,7 @@
                     "format": "datetime"
                 },
                 "Periodo": {
-                    "$ref": "#/definitions/44067.0xc000646900.false"
+                    "$ref": "#/definitions/33694.0xc0005eea80.false"
                 }
             }
         }

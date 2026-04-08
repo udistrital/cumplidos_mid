@@ -21,7 +21,7 @@ func GetNombreResponable(id string) (nombreCompleto string, outputError interfac
 	var respuesta_peticion []*models.InformacionPersonaNatural
 	query := "Id:" + id
 
-	if response, err := getJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_persona_natural?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
+	if response, err := GetJsonTest(beego.AppConfig.String("UrlcrudAgora")+"/informacion_persona_natural?fields=PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido&limit=0&query="+query, &respuesta_peticion); (err == nil) && (response == 200) {
 
 		if respuesta_peticion != nil {
 			nombreCompleto = capitalizarPrimeraLetra(respuesta_peticion[0].PrimerNombre) +

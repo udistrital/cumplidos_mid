@@ -1,0 +1,1214 @@
+swagger: "2.0"
+info:
+  title: beego Test API
+  description: beego has a very cool tools to autogenerate documents for your API
+  version: 1.0.0
+  termsOfService: http://beego.me/
+  contact:
+    email: astaxie@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+basePath: /v1
+paths:
+  /contratos_contratista/{numero_documento}:
+    get:
+      tags:
+      - contratos_contratista
+      description: create ContratosContratista
+      operationId: ContratosContratistaController.GetContratosContratista
+      parameters:
+      - in: path
+        name: numero_documento
+        description: Número documento
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/models.ContratoDisponibilidadRp'
+        "404":
+          description: not found resource
+  /contratos_contratista/documentos_pago_mensual/{pago_mensual_id}:
+    get:
+      tags:
+      - contratos_contratista
+      description: create ContratosContratista
+      operationId: ContratosContratistaController.GetDocumentosPagoMensual
+      parameters:
+      - in: path
+        name: pago_mensual_id
+        description: Id pago mensual
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/models.DocumentosSoporte'
+        "404":
+          description: not found resource
+  /download_documents/{pago_mensual_id}:
+    get:
+      tags:
+      - download_documents
+      description: Download in a .zip file all the documents uploaded in the payment request form
+      operationId: DescargarDocumentosSolicitudesPagosController.GetDocumentosPagoZip
+      parameters:
+      - in: path
+        name: id_pago_mensual
+        description: Id Pago Mensual
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "404":
+          description: not found resource
+  /historicos/cambio_estado_pago/{idPagoMensual}:
+    get:
+      tags:
+      - historicos
+      description: get the state change history for a given payment ID
+      operationId: HistoricoCumplidos.GetCambioEstado
+      parameters:
+      - in: path
+        name: idPagoMensual
+        description: ID of the monthly payment
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '"Success"'
+          schema:
+            $ref: '#/definitions/map[string]interface{}'
+        "404":
+          description: '{object} map[string]interface{} "Error"'
+  /historicos/dependencias/{documento}:
+    get:
+      tags:
+      - historicos
+      description: get the dependencies for a given document
+      operationId: HistoricoCumplidos.GetDependencias
+      parameters:
+      - in: path
+        name: documento
+        description: Document number
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '"Success"'
+          schema:
+            $ref: '#/definitions/map[string]interface{}'
+        "404":
+          description: '{object} map[string]interface{} "Error"'
+  /historicos/dependencias_generales/:
+    get:
+      tags:
+      - historicos
+      description: get all  dependencies
+      operationId: HistoricoCumplidos.GetDependenciasGeneral
+      responses:
+        "200":
+          description: '"Success"'
+          schema:
+            $ref: '#/definitions/map[string]interface{}'
+        "404":
+          description: '{object} map[string]interface{} "Error"'
+  /informacion_informe/{pago_mensual_id}:
+    get:
+      tags:
+      - informacion_informe
+      description: get InformacionInforme by pago_mensual_id
+      operationId: InformacionInformeController.GetInformacionInforme
+      parameters:
+      - in: path
+        name: pago_mensual_id
+        description: id del pago mensual
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.InformacionInforme'
+        "403":
+          description: :pago_mensual_id is empty
+  /informacion_informe/preliquidacion/{pago_mensual_id}:
+    get:
+      tags:
+      - informacion_informe
+      description: get preliquidacion correspondiente a una solicitud de pago mensual
+      operationId: InformacionInformeController.GetPreliquidacion
+      parameters:
+      - in: path
+        name: pago_mensual_id
+        description: id del pago mensual
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.PreliquidacionTitan'
+        "403":
+          description: :pago_mensual_id is empty
+  /informe/:
+    post:
+      tags:
+      - informe
+      description: create Informe
+      operationId: InformeController.Post
+      parameters:
+      - in: body
+        name: body
+        description: body for Informe content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Informe'
+      responses:
+        "201":
+          description: '{int} models.Informe'
+        "403":
+          description: body is empty
+  /informe/{id}:
+    put:
+      tags:
+      - informe
+      description: update the Informe
+      operationId: InformeController.Put
+      parameters:
+      - in: path
+        name: id
+        description: The id you want to update
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Informe content
+        required: true
+        schema:
+          $ref: '#/definitions/models.Informe'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Informe'
+        "403":
+          description: :id is not int
+  /informe/{pago_mensual_id}:
+    get:
+      tags:
+      - informe
+      description: get Informe by pago_mensual_id
+      operationId: InformeController.Get One
+      parameters:
+      - in: path
+        name: pago_mensual_id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Informe'
+        "403":
+          description: :pago_mensual_id is empty
+  /informe/ultimo_informe/{pago_mensual_id}:
+    get:
+      tags:
+      - informe
+      description: get Ultimo Informe de un contratista by contrato,vigencia y documento
+      operationId: InformeController.Get UltimoInformeContratista
+      parameters:
+      - in: path
+        name: pago_mensual_id
+        description: Id del pago mensual
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Informe'
+        "403":
+          description: :id is empty
+  /solicitudes_ordenador_contratistas/aprobar_pagos:
+    post:
+      tags:
+      - solicitudes_ordenador_contratistas
+      description: create AprobarMultiplesPagosContratistas
+      operationId: SolicitudesOrdenadorContratistasController.AprobarMultiplesPagosContratistas
+      parameters:
+      - in: body
+        name: body
+        description: body for SoportePagoMensual content
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/models.PagoContratistaCdpRp'
+      responses:
+        "201":
+          description: Ok
+        "400":
+          description: the request contains incorrect syntax
+  /solicitudes_ordenador_contratistas/certificaciones:
+    get:
+      tags:
+      - solicitudes_ordenador_contratistas
+      description: get certificacion_cumplidos_contratistas
+      operationId: SolicitudesOrdenadorContratistasController.certificacion_cumplidos_contratistas
+      parameters:
+      - in: query
+        name: fechaInicio
+        description: Fecha inicio de aprobación en formato YYYY-MM-DD
+        required: true
+        type: string
+      - in: query
+        name: dependencia
+        description: Código de la dependencia
+        required: true
+        type: string
+      - in: query
+        name: mes
+        description: Mes del periodo del cumplido en formato MM
+        type: string
+      - in: query
+        name: anio
+        description: Año del periodo del cumplido en formato YYYY
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/models.Persona'
+        "404":
+          description: not found resource
+  /solicitudes_ordenador_contratistas/cumplidos_revertibles/{docordenador}:
+    get:
+      tags:
+      - solicitudes_ordenador_contratistas
+      description: create GetCumplidosRevertiblesPorOrdenador
+      operationId: SolicitudesOrdenadorContratistasController.GetCumplidosRevertiblesPorOrdenador
+      parameters:
+      - in: path
+        name: docordenador
+        description: Número del documento del ordenador
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/models.PagoContratistaCdpRp'
+        "404":
+          description: not found resource
+  /solicitudes_ordenador_contratistas/informacion_ordenador/{numero_contrato}/{vigencia}:
+    get:
+      tags:
+      - solicitudes_ordenador_contratistas
+      description: ObtenerInfoOrdenador trae la informacion de un ordenador del gasto a partir de su numero de contrato y ano de vigencia
+      operationId: SolicitudesOrdenadorContratistasController.GetInfoOrdanador
+      parameters:
+      - in: path
+        name: numero_contrato
+        description: Numero de contrato en la tabla contrato general
+        required: true
+        type: string
+      - in: path
+        name: vigencia
+        description: Vigencia del contrato en la tabla contrato general
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.InformacionOrdenador'
+        "404":
+          description: not found resource
+  /solicitudes_ordenador_contratistas/solicitudes/{docordenador}:
+    get:
+      tags:
+      - solicitudes_ordenador_contratistas
+      description: create GetSolicitudesOrdenadorContratistas
+      operationId: SolicitudesOrdenadorContratistasController.GetSolicitudesOrdenadorContratistas
+      parameters:
+      - in: path
+        name: docordenador
+        description: Número del documento del supervisor
+        required: true
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/models.PagoContratistaCdpRp'
+        "404":
+          description: not found resource
+  /solicitudes_ordenador_contratistas/solicitudes_dependencia/{docordenador}/{cod_dependencia}:
+    get:
+      tags:
+      - solicitudes_ordenador_contratistas
+      description: create GetSolicitudesOrdenadorContratistasDependencia
+      operationId: SolicitudesOrdenadorContratistasController.GetSolicitudesOrdenadorContratistasDependencia
+      parameters:
+      - in: path
+        name: docordenador
+        description: Número del documento del supervisor
+        required: true
+        type: string
+      - in: path
+        name: cod_dependencia
+        description: cod_dependencia
+        required: true
+        type: string
+      - in: query
+        name: limit
+        description: Limit the size of result set. Must be an integer
+        type: string
+      - in: query
+        name: offset
+        description: Start position of result set. Must be an integer
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/models.PagoContratistaCdpRp'
+        "404":
+          description: not found resource
+  /solicitudes_pagos/:
+    post:
+      tags:
+      - solicitudes_pagos
+      description: filter payment requests by various parameters
+      operationId: SolicitudesPagoMensualController.GetSolicitudesPagoMensual
+      parameters:
+      - in: query
+        name: codigos_dependencias
+        description: List of dependency codes
+        required: true
+        type: array
+        items:
+          type: string
+      - in: query
+        name: vigencias
+        description: List of years
+        required: true
+        type: array
+        items:
+          type: string
+      - in: query
+        name: documentos_contratistas
+        description: List of contractor IDs
+        required: true
+        type: array
+        items:
+          type: string
+      - in: query
+        name: numeros_contratos
+        description: List of contract numbers
+        required: true
+        type: array
+        items:
+          type: string
+      - in: query
+        name: meses
+        description: List of months
+        required: true
+        type: array
+        items:
+          type: string
+      - in: query
+        name: anios
+        description: List of years
+        required: true
+        type: array
+        items:
+          type: string
+      - in: query
+        name: estados
+        description: List of payment states
+        required: true
+        type: array
+        items:
+          type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/models.SolicitudPago'
+        "400":
+          description: Bad request
+  /solicitudes_supervisor_contratistas/{docsupervisor}:
+    get:
+      tags:
+      - solicitudes_supervisor_contratistas
+      description: create GetSolicitudesSupervisorContratistas
+      operationId: SolicitudesSupervisorContratistasController.GetSolicitudesSupervisorContratistas
+      parameters:
+      - in: path
+        name: docsupervisor
+        description: Número del documento del supervisor
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/models.PagoContratistaCdpRp'
+        "404":
+          description: not found resource
+  /validacion_periodo_carga_cumplido/{dependencia_supervisor}/{anio}/{mes}:
+    get:
+      tags:
+      - validacion_periodo_carga_cumplido
+      description: valida si se esta dentro del periodo de carga de cumplidos
+      operationId: ValidacionFechaCargaCumplidoController.GetValidacionPeriodo
+      parameters:
+      - in: path
+        name: dependencia_supervisor
+        description: Dependencia supervisor
+        required: true
+        type: string
+      - in: path
+        name: anio
+        description: anio
+        required: true
+        type: string
+      - in: path
+        name: mes
+        description: mes
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/models.ValidacionFechaCargaCumplido'
+        "404":
+          description: not found resource
+definitions:
+  17333.0xc00057ed50.false:
+    title: "false"
+    type: object
+  17613.0xc00057ed80.false:
+    title: "false"
+    type: object
+  17674.0xc00057edb0.false:
+    title: "false"
+    type: object
+  17795.0xc00057ee10.false:
+    title: "false"
+    type: object
+  17946.0xc00057ee40.false:
+    title: "false"
+    type: object
+  33694.0xc0005eea80.false:
+    title: "false"
+    type: object
+  map[string]interface{}:
+    title: map[string]interface{}
+    type: object
+  models.ActividadEspecifica:
+    title: ActividadEspecifica
+    type: object
+    properties:
+      ActividadEspecifica:
+        type: string
+      ActividadesRealizadas:
+        type: array
+        items:
+          $ref: '#/definitions/models.ActividadRealizada'
+      Activo:
+        type: boolean
+      Avance:
+        type: integer
+        format: int64
+      FechaCreacion:
+        type: string
+        format: datetime
+      FechaModificacion:
+        type: string
+        format: datetime
+      Id:
+        type: integer
+        format: int64
+  models.ActividadRealizada:
+    title: ActividadRealizada
+    type: object
+    properties:
+      Actividad:
+        type: string
+      Activo:
+        type: boolean
+      Evidencia:
+        type: string
+      FechaCreacion:
+        type: string
+        format: datetime
+      FechaModificacion:
+        type: string
+        format: datetime
+      Id:
+        type: integer
+        format: int64
+      ProductoAsociado:
+        type: string
+  models.ConceptoNomina:
+    title: ConceptoNomina
+    type: object
+    properties:
+      Activo:
+        type: boolean
+      AliasConcepto:
+        type: string
+      EstadoConceptoNominaId:
+        type: integer
+        format: int64
+      FechaCreacion:
+        type: string
+      FechaModificacion:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      NaturalezaConceptoNominaId:
+        type: integer
+        format: int64
+      NombreConcepto:
+        type: string
+      TipoConceptoNominaId:
+        type: integer
+        format: int64
+  models.Contrato:
+    title: Contrato
+    type: object
+    properties:
+      Activo:
+        type: boolean
+      Cdp:
+        type: integer
+        format: int64
+      Completo:
+        type: boolean
+      DependenciaId:
+        type: integer
+        format: int64
+      Documento:
+        type: string
+      FechaCreacion:
+        type: string
+      FechaFin:
+        type: string
+        format: datetime
+      FechaInicio:
+        type: string
+        format: datetime
+      FechaModificacion:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      NombreCompleto:
+        type: string
+      NumeroContrato:
+        type: string
+      PersonaId:
+        type: integer
+        format: int64
+      ProyectoId:
+        type: integer
+        format: int64
+      Rp:
+        type: integer
+        format: int64
+      TipoNominaId:
+        type: integer
+        format: int64
+      Unico:
+        type: boolean
+      Vacaciones:
+        type: number
+        format: double
+      ValorContrato:
+        type: number
+        format: double
+      Vigencia:
+        type: integer
+        format: int64
+  models.ContratoDisponibilidadRp:
+    title: ContratoDisponibilidadRp
+    type: object
+    properties:
+      FechaFin:
+        type: string
+        format: datetime
+      FechaInicio:
+        type: string
+        format: datetime
+      NombreDependencia:
+        type: string
+      NumDocumentoSupervisor:
+        type: string
+      NumeroCdp:
+        type: string
+      NumeroContratoSuscrito:
+        type: string
+      NumeroRp:
+        type: string
+      Vigencia:
+        type: string
+      VigenciaCdp:
+        type: string
+      VigenciaRp:
+        type: string
+  models.ContratoPreliquidacion:
+    title: ContratoPreliquidacion
+    type: object
+    properties:
+      Activo:
+        type: boolean
+      Afc:
+        type: number
+        format: double
+      ContratoId:
+        $ref: '#/definitions/models.Contrato'
+      Cumplido:
+        type: boolean
+      Dependientes:
+        type: boolean
+      FechaCreacion:
+        type: string
+      FechaModificacion:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      InteresesVivienda:
+        type: number
+        format: double
+      MedicinaPrepagadaUvt:
+        type: number
+        format: double
+      PensionVoluntaria:
+        type: number
+        format: double
+      Pensionado:
+        type: boolean
+      PreliquidacionId:
+        $ref: '#/definitions/models.Preliquidacion'
+      Preliquidado:
+        type: boolean
+      ResponsableIva:
+        type: boolean
+  models.DetallePreliquidacion:
+    title: DetallePreliquidacion
+    type: object
+    properties:
+      Activo:
+        type: boolean
+      ConceptoNominaId:
+        $ref: '#/definitions/models.ConceptoNomina'
+      ContratoPreliquidacionId:
+        $ref: '#/definitions/models.ContratoPreliquidacion'
+      DiasEspecificos:
+        type: string
+      DiasLiquidados:
+        type: number
+        format: double
+      Documento:
+        type: string
+      EstadoDisponibilidadId:
+        type: integer
+        format: int64
+      FechaCreacion:
+        type: string
+      FechaModificacion:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      NombreCompleto:
+        type: string
+      NumeroContrato:
+        type: string
+      Persona:
+        type: integer
+        format: int64
+      TipoPreliquidacionId:
+        type: integer
+        format: int64
+      ValorCalculado:
+        type: number
+        format: double
+      ValorCalculadoConFormato:
+        type: string
+      VigenciaContrato:
+        type: integer
+        format: int64
+  models.Documento:
+    title: Documento
+    type: object
+    properties:
+      Activo:
+        type: boolean
+      Descripcion:
+        type: string
+      Enlace:
+        type: string
+      FechaCreacion:
+        type: string
+      FechaModificacion:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      Metadatos:
+        type: string
+      Nombre:
+        type: string
+      TipoDocumento:
+        $ref: '#/definitions/models.TipoDocumento'
+  models.DocumentosSoporte:
+    title: DocumentosSoporte
+    type: object
+    properties:
+      Archivo:
+        $ref: '#/definitions/models.FileGestorDocumental'
+      Documento:
+        $ref: '#/definitions/models.Documento'
+  models.DominioTipoDocumento:
+    title: DominioTipoDocumento
+    type: object
+    properties:
+      Activo:
+        type: boolean
+      CodigoAbreviacion:
+        type: string
+      Descripcion:
+        type: string
+      FechaCreacion:
+        type: string
+      FechaModificacion:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      Nombre:
+        type: string
+      NumeroOrden:
+        type: number
+        format: double
+  models.EstadoPagoMensual:
+    title: EstadoPagoMensual
+    type: object
+    properties:
+      Activo:
+        type: boolean
+      CodigoAbreviacion:
+        type: string
+      Descripcion:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      Nombre:
+        type: string
+      NumeroOrden:
+        type: number
+        format: double
+  models.FechasConNovedades:
+    title: FechasConNovedades
+    type: object
+    properties:
+      FechaFin:
+        type: string
+        format: datetime
+      FechaInicio:
+        type: string
+        format: datetime
+  models.FileGestorDocumental:
+    title: FileGestorDocumental
+    type: object
+    properties:
+      file:
+        type: string
+  models.InformacionInforme:
+    title: InformacionInforme
+    type: object
+    properties:
+      ActividadesEspecificas:
+        type: string
+      CDP:
+        $ref: '#/definitions/17613.0xc00057ed80.false'
+      Dependencia:
+        type: string
+      EjecutadoDinero:
+        $ref: '#/definitions/17946.0xc00057ee40.false'
+      FechaCPS:
+        type: string
+      FechaFin:
+        type: string
+        format: datetime
+      FechaInicio:
+        type: string
+        format: datetime
+      FechasConNovedades:
+        $ref: '#/definitions/models.FechasConNovedades'
+      InformacionContratista:
+        $ref: '#/definitions/17795.0xc00057ee10.false'
+      Novedades:
+        type: array
+        items:
+          $ref: '#/definitions/models.NovedadCesion'
+      Objeto:
+        type: string
+      RP:
+        $ref: '#/definitions/17674.0xc00057edb0.false'
+      Sede:
+        type: string
+      Supervisor:
+        $ref: '#/definitions/17333.0xc00057ed50.false'
+      ValorContrato:
+        type: integer
+        format: int64
+      ValorTotalContrato:
+        type: integer
+        format: int64
+  models.InformacionOrdenador:
+    title: InformacionOrdenador
+    type: object
+    properties:
+      Cargo:
+        type: string
+      IdDependencia:
+        type: integer
+        format: int64
+      Nombre:
+        type: string
+      NumeroDocumento:
+        type: integer
+        format: int64
+  models.Informe:
+    title: Informe
+    type: object
+    properties:
+      ActividadesEspecificas:
+        type: array
+        items:
+          $ref: '#/definitions/models.ActividadEspecifica'
+      Activo:
+        type: boolean
+      FechaCreacion:
+        type: string
+        format: datetime
+      FechaModificacion:
+        type: string
+        format: datetime
+      Id:
+        type: integer
+        format: int64
+      PagoMensualId:
+        $ref: '#/definitions/models.PagoMensual'
+      PeriodoInformeFin:
+        type: string
+        format: datetime
+      PeriodoInformeInicio:
+        type: string
+        format: datetime
+      Proceso:
+        type: string
+  models.NovedadCesion:
+    title: NovedadCesion
+    type: object
+    properties:
+      DocCedente:
+        type: string
+      DocCesionario:
+        type: string
+      FechaCreacion:
+        type: string
+      FechaFin:
+        type: string
+      FechaFinSus:
+        type: string
+      FechaInicio:
+        type: string
+      NombreCedente:
+        type: string
+      NombreCesionario:
+        type: string
+      NumeroCdp:
+        type: integer
+        format: int64
+      NumeroContrato:
+        type: integer
+        format: int64
+      PlazoEjecucion:
+        type: integer
+        format: int64
+      TipoNovedad:
+        type: string
+      ValorAdicion:
+        type: integer
+        format: int64
+      ValorNovedadPagado:
+        type: integer
+        format: int64
+      Vigencia:
+        type: integer
+        format: int64
+      VigenciaCdp:
+        type: integer
+        format: int64
+  models.PagoContratistaCdpRp:
+    title: PagoContratistaCdpRp
+    type: object
+    properties:
+      NombreDependencia:
+        type: string
+      NombrePersona:
+        type: string
+      NumeroCdp:
+        type: string
+      NumeroRp:
+        type: string
+      PagoMensual:
+        $ref: '#/definitions/models.PagoMensual'
+      Rubro:
+        type: string
+      VigenciaCdp:
+        type: string
+      VigenciaRp:
+        type: string
+  models.PagoMensual:
+    title: PagoMensual
+    type: object
+    properties:
+      Activo:
+        type: boolean
+      Ano:
+        type: number
+        format: double
+      CargoResponsable:
+        type: string
+      DocumentoPersonaId:
+        type: string
+      DocumentoResponsableId:
+        type: string
+      EstadoPagoMensualId:
+        $ref: '#/definitions/models.EstadoPagoMensual'
+      FechaCreacion:
+        type: string
+        format: datetime
+      FechaModificacion:
+        type: string
+        format: datetime
+      Id:
+        type: integer
+        format: int64
+      Mes:
+        type: number
+        format: double
+      NumeroCDP:
+        type: string
+      NumeroContrato:
+        type: string
+      VigenciaCDP:
+        type: number
+        format: double
+      VigenciaContrato:
+        type: number
+        format: double
+  models.Persona:
+    title: Persona
+    type: object
+    properties:
+      Nombre:
+        type: string
+      NumDocumento:
+        type: string
+      NumeroCdp:
+        type: string
+      NumeroContrato:
+        type: string
+      Rubro:
+        type: string
+      Vigencia:
+        type: integer
+        format: int64
+  models.Preliquidacion:
+    title: Preliquidacion
+    type: object
+    properties:
+      Activo:
+        type: boolean
+      Ano:
+        type: integer
+        format: int64
+      Descripcion:
+        type: string
+      EstadoPreliquidacionId:
+        type: integer
+        format: int64
+      FechaCreacion:
+        type: string
+      FechaModificacion:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      Mes:
+        type: integer
+        format: int64
+      NominaId:
+        type: integer
+        format: int64
+  models.PreliquidacionTitan:
+    title: PreliquidacionTitan
+    type: object
+    properties:
+      Contrato:
+        type: string
+      Detalle:
+        type: array
+        items:
+          $ref: '#/definitions/models.DetallePreliquidacion'
+      TotalDescuentos:
+        type: number
+        format: double
+      TotalDescuentosConFormato:
+        type: string
+      TotalDevengado:
+        type: number
+        format: double
+      TotalDevengadoConFormato:
+        type: string
+      TotalPago:
+        type: number
+        format: double
+      TotalPagoConFormato:
+        type: string
+      Vigencia:
+        type: integer
+        format: int64
+  models.SolicitudPago:
+    title: SolicitudPago
+    type: object
+    properties:
+      Ano:
+        type: string
+      DocumentoContratista:
+        type: string
+      Estado:
+        type: string
+      IdPagoMensual:
+        type: string
+      Mes:
+        type: string
+      NombreContratista:
+        type: string
+      NombreDependencia:
+        type: string
+      NumeroContrato:
+        type: string
+      Rubro:
+        type: string
+      Vigencia:
+        type: string
+  models.TipoDocumento:
+    title: TipoDocumento
+    type: object
+    properties:
+      Activo:
+        type: boolean
+      CodigoAbreviacion:
+        type: string
+      Descripcion:
+        type: string
+      DominioTipoDocumento:
+        $ref: '#/definitions/models.DominioTipoDocumento'
+      Extension:
+        type: string
+      FechaCreacion:
+        type: string
+      FechaModificacion:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      Nombre:
+        type: string
+      NumeroOrden:
+        type: number
+        format: double
+      Tamano:
+        type: number
+        format: double
+      TipoDocumentoNuxeo:
+        type: string
+      Workspace:
+        type: string
+  models.ValidacionFechaCargaCumplido:
+    title: ValidacionFechaCargaCumplido
+    type: object
+    properties:
+      CargaHabilitada:
+        type: boolean
+      FechaActual:
+        type: string
+        format: datetime
+      Periodo:
+        $ref: '#/definitions/33694.0xc0005eea80.false'
+tags:
+- name: contratos_contratista
+  description: |
+    ContratosContratistaController operations for contratos_contratista
+- name: solicitudes_supervisor_contratistas
+  description: |
+    SolicitudesSupervisorContratistasController operations for solicitudes_supervisor_contratistas
+- name: solicitudes_ordenador_contratistas
+  description: |
+    SolicitudesOrdenadorContratistasController operations for SolicitudesOrdenadorContratistas
+- name: informacion_informe
+  description: |
+    InformacionInformeController operations for InformacionInforme
+- name: informe
+  description: |
+    InformeController operations for Informe
+- name: validacion_periodo_carga_cumplido
+  description: |
+    ValidacionFechaCargaCumplidoController operations for validacion_fecha_carga_cumplido
