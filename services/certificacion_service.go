@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -172,8 +173,8 @@ func (s *CertificacionService) getCambiosEstadoAprobadosDesdeFechaParaPagos(fech
 	var cambiosEstado []models.CambioEstadoPago
 
 	for _, pagoMensualID := range pagoMensualIds {
-		query := "PagoMensualId:" + pagoMensualID + ",Activo:true,FechaCreacion__gte:" + queryFecha
-		url := beego.AppConfig.String("UrlCrudCumplidos") + "/cambio_estado_pago/?query=" + query + "&limit=-1"
+		query := "PagoMensualId.Id:" + pagoMensualID + ",EstadoPagoMensualId.in:13|5,FechaCreacion__gte:" + queryFecha
+		url := beego.AppConfig.String("UrlCrudCumplidos") + "/cambio_estado_pago/?query=" + query + "&sortby=FechaCreacion&order=asc&limit=-1"
 
 		var respuestaPeticion map[string]interface{}
 		if response, err := helpers.GetJsonTest(url, &respuestaPeticion); (err == nil) && (response == 200) {
@@ -182,30 +183,14 @@ func (s *CertificacionService) getCambiosEstadoAprobadosDesdeFechaParaPagos(fech
 				continue
 			}
 
+			var cambiosPorPago []models.CambioEstadoPago
 			for _, rawCambio := range data {
 				cambioMap, ok := rawCambio.(map[string]interface{})
 				if !ok || len(cambioMap) == 0 {
 					continue
 				}
 
-				estadoVal, hasEstado := cambioMap["EstadoPagoMensualId"]
-				if hasEstado {
-					switch estado := estadoVal.(type) {
-					case map[string]interface{}:
-						if codigo, ok := estado["CodigoAbreviacion"].(string); ok {
-							if codigo != "AS" {
-								continue
-							}
-						}
-					case float64:
-						if int(estado) != 13 {
-							continue
-						}
-					}
-				}
-
 				cambio := models.CambioEstadoPago{}
-				cambio.Activo = true
 				cambio.PagoMensualId.Id, _ = strconv.Atoi(pagoMensualID)
 
 				if id, ok := cambioMap["Id"].(float64); ok {
@@ -217,6 +202,9 @@ func (s *CertificacionService) getCambiosEstadoAprobadosDesdeFechaParaPagos(fech
 				if cargo, ok := cambioMap["CargoResponsable"].(string); ok {
 					cambio.CargoResponsable = cargo
 				}
+				if activo, ok := cambioMap["Activo"].(bool); ok {
+					cambio.Activo = activo
+				}
 				if fechaCreacion, ok := cambioMap["FechaCreacion"].(string); ok {
 					if parsedFecha, err := time.Parse(time.RFC3339Nano, fechaCreacion); err == nil {
 						cambio.FechaCreacion = parsedFecha
@@ -225,6 +213,20 @@ func (s *CertificacionService) getCambiosEstadoAprobadosDesdeFechaParaPagos(fech
 				if fechaModificacion, ok := cambioMap["FechaModificacion"].(string); ok {
 					if parsedFecha, err := time.Parse(time.RFC3339Nano, fechaModificacion); err == nil {
 						cambio.FechaModificacion = parsedFecha
+					}
+				}
+
+				if estadoVal, hasEstado := cambioMap["EstadoPagoMensualId"]; hasEstado {
+					switch estado := estadoVal.(type) {
+					case map[string]interface{}:
+						if codigo, ok := estado["CodigoAbreviacion"].(string); ok {
+							cambio.EstadoPagoMensualId.CodigoAbreviacion = codigo
+						}
+						if id, ok := estado["Id"].(float64); ok {
+							cambio.EstadoPagoMensualId.Id = int(id)
+						}
+					case float64:
+						cambio.EstadoPagoMensualId.Id = int(estado)
 					}
 				}
 
@@ -255,11 +257,64 @@ func (s *CertificacionService) getCambiosEstadoAprobadosDesdeFechaParaPagos(fech
 					}
 				}
 
-				cambiosEstado = append(cambiosEstado, cambio)
+				if s.isCambioAprobadoSupervisorOCertificado(cambio) {
+					cambiosPorPago = append(cambiosPorPago, cambio)
+				}
+			}
+
+			if validCambio, ok := s.getCambio13Valido(cambiosPorPago); ok {
+				cambiosEstado = append(cambiosEstado, validCambio)
 			}
 		}
 	}
 	return cambiosEstado, nil
+}
+
+func (s *CertificacionService) isCambioAprobadoSupervisorOCertificado(cambio models.CambioEstadoPago) bool {
+	return s.isEstado13(cambio) || s.isEstado5(cambio)
+}
+
+func (s *CertificacionService) isEstado13(cambio models.CambioEstadoPago) bool {
+	return cambio.EstadoPagoMensualId.CodigoAbreviacion == "AS" || cambio.EstadoPagoMensualId.Id == 13
+}
+
+func (s *CertificacionService) isEstado5(cambio models.CambioEstadoPago) bool {
+	return cambio.EstadoPagoMensualId.CodigoAbreviacion == "AP" || cambio.EstadoPagoMensualId.Id == 5
+}
+
+func (s *CertificacionService) getCambio13Valido(cambios []models.CambioEstadoPago) (models.CambioEstadoPago, bool) {
+	if len(cambios) == 0 {
+		return models.CambioEstadoPago{}, false
+	}
+
+	sort.SliceStable(cambios, func(i, j int) bool {
+		return cambios[i].FechaCreacion.Before(cambios[j].FechaCreacion)
+	})
+
+	last5Index := -1
+	for i := len(cambios) - 1; i >= 0; i-- {
+		if s.isEstado5(cambios[i]) && cambios[i].Activo {
+			last5Index = i
+			break
+		}
+	}
+
+	if last5Index >= 0 {
+		for j := last5Index - 1; j >= 0; j-- {
+			if s.isEstado13(cambios[j]) {
+				return cambios[j], true
+			}
+		}
+		return models.CambioEstadoPago{}, false
+	}
+
+	for i := len(cambios) - 1; i >= 0; i-- {
+		if s.isEstado13(cambios[i]) && cambios[i].Activo {
+			return cambios[i], true
+		}
+	}
+
+	return models.CambioEstadoPago{}, false
 }
 
 // extractPagoMensualIds extrae IDs únicos de pagos mensuales
@@ -323,7 +378,8 @@ func (s *CertificacionService) getPersonasFromPagos(pagos []models.PagoMensual) 
 func (s *CertificacionService) getPersonaFromPago(pago models.PagoMensual) (models.Persona, map[string]interface{}) {
 	var contratistas []models.InformacionProveedor
 
-	if response, err := helpers.GetJsonTest(beego.AppConfig.String("UrlCrudAgora")+"/informacion_proveedor/?query=NumDocumento:"+pago.DocumentoPersonaId, &contratistas); (err == nil) && (response == 200) {
+	personaQueryUrl := beego.AppConfig.String("UrlCrudAgora") + "/informacion_proveedor/?query=NumDocumento:" + pago.DocumentoPersonaId
+	if response, err := helpers.GetJsonTest(personaQueryUrl, &contratistas); (err == nil) && (response == 200) {
 		contrato, err := helpers.GetContrato(pago.NumeroContrato, strconv.FormatFloat(pago.VigenciaContrato, 'f', 0, 64))
 		if err != nil {
 			return models.Persona{}, err
@@ -445,7 +501,7 @@ func (s *CertificacionService) getCambiosEstadoAprobadosDesdeFecha(fechaInicio s
 		}
 	}
 	queryFecha := parsed.UTC().Format("2006-01-02T15:04:05Z")
-	query := "EstadoPagoMensualId.CodigoAbreviacion:AS,Activo:true,FechaCreacion__gte:" + queryFecha
+	query := "EstadoPagoMensualId.CodigoAbreviacion:AS,FechaCreacion__gte:" + queryFecha
 	url := beego.AppConfig.String("UrlCrudCumplidos") + "/cambio_estado_pago/?query=" + query + "&limit=-1"
 	var respuestaPeticion map[string]interface{}
 	var cambiosEstado []models.CambioEstadoPago
