@@ -27,6 +27,7 @@ func GetEstado(idEstado string) (estado *models.EstadoPagoMensual, outputError i
 		}
 	} else {
 		//Ejecuta si hay un error o status !=200
+		outputError = map[string]interface{}{"funcion": "/GetEstado", "err": err, "status": "502"}
 		return nil, outputError
 	}
 
