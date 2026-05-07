@@ -11,10 +11,9 @@ func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPa
 	defer func() {
 		if err := recover(); err != nil {
 			outputError := map[string]interface{}{
-				"Succes":  true,
-				"Status":  502,
-				"Message": "Error al consultar cambios de estados del pago :" + idPagoMensual,
-				"Error":   err}
+				"funcion": "/GetEstadosPago",
+				"err":     err,
+				"status":  "502"}
 			panic(outputError)
 		}
 	}()
@@ -24,13 +23,15 @@ func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPa
 
 	if response, err := GetJsonTest(beego.AppConfig.String("UrlCrudCumplidos")+"/cambio_estado_pago/?query="+query+"&sortby=FechaCreacion&order=asc&limit=-1", &respuesta_peticion); (err == nil) && (response == 200) {
 		//Ejecuta si no hay error y estado = 200
-		if len(respuesta_peticion["Data"].([]interface{})[0].(map[string]interface{})) != 0 {
+		data, ok := respuesta_peticion["Data"].([]interface{})
+		if ok && len(data) > 0 {
 			LimpiezaRespuestaRefactor(respuesta_peticion, &cambiosEstado)
 
 			for i, cambioEstado := range cambiosEstado {
 				nombreResponsable, _ := GetNombreResponable(cambioEstado.DocumentoResponsableId)
 				estado, err := GetEstado(strconv.Itoa(cambioEstado.EstadoPagoMensualId.Id))
-				if err != nil {
+				if err != nil || estado == nil {
+					outputError = map[string]interface{}{"funcion": "/GetEstadosPago/GetEstado", "err": err, "status": "502"}
 					panic(outputError)
 				} else {
 					cambiosEstado[i].CargoResponsable = capitalizarPrimeraLetra(cambiosEstado[i].CargoResponsable)
@@ -49,6 +50,7 @@ func GetEstadosPago(idPagoMensual string) (cambiosEstado []models.CambioEstadoPa
 		}
 	} else {
 		//Ejecutar si hay un error o status !=200
+		outputError = map[string]interface{}{"funcion": "/GetEstadosPago", "err": err, "status": "502"}
 		return nil, outputError
 	}
 	return cambiosEstado, nil

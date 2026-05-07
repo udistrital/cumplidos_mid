@@ -1,21 +1,43 @@
 package models
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
+
+type EstadoPagoMensualReferencia struct {
+	Id                int       `json:"Id"`
+	Nombre            string    `json:"Nombre"`
+	Descripcion       string    `json:"Descripcion"`
+	CodigoAbreviacion string    `json:"CodigoAbreviacion"`
+	NumeroOrden       int       `json:"NumeroOrden"`
+	Activo            bool      `json:"Activo"`
+	FechaCreacion     time.Time `json:"FechaCreacion"`
+	FechaModificacion time.Time `json:"FechaModificacion"`
+}
+
+func (e *EstadoPagoMensualReferencia) UnmarshalJSON(data []byte) error {
+	var id int
+	if err := json.Unmarshal(data, &id); err == nil {
+		e.Id = id
+		return nil
+	}
+
+	type estadoPagoMensualReferencia EstadoPagoMensualReferencia
+	var estado estadoPagoMensualReferencia
+	if err := json.Unmarshal(data, &estado); err != nil {
+		return err
+	}
+
+	*e = EstadoPagoMensualReferencia(estado)
+	return nil
+}
 
 type CambioEstadoPago struct {
-	Id                  int `json:"Id"`
-	EstadoPagoMensualId struct {
-		Id                int       `json:"Id"`
-		Nombre            string    `json:"Nombre"`
-		Descripcion       string    `json:"Descripcion"`
-		CodigoAbreviacion string    `json:"CodigoAbreviacion"`
-		NumeroOrden       int       `json:"NumeroOrden"`
-		Activo            bool      `json:"Activo"`
-		FechaCreacion     time.Time `json:"FechaCreacion"`
-		FechaModificacion time.Time `json:"FechaModificacion"`
-	} `json:"EstadoPagoMensualId"`
-	DocumentoResponsableId string `json:"DocumentoResponsableId"`
-	CargoResponsable       string `json:"CargoResponsable"`
+	Id                     int                         `json:"Id"`
+	EstadoPagoMensualId    EstadoPagoMensualReferencia `json:"EstadoPagoMensualId"`
+	DocumentoResponsableId string                      `json:"DocumentoResponsableId"`
+	CargoResponsable       string                      `json:"CargoResponsable"`
 	PagoMensualId          struct {
 		Id                     int         `json:"Id"`
 		NumeroContrato         string      `json:"NumeroContrato"`
