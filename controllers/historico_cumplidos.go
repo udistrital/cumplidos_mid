@@ -26,14 +26,21 @@ func (c *HistoricoCumplidos) GetCambioEstado() {
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error(err)
-			localError := err.(map[string]interface{})
-			c.Data["message"] = beego.AppConfig.String("appname") + "/cambio_estado_pago/" + "/" + localError["funcion"].(string)
-			c.Data["data"] = localError["err"]
-			if status, ok := localError["status"]; ok {
-				c.Abort(status.(string))
-			} else {
-				c.Abort("404")
+			localError, ok := err.(map[string]interface{})
+			if !ok {
+				c.Data["message"] = beego.AppConfig.String("appname") + "/cambio_estado_pago"
+				c.Data["data"] = err
+				c.Abort("500")
 			}
+
+			funcion, _ := localError["funcion"].(string)
+			status, _ := localError["status"].(string)
+			if status == "" {
+				status = "500"
+			}
+			c.Data["message"] = beego.AppConfig.String("appname") + "/cambio_estado_pago/" + funcion
+			c.Data["data"] = localError["err"]
+			c.Abort(status)
 		}
 	}()
 
