@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/astaxie/beego/logs"
@@ -27,6 +28,14 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 			contrato_persona.FechaInicio = time.Date(contrato_persona.FechaInicio.Year(), contrato_persona.FechaInicio.Month(), contrato_persona.FechaInicio.Day(), 0, 0, 0, 0, contrato_persona.FechaInicio.Location())
 			contrato_persona.FechaFin = time.Date(contrato_persona.FechaFin.Year(), contrato_persona.FechaFin.Month(), contrato_persona.FechaFin.Day(), 0, 0, 0, 0, contrato_persona.FechaFin.Location())
 			if time.Now().AddDate(-2, 0, 0).Before(contrato_persona.FechaFin) {
+
+				vigenciaCDP := strings.TrimSpace(contrato_persona.Vigencia_cdp)
+				anioCDP, err := strconv.Atoi(vigenciaCDP)
+				if err != nil || anioCDP <= 0 {
+					logs.Warn("Se omite contrato sin vigencia CDP valida: contrato=%s, vigencia_contrato=%s, cdp=%s, vigencia_cdp=%q", contrato_persona.NumeroContrato, contrato_persona.Vigencia, contrato_persona.NumeroCDP, vigenciaCDP)
+					continue
+				}
+
 				var contrato models.InformacionContrato
 				contrato, outputError = GetContrato(contrato_persona.NumeroContrato, contrato_persona.Vigencia)
 
@@ -39,7 +48,7 @@ func ContratosContratista(numero_documento string) (contratos_disponibilidad_rp 
 				// Obtener la unidad ejecutora desde el contrato
 				unidadEjecucion := "0" + contrato.Contrato.UnidadEjecutora
 
-				if cdprp, outputError := GetRP(contrato_persona.NumeroCDP, contrato_persona.Vigencia_cdp, unidadEjecucion); outputError == nil {
+				if cdprp, outputError := GetRP(contrato_persona.NumeroCDP, vigenciaCDP, unidadEjecucion); outputError == nil {
 					for _, rp := range cdprp.CdpXRp.CdpRp {
 						var contrato_disponibilidad_rp models.ContratoDisponibilidadRp
 						contrato_disponibilidad_rp.NumeroContratoSuscrito = contrato_persona.NumeroContrato
@@ -78,6 +87,19 @@ func GetRP(numero_cdp string, vigencia_cdp string, unidad_ejecucion string) (rp 
 			panic(outputError)
 		}
 	}()
+
+	numero_cdp = strings.TrimSpace(numero_cdp)
+	vigencia_cdp = strings.TrimSpace(vigencia_cdp)
+	unidad_ejecucion = strings.TrimSpace(unidad_ejecucion)
+	anioCDP, err := strconv.Atoi(vigencia_cdp)
+	if numero_cdp == "" || unidad_ejecucion == "" || err != nil || anioCDP <= 0 {
+		logs.Warn("Consulta cdprp omitida por parametros incompletos o invalidos: cdp=%q, vigencia_cdp=%q, unidad=%q", numero_cdp, vigencia_cdp, unidad_ejecucion)
+		return rp, map[string]interface{}{
+			"funcion": "/GetRP",
+			"err":     "Parametros CDP/RP incompletos o invalidos",
+			"status":  "400",
+		}
+	}
 
 	var temp map[string]interface{}
 	var temp_cdp_rp models.InformacionCdpRp
